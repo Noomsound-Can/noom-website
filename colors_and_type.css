@@ -1,0 +1,170 @@
+/* =========================================================
+   Noom Sound Studio — Foundations
+   Editorial, contemplative, warm. Cream backgrounds, ink text,
+   sparing accents drawn from sunset photography.
+   ========================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Inter:wght@300;400;500&display=swap');
+
+:root {
+  /* ---------- Color · Surfaces ---------- */
+  --cream:        #F4ECDF; /* primary page background — warm off-white */
+  --cream-soft:   #EFE5D3; /* recessed surface, footers */
+  --cream-deep:   #E7DAC2; /* card / inset */
+  --paper:        #FBF6EC; /* lightest, near-white but warm */
+  --shell:        #EADFC8; /* hairline / divider tint */
+
+  /* ---------- Color · Ink (text) ---------- */
+  --ink:          #2A2622; /* primary text — warm near-black */
+  --ink-soft:     #4A4137; /* secondary text */
+  --ink-mute:     #7A6E5F; /* tertiary, captions, meta */
+  --ink-faint:    #A89A85; /* hairlines, disabled */
+
+  /* ---------- Color · Accents (used sparingly · max 2 in use) ---------- */
+  --clay:         #B57A55; /* terracotta — links, primary accent */
+  --sage:         #7E8A6E; /* muted agave green — secondary accent */
+  --sand:         #C9A77D; /* deep warm sand — quiet emphasis */
+
+  /* ---------- Semantic ---------- */
+  --bg:           var(--cream);
+  --bg-alt:       var(--paper);
+  --fg:           var(--ink);
+  --fg-soft:      var(--ink-soft);
+  --fg-mute:      var(--ink-mute);
+  --rule:         var(--ink-faint);
+  --accent:       var(--clay);
+
+  /* ---------- Type families ---------- */
+  --serif: 'Cormorant Garamond', 'EB Garamond', Georgia, 'Times New Roman', serif;
+  --sans:  'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+  --mono:  'IBM Plex Mono', ui-monospace, monospace;
+
+  /* ---------- Type scale (editorial, generous) ---------- */
+  --fs-display: clamp(56px, 8vw, 112px);
+  --fs-h1:      clamp(40px, 5.5vw, 72px);
+  --fs-h2:      clamp(32px, 3.6vw, 48px);
+  --fs-h3:      clamp(24px, 2.4vw, 32px);
+  --fs-lead:    22px;   /* opening paragraphs */
+  --fs-body:    17px;
+  --fs-small:   14px;
+  --fs-meta:    12px;   /* labels, eyebrows, dates */
+
+  /* ---------- Spacing (editorial rhythm) ---------- */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 24px;
+  --s-6: 32px;
+  --s-7: 48px;
+  --s-8: 72px;
+  --s-9: 112px;
+  --s-10: 160px;
+
+  /* ---------- Radii (mostly square) ---------- */
+  --r-0: 0px;
+  --r-1: 2px;
+  --r-2: 4px;
+  --r-pill: 999px;
+
+  /* ---------- Shadows (very subtle, warm) ---------- */
+  --shadow-1: 0 1px 0 rgba(42,38,34,0.04);
+  --shadow-2: 0 8px 24px -16px rgba(42,38,34,0.18);
+  --shadow-3: 0 24px 60px -28px rgba(42,38,34,0.25);
+
+  /* ---------- Motion ---------- */
+  --ease-slow: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --dur-slow: 900ms;
+  --dur-med:  500ms;
+  --dur-fast: 250ms;
+
+  /* ---------- Layout ---------- */
+  --measure: 64ch;        /* prose line-length */
+  --container: 1200px;
+  --gutter: clamp(24px, 4vw, 64px);
+}
+
+/* ---------------- Base resets ---------------- */
+html, body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: var(--fs-body);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* ---------------- Semantic typography ---------------- */
+.display, h1.display {
+  font-family: var(--serif);
+  font-weight: 300;
+  font-size: var(--fs-display);
+  line-height: 1.02;
+  letter-spacing: -0.012em;
+  color: var(--ink);
+}
+h1, .h1 {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: var(--fs-h1);
+  line-height: 1.08;
+  letter-spacing: -0.008em;
+}
+h2, .h2 {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: var(--fs-h2);
+  line-height: 1.15;
+  letter-spacing: -0.004em;
+}
+h3, .h3 {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: var(--fs-h3);
+  line-height: 1.25;
+}
+.lead {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 300;
+  font-size: var(--fs-lead);
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+p, .body {
+  font-family: var(--serif);
+  font-size: var(--fs-body);
+  line-height: 1.65;
+  max-width: var(--measure);
+}
+.eyebrow, .meta {
+  font-family: var(--sans);
+  font-weight: 400;
+  font-size: var(--fs-meta);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+.small {
+  font-family: var(--sans);
+  font-size: var(--fs-small);
+  color: var(--ink-soft);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px solid var(--ink-faint);
+  transition: border-color var(--dur-fast) var(--ease-slow), color var(--dur-fast);
+}
+a:hover { border-color: var(--clay); color: var(--clay); }
+
+hr {
+  border: 0;
+  border-top: 1px solid var(--rule);
+  margin: var(--s-7) 0;
+}
+
+::selection { background: rgba(216,159,122,0.35); color: var(--ink); }

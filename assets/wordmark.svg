@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 60" width="360" height="60">
+  
+  <text class="word name" x="0" y="34">Noom</text>
+  <text class="word sub" x="106" y="32">Sound Studio</text>
+  <line x1="0" y1="46" x2="340" y2="46" stroke="#A89A85" stroke-width="0.75"></line>
+  <text class="word sub" x="0" y="58">Koh Samui · Thailand</text>
+</svg>
