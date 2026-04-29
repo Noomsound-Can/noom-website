@@ -297,50 +297,46 @@
       border-top: 1px solid var(--ink-faint);
     }
     .contact-inner {
-      max-width: 880px; margin: 0 auto;
-      display: grid; grid-template-columns: 1fr 1.2fr; gap: clamp(48px, 8vw, 112px);
-      align-items: start;
+      max-width: 640px; margin: 0 auto;
+      text-align: center;
     }
     .contact h3 {
       font-family: var(--serif); font-weight: 300;
-      font-size: clamp(36px, 4.4vw, 56px); line-height: 1.05; letter-spacing: -0.006em;
-      margin: 24px 0 24px;
+      font-size: clamp(40px, 5.5vw, 72px); line-height: 1.0; letter-spacing: -0.012em;
+      margin: 24px 0 28px;
     }
     .contact h3 em { font-style: italic; }
     .contact .lede {
       font-family: var(--serif); font-style: italic; font-size: 19px; line-height: 1.55;
-      color: var(--ink-soft); max-width: 32ch; margin: 0;
+      color: var(--ink-soft); max-width: 44ch; margin: 0 auto 48px;
     }
-    .contact form { display: flex; flex-direction: column; gap: 28px; }
-    .contact label {
-      font-family: var(--sans); font-size: 10px; letter-spacing: 0.22em;
-      text-transform: uppercase; color: var(--ink-mute); display: block; margin-bottom: 8px;
+    .contact .btn-row {
+      display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;
+      margin-bottom: 36px;
     }
-    .contact input, .contact textarea {
-      width: 100%; box-sizing: border-box;
-      background: transparent; border: 0;
-      border-bottom: 1px solid var(--ink-faint);
-      padding: 6px 0 10px;
-      font-family: var(--serif); font-size: 18px; color: var(--ink);
-      outline: none;
-      transition: border-color 300ms;
-    }
-    .contact textarea { resize: vertical; min-height: 96px; font-family: var(--serif); line-height: 1.55; }
-    .contact input:focus, .contact textarea:focus { border-bottom-color: var(--ink); }
-    .contact .send {
-      align-self: flex-start;
-      background: var(--ink); color: var(--cream); border: 0;
-      padding: 16px 32px;
+    .contact a.btn-primary {
+      display: inline-block;
+      background: var(--ink); color: var(--cream); border: 0; border-bottom: 0;
+      padding: 18px 36px;
       font-family: var(--sans); font-size: 12px; font-weight: 500; letter-spacing: 0.22em; text-transform: uppercase;
-      cursor: pointer;
+      text-shadow: none; text-decoration: none;
       transition: background 300ms;
     }
-    .contact .send:hover { background: #000; }
-    .contact .alt {
-      font-family: var(--serif); font-style: italic; font-size: 16px; color: var(--ink-soft);
-      margin: 32px 0 0;
+    .contact a.btn-primary:hover { background: #000; }
+    .contact a.btn-outline {
+      display: inline-block;
+      background: transparent; color: var(--ink);
+      border: 1px solid var(--ink);
+      padding: 17px 36px;
+      font-family: var(--sans); font-size: 12px; font-weight: 500; letter-spacing: 0.22em; text-transform: uppercase;
+      text-shadow: none; text-decoration: none;
+      transition: background 300ms, color 300ms;
     }
-    .contact .alt a { color: var(--ink); border-bottom: 1px solid var(--ink-faint); padding-bottom: 2px; }
+    .contact a.btn-outline:hover { background: var(--ink); color: var(--cream); }
+    .contact .contact-email {
+      font-family: var(--serif); font-style: italic; font-size: 16px; color: var(--ink-soft);
+    }
+    .contact .contact-email a { color: var(--ink); border-bottom: 1px solid var(--ink-faint); padding-bottom: 2px; }
 
     /* Footer */
     .footer {
@@ -439,7 +435,7 @@
     <article class="pillar reveal">
       <div class="num">02</div>
       <h3>Sound journeys</h3>
-      <p>Live handpan, gong, and Tibetan/crystal bowls &mdash; played while you lie back and rest. No experience needed.<br/><br/><strong style="font-weight:500;color:var(--ink)">Private</strong> sessions at the studio from ฿2,500 (2 guests), or we come to your space from ฿4,000 (4 guests).<br/><br/><strong style="font-weight:500;color:var(--ink)">Weekly open session</strong> every Sunday at 17:30 on the Noom Studio terrace, Lamai &mdash; ฿600, limited spaces.</p>
+      <p>Live handpan, gong, and Tibetan/crystal bowls &mdash; played while you lie back and rest. No experience needed.<br/><br/><strong style="font-weight:500;color:var(--ink)">Private</strong> sessions at the studio or we come to your space &mdash; message us to arrange.<br/><br/><strong style="font-weight:500;color:var(--ink)">Weekly open session</strong> every Sunday at 17:30 on the Noom Studio terrace, Lamai &mdash; limited spaces.</p>
       <a href="#events">Join the next one &nbsp;&rarr;</a>
     </article>
 
@@ -635,7 +631,7 @@
         </details>
         <details>
           <summary><span>How much does it cost?</span><span class="plus" aria-hidden="true"></span></summary>
-          <div class="answer">Sound journeys at the studio start at <strong (up to 6 guests) </strong> (+500 THB each additional guest, max 6). We come to your space (up to 10 guests)</strong>. Weekly open sessions on Sundays are <strong>600 THB per person</strong>. Handpan lesson pricing &mdash; message us to confirm.</div>
+          <div class="answer">Sound journeys at the studio start at <strong>2,500 THB for two people</strong> (+500 THB each additional guest, max 6). We come to your space from <strong>4,000 THB for four guests</strong> (+500 THB each, max 12). Weekly open sessions on Sundays are <strong>600 THB per person</strong>. Handpan lesson pricing &mdash; message us to confirm.</div>
         </details>
         <details>
           <summary><span>Can I bring kids?</span><span class="plus" aria-hidden="true"></span></summary>
@@ -674,29 +670,16 @@
     </div>
   </section>
 
-  <section class="contact" id="contact" data-screen-label="Contact">
-    <div class="contact-inner">
-      <div class="reveal">
-        <p class="eyebrow">Get in touch</p>
-        <h3>Send a note,<br/><em>we&rsquo;ll write back.</em></h3>
-        <p class="lede">For private lessons, sound journeys, jam invites, or anything else &mdash; this lands straight in our inbox.</p>
-        <p class="alt">Or write to <a href="mailto:noom@noomsoundstudio.com">noomsoundstudio@gmail.com</a><br/>or message <a href="#">+90 546 841 91 81 </a> on WhatsApp.</p>
+    <section class="contact" id="contact" data-screen-label="Contact">
+    <div class="contact-inner reveal">
+      <p class="eyebrow">Contact</p>
+      <h3>Message us<br/><em>directly.</em></h3>
+      <p class="lede">For private lessons, sound journeys, jam invites, events, or collaborations in Koh Samui.</p>
+      <div class="btn-row">
+        <a class="btn-primary" href="https://wa.me/905468419181" target="_blank" rel="noopener">Message on WhatsApp</a>
+        <a class="btn-outline" href="https://instagram.com/noomsoundstudio" target="_blank" rel="noopener">Visit Instagram</a>
       </div>
-      <form class="reveal" data-delay="1" onsubmit="event.preventDefault(); this.querySelector('.send').textContent='Sent — talk soon';">
-        <div>
-          <label for="c-name">Your name</label>
-          <input id="c-name" name="name" type="text" autocomplete="name" required />
-        </div>
-        <div>
-          <label for="c-email">Email</label>
-          <input id="c-email" name="email" type="email" autocomplete="email" required />
-        </div>
-        <div>
-          <label for="c-msg">A short message</label>
-          <textarea id="c-msg" name="message" rows="4" placeholder="Dates you're on the island, what you'd like to come to, a question…"></textarea>
-        </div>
-        <button class="send" type="submit">Send message</button>
-      </form>
+      <p class="contact-email"><a href="mailto:noomsoundstudio@gmail.com">noomsoundstudio@gmail.com</a></p>
     </div>
   </section>
 
