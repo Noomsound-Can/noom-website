@@ -33,6 +33,25 @@
     .nav .links { display: flex; gap: 36px; font-family: var(--sans); font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink); }
     .nav .links a:hover { color: var(--clay); }
 
+    @media (max-width: 720px) {
+      .nav {
+        flex-direction: column; align-items: stretch; gap: 14px;
+        padding: 14px 16px 12px;
+      }
+      .nav > a:first-child {
+        align-self: center;
+        display: inline-flex; align-items: baseline; gap: 8px;
+        white-space: nowrap;
+      }
+      .nav > a:first-child > span:first-child { font-size: 20px !important; }
+      .nav > a:first-child > span:last-child { font-size: 9px !important; margin-left: 0 !important; letter-spacing: 0.18em !important; }
+      .nav .links {
+        gap: 0; justify-content: space-between; width: 100%;
+        font-size: 10px; letter-spacing: 0.12em;
+      }
+      .nav .links a { padding: 4px 2px; }
+    }
+
     /* Hero */
     .hero {
       position: relative; height: 100vh; min-height: 720px;
@@ -532,6 +551,7 @@
     <div class="links">
       <a href="#events">What&rsquo;s on</a>
       <a href="#testimonials">Reviews</a>
+      <a href="#faq">FAQ</a>
       <a href="#contact">Contact</a>
     </div>
   </nav>
@@ -560,9 +580,7 @@
       <p class="reveal">
         We&rsquo;re a team of sound and movement practitioners based in Koh Samui. We teach handpan, host sound journeys with live instruments, run open jams, and hold weekly sessions &mdash; because we believe this kind of practice should be accessible to everyone, not just those who already know what it is.
       </p>
-      <p class="reveal" data-delay="1">
-        Whether you&rsquo;ve never heard a handpan or you&rsquo;ve been in this world for years &mdash; come play, come rest, come move.
-      </p>
+      <p class="reveal" data-delay="1">Come curious, leave with something.</p>
     </div>
     <div class="photo-side reveal" data-delay="1">
       <img src="assets/photo-intro.jpg" alt="Noom Sound Studio" onerror="this.style.display='none';this.parentNode.querySelector('.photo-placeholder').style.display='block'"/>
@@ -883,7 +901,7 @@
         <a class="btn-primary" href="https://wa.me/905468419181" target="_blank" rel="noopener">Message on WhatsApp</a>
         <a class="btn-outline" href="https://instagram.com/noomsoundstudio" target="_blank" rel="noopener">Visit Instagram</a>
       </div>
-      <p class="contact-email"><a href="mailto:noomsoundstudio@gmail.com">noomsoundstudio@gmail.com</a></p>
+      <p class="contact-email"><a href="/cdn-cgi/l/email-protection#dfb1b0b0b2acb0aab1bbacabaabbb6b09fb8b2beb6b3f1bcb0b2"><span class="__cf_email__" data-cfemail="640a0b0b09170b110a00171011000d0b240309050d084a070b09">[email&#160;protected]</span></a></p>
 
       <!-- Map -->
       <div class="map-block">
@@ -932,11 +950,11 @@
     </div>
     <div class="row">
       <span class="meta">Come play.</span>
-      <span class="meta">© 2026 &nbsp;·&nbsp; <a href="https://instagram.com/noomsoundstudio" target="_blank" rel="noopener" style="color:var(--ink-mute);text-decoration:none;letter-spacing:0.22em;">@noomsoundstudio</a> &nbsp;·&nbsp; <a href="mailto:noomsoundstudio@gmail.com" style="color:var(--ink-mute);text-decoration:none;letter-spacing:0.22em;">noomsoundstudio@gmail.com</a></span>
+      <span class="meta">© 2026 &nbsp;·&nbsp; <a href="https://instagram.com/noomsoundstudio" target="_blank" rel="noopener" style="color:var(--ink-mute);text-decoration:none;letter-spacing:0.22em;">@noomsoundstudio</a> &nbsp;·&nbsp; <a href="/cdn-cgi/l/email-protection#bbd5d4d4d6c8d4ced5dfc8cfcedfd2d4fbdcd6dad2d795d8d4d6" style="color:var(--ink-mute);text-decoration:none;letter-spacing:0.22em;"><span class="__cf_email__" data-cfemail="761819191b0519031812050203121f1936111b171f1a5815191b">[email&#160;protected]</span></a></span>
     </div>
   </footer>
 
-  <script>
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
     const nav = document.getElementById('nav');
     const onScroll = () => nav.classList.toggle('scrolled', window.scrollY > 80);
     window.addEventListener('scroll', onScroll, { passive: true });
