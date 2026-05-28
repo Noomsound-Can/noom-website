@@ -30,55 +30,8 @@
       border-bottom: 1px solid var(--ink-faint);
     }
     .nav a { border-bottom: 0; }
-    .nav .links { display: flex; gap: 36px; align-items: center; font-family: var(--sans); font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink); }
+    .nav .links { display: flex; gap: 36px; font-family: var(--sans); font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink); }
     .nav .links a:hover { color: var(--clay); }
-
-    /* Language dropdown */
-    .lang { position: relative; }
-    .lang-btn {
-      display: inline-flex; align-items: center; gap: 8px;
-      background: transparent; border: 0; cursor: pointer;
-      padding: 6px 10px 6px 8px; margin: -6px -10px -6px -8px;
-      font-family: var(--sans); font-size: 12px; letter-spacing: 0.18em;
-      text-transform: uppercase; color: inherit;
-      transition: color 300ms;
-    }
-    .nav:not(.scrolled) .lang-btn { color: var(--cream); text-shadow: 0 1px 16px rgba(42,38,34,0.45); }
-    .nav.scrolled .lang-btn { color: var(--ink); }
-    .lang-btn:hover { color: var(--clay); }
-    .lang-btn .globe { width: 14px; height: 14px; flex-shrink: 0; }
-    .lang-btn .caret { font-size: 9px; opacity: 0.7; transition: transform 300ms var(--ease-slow); }
-    .lang.open .lang-btn .caret { transform: rotate(180deg); }
-    .lang-menu {
-      position: absolute; top: calc(100% + 10px); right: 0;
-      background: var(--cream);
-      border: 1px solid var(--ink-faint);
-      box-shadow: 0 18px 48px -22px rgba(42,38,34,0.18);
-      padding: 6px 0; margin: 0; list-style: none;
-      min-width: 0; width: auto;
-      opacity: 0; pointer-events: none;
-      transform: translateY(-4px);
-      transition: opacity 240ms var(--ease-slow), transform 240ms var(--ease-slow);
-      z-index: 100;
-    }
-    .lang.open .lang-menu { opacity: 1; pointer-events: auto; transform: none; }
-    .lang-menu li {
-      position: relative;
-      display: block;
-      padding: 10px 18px 10px 22px;
-      cursor: pointer;
-      font-family: var(--sans); font-size: 11px; letter-spacing: 0.22em;
-      text-transform: uppercase; color: var(--ink-soft);
-      text-align: center;
-      transition: color 200ms;
-    }
-    .lang-menu li:hover { color: var(--clay); }
-    .lang-menu li[aria-selected="true"] { color: var(--ink); }
-    .lang-menu li[aria-selected="true"]::before {
-      content: "·"; position: absolute; left: 8px; top: 50%;
-      transform: translateY(-50%); color: var(--ink);
-      font-size: 14px; line-height: 1;
-    }
 
     @media (max-width: 720px) {
       .nav {
@@ -97,9 +50,6 @@
         font-size: 10px; letter-spacing: 0.12em;
       }
       .nav .links a { padding: 4px 2px; }
-      .lang-btn { padding: 4px 2px; margin: 0; font-size: 10px; letter-spacing: 0.12em; }
-      .lang-btn .globe { width: 12px; height: 12px; }
-      .lang-menu { right: -8px; }
     }
 
     /* Hero */
@@ -599,58 +549,38 @@
       <span style="font-family: var(--sans); font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--ink-mute); margin-left: 10px;">Sound Studio</span>
     </a>
     <div class="links">
-      <a href="#events" data-i18n="nav.events">What&rsquo;s on</a>
-      <a href="#testimonials" data-i18n="nav.reviews">Reviews</a>
-      <a href="#faq" data-i18n="nav.faq">FAQ</a>
-      <a href="#contact" data-i18n="nav.contact">Contact</a>
-      <div class="lang" id="lang">
-        <button class="lang-btn" id="langBtn" aria-haspopup="listbox" aria-expanded="false" aria-label="Choose language">
-          <svg class="globe" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true">
-            <circle cx="8" cy="8" r="6.5"/>
-            <ellipse cx="8" cy="8" rx="3" ry="6.5"/>
-            <line x1="1.5" y1="8" x2="14.5" y2="8"/>
-          </svg>
-          <span id="langLabel">EN</span>
-          <span class="caret" aria-hidden="true">▾</span>
-        </button>
-        <ul class="lang-menu" id="langMenu" role="listbox" aria-label="Languages">
-          <li role="option" data-lang="en" title="English">EN</li>
-          <li role="option" data-lang="th" title="ภาษาไทย">TH</li>
-          <li role="option" data-lang="de" title="Deutsch">DE</li>
-          <li role="option" data-lang="fr" title="Français">FR</li>
-          <li role="option" data-lang="ru" title="Русский">RU</li>
-          <li role="option" data-lang="tr" title="Türkçe">TR</li>
-          <li role="option" data-lang="he" title="עברית">HE</li>
-        </ul>
-      </div>
+      <a href="#events">What&rsquo;s on</a>
+      <a href="#testimonials">Reviews</a>
+      <a href="#faq">FAQ</a>
+      <a href="#contact">Contact</a>
     </div>
   </nav>
 
   <header class="hero" id="top" data-screen-label="Hero">
     <div class="hero-inner">
       <div>
-        <p class="eyebrow reveal" data-i18n="hero.eyebrow">Koh Samui · Thailand</p>
-        <h1 class="reveal" data-delay="1" data-i18n="hero.title" style="text-shadow: 0 2px 32px rgba(42,38,34,0.35);">Handpan,<br/><em>played together.</em></h1>
+        <p class="eyebrow reveal">Koh Samui · Thailand</p>
+        <h1 class="reveal" data-delay="1" style="text-shadow: 0 2px 32px rgba(42,38,34,0.35);">Handpan,<br/><em>played together.</em></h1>
       </div>
       <div>
-        <p class="sub reveal" data-delay="2" data-i18n="hero.sub">
+        <p class="sub reveal" data-delay="2">
           Handpan lessons, sound journeys, weekly jams and movement sessions in Koh Samui.
         </p>
         <div class="cta-row reveal" data-delay="3">
-          <a class="cta" href="#events" data-i18n="hero.cta">See what&rsquo;s on &nbsp;&rarr;</a>
+          <a class="cta" href="#events">See what&rsquo;s on &nbsp;&rarr;</a>
         </div>
       </div>
     </div>
-    <span class="scroll-hint reveal" data-delay="4" data-i18n="hero.scroll">Scroll</span>
+    <span class="scroll-hint reveal" data-delay="4">Scroll</span>
   </header>
 
   <section class="intro" data-screen-label="Intro">
     <div class="body">
       <div class="ornament reveal"></div>
-      <p class="reveal" data-i18n="intro.p1">
+      <p class="reveal">
         We&rsquo;re a team of sound and movement practitioners based in Koh Samui. We teach handpan, host sound journeys with live instruments, run open jams, and hold weekly sessions &mdash; because we believe this kind of practice should be accessible to everyone, not just those who already know what it is.
       </p>
-      <p class="reveal" data-delay="1" data-i18n="intro.p2">Come curious, leave with something.</p>
+      <p class="reveal" data-delay="1">Come curious, leave with something.</p>
     </div>
     <div class="photo-side reveal" data-delay="1">
       <img src="assets/photo-intro.jpg" alt="Noom Sound Studio" onerror="this.style.display='none';this.parentNode.querySelector('.photo-placeholder').style.display='block'"/>
@@ -661,40 +591,40 @@
   <section class="pillars" id="pillars" data-screen-label="What we do">
     <div class="pillars-head">
       <div class="reveal">
-        <p class="eyebrow" data-i18n="pillars.eyebrow">What we do</p>
-        <h2 data-i18n="pillars.title">Four ways to come<br/><em>and play.</em></h2>
+        <p class="eyebrow">What we do</p>
+        <h2>Four ways to come<br/><em>and play.</em></h2>
       </div>
-      <p class="reveal" data-delay="1" data-i18n="pillars.lede">
+      <p class="reveal" data-delay="1">
         Pick what suits you. Lessons are by appointment; jams and journeys run on set dates; the weekly session is open to anyone passing through.
       </p>
     </div>
 
     <article class="pillar reveal">
       <div class="num">01</div>
-      <h3 data-i18n="pillar1.title">Handpan lessons</h3>
-      <p data-i18n="pillar1.body"><strong style="font-weight:500;color:var(--ink)">Private.</strong> One student, 60 minutes, tailored to your pace &mdash; for beginners, or those coming back.<br/><br/><strong style="font-weight:500;color:var(--ink)">Group.</strong> Two to three people, 90 minutes, guided together &mdash; for couples, friends, or travel companions.<br/><br/>At the Noom Studio open-air terrace in Lamai, or we come to your hotel or villa.</p>
-      <a href="#contact" data-i18n="pillar1.cta">Message to book &nbsp;&rarr;</a>
+      <h3>Handpan lessons</h3>
+      <p><strong style="font-weight:500;color:var(--ink)">Private.</strong> One student, 60 minutes, tailored to your pace &mdash; for beginners, or those coming back.<br/><br/><strong style="font-weight:500;color:var(--ink)">Group.</strong> Two to three people, 90 minutes, guided together &mdash; for couples, friends, or travel companions.<br/><br/>At the Noom Studio open-air terrace in Lamai, or we come to your hotel or villa.</p>
+      <a href="#contact">Message to book &nbsp;&rarr;</a>
     </article>
 
     <article class="pillar reveal">
       <div class="num">02</div>
-      <h3 data-i18n="pillar2.title">Sound journeys</h3>
-      <p data-i18n="pillar2.body">Live handpan, gong, and Tibetan/crystal bowls &mdash; played while you lie back and rest. No experience needed.<br/><br/><strong style="font-weight:500;color:var(--ink)">Private</strong> sessions at the studio or we come to your space &mdash; message us to arrange.<br/><br/><strong style="font-weight:500;color:var(--ink)">Weekly open session</strong> every Sunday at 17:30 on the Noom Studio terrace, Lamai &mdash; limited spaces.</p>
-      <a href="#events" data-i18n="pillar2.cta">Join the next one &nbsp;&rarr;</a>
+      <h3>Sound journeys</h3>
+      <p>Live handpan, gong, and Tibetan/crystal bowls &mdash; played while you lie back and rest. No experience needed.<br/><br/><strong style="font-weight:500;color:var(--ink)">Private</strong> sessions at the studio or we come to your space &mdash; message us to arrange.<br/><br/><strong style="font-weight:500;color:var(--ink)">Weekly open session</strong> every Sunday at 17:30 on the Noom Studio terrace, Lamai &mdash; limited spaces.</p>
+      <a href="#events">Join the next one &nbsp;&rarr;</a>
     </article>
 
     <article class="pillar reveal">
       <div class="num">03</div>
-      <h3 data-i18n="pillar3.title">Jams</h3>
-      <p data-i18n="pillar3.body">Friends visit, instruments come out, we play. Open to handpan players, percussionists, singers &mdash; anyone who wants to sit in. Tea and snacks; usually runs late.</p>
-      <a href="#events" data-i18n="pillar3.cta">Join the next one &nbsp;&rarr;</a>
+      <h3>Jams</h3>
+      <p>Friends visit, instruments come out, we play. Open to handpan players, percussionists, singers &mdash; anyone who wants to sit in. Tea and snacks; usually runs late.</p>
+      <a href="#events">Join the next one &nbsp;&rarr;</a>
     </article>
 
     <article class="pillar reveal">
       <div class="num">04</div>
-      <h3 data-i18n="pillar4.title">Weekly sessions &amp; events</h3>
-      <p data-i18n="pillar4.body">We hold regular sessions open to everyone &mdash; sound journeys, movement and sound gatherings, and open jams. Dates and locations shift with the season so check back or follow us to stay in the loop. Some are free. Some have a small contribution. All are open.</p>
-      <a href="#events" data-i18n="pillar4.cta">See upcoming dates &nbsp;&rarr;</a>
+      <h3>Weekly sessions &amp; events</h3>
+      <p>We hold regular sessions open to everyone &mdash; sound journeys, movement and sound gatherings, and open jams. Dates and locations shift with the season so check back or follow us to stay in the loop. Some are free. Some have a small contribution. All are open.</p>
+      <a href="#events">See upcoming dates &nbsp;&rarr;</a>
     </article>
   </section>
 
@@ -703,10 +633,10 @@
     <div class="events-inner">
       <div class="events-head">
         <div class="reveal">
-          <p class="eyebrow" data-i18n="events.eyebrow">What&rsquo;s on</p>
-          <h2 data-i18n="events.title">Sessions, jams<br/><em>&amp; gatherings.</em></h2>
+          <p class="eyebrow">What&rsquo;s on</p>
+          <h2>Sessions, jams<br/><em>&amp; gatherings.</em></h2>
         </div>
-        <p class="lede reveal" data-delay="1" data-i18n="events.lede">
+        <p class="lede reveal" data-delay="1">
           Open to anyone passing through. Dates and locations shift with the season &mdash; message us to be on the list for the next one.
         </p>
       </div>
@@ -716,61 +646,61 @@
         <article class="ev reveal">
           <div class="top">
             <span class="num">01</span>
-            <span class="price" data-i18n="ev1.price">฿600</span>
+            <span class="price">฿600</span>
           </div>
-          <h3 data-i18n="ev1.title">Weekly<br/><em>Sound Journey.</em></h3>
-          <p class="desc" data-i18n="ev1.desc">Lie back while we play handpan, gong, and bowls live. An hour of rest, no participation needed.</p>
+          <h3>Weekly<br/><em>Sound Journey.</em></h3>
+          <p class="desc">Lie back while we play handpan, gong, and bowls live. An hour of rest, no participation needed.</p>
           <div class="when">
-            <span class="label" data-i18n="common.whenWhere">When &amp; where</span>
-            <span data-i18n="ev1.when">Every Sunday &middot; 17:30<br/>
-            <em>60 min &middot; Noom Studio Terrace, Lamai</em></span>
+            <span class="label">When &amp; where</span>
+            Every Sunday &middot; 17:30<br/>
+            <em>60 min &middot; Noom Studio Terrace, Lamai</em>
           </div>
-          <a class="cta" href="#contact" data-i18n="common.join">Join &nbsp;&rarr;</a>
+          <a class="cta" href="#contact">Join &nbsp;&rarr;</a>
         </article>
 
         <article class="ev reveal" data-delay="1">
           <div class="top">
             <span class="num">02</span>
-            <span class="price free" data-i18n="common.free">Free</span>
+            <span class="price free">Free</span>
           </div>
-          <h3 data-i18n="ev2.title">Sound<br/><em>&amp; Movement.</em></h3>
-          <p class="desc" data-i18n="ev2.desc">Outdoor weekly session &mdash; live instruments and gentle movement, side by side. Open to all.</p>
+          <h3>Sound<br/><em>&amp; Movement.</em></h3>
+          <p class="desc">Outdoor weekly session &mdash; live instruments and gentle movement, side by side. Open to all.</p>
           <div class="when">
-            <span class="label" data-i18n="common.whenWhere">When &amp; where</span>
-            <span data-i18n="ev2.when">Weekly &middot; outdoor<br/>
-            <em>Day &amp; location announced</em></span>
+            <span class="label">When &amp; where</span>
+            Weekly &middot; outdoor<br/>
+            <em>Day &amp; location announced</em>
           </div>
-          <a class="cta" href="#contact" data-i18n="common.messageJoin">Message to join &nbsp;&rarr;</a>
+          <a class="cta" href="#contact">Message to join &nbsp;&rarr;</a>
         </article>
 
         <article class="ev reveal" data-delay="2">
           <div class="top">
             <span class="num">03</span>
-            <span class="price" data-i18n="ev3.price">By contribution</span>
+            <span class="price">By contribution</span>
           </div>
-          <h3 data-i18n="ev3.title">Handpan<br/><em>Workshop.</em></h3>
-          <p class="desc" data-i18n="ev3.desc">Beginner-friendly group session &mdash; first sounds, simple patterns, an hour of playing together. Instruments provided.</p>
+          <h3>Handpan<br/><em>Workshop.</em></h3>
+          <p class="desc">Beginner-friendly group session &mdash; first sounds, simple patterns, an hour of playing together. Instruments provided.</p>
           <div class="when">
-            <span class="label" data-i18n="common.whenWhere">When &amp; where</span>
-            <span data-i18n="ev3.when">Monthly &middot; Lamai<br/>
-            <em>Dates announced</em></span>
+            <span class="label">When &amp; where</span>
+            Monthly &middot; Lamai<br/>
+            <em>Dates announced</em>
           </div>
-          <a class="cta" href="#contact" data-i18n="common.messageJoin">Message to join &nbsp;&rarr;</a>
+          <a class="cta" href="#contact">Message to join &nbsp;&rarr;</a>
         </article>
 
         <article class="ev reveal" data-delay="3">
           <div class="top">
             <span class="num">04</span>
-            <span class="price free" data-i18n="common.free">Free</span>
+            <span class="price free">Free</span>
           </div>
-          <h3 data-i18n="ev4.title">Open<br/><em>Jam.</em></h3>
-          <p class="desc" data-i18n="ev4.desc">Drop-in evening for musicians and curious listeners. Bring an instrument, or just come and listen.</p>
+          <h3>Open<br/><em>Jam.</em></h3>
+          <p class="desc">Drop-in evening for musicians and curious listeners. Bring an instrument, or just come and listen.</p>
           <div class="when">
-            <span class="label" data-i18n="common.whenWhere">When &amp; where</span>
-            <span data-i18n="ev4.when">Dates vary &middot; around Samui<br/>
-            <em>Follow for the next one</em></span>
+            <span class="label">When &amp; where</span>
+            Dates vary &middot; around Samui<br/>
+            <em>Follow for the next one</em>
           </div>
-          <a class="cta" href="#contact" data-i18n="common.messageJoin">Message to join &nbsp;&rarr;</a>
+          <a class="cta" href="#contact">Message to join &nbsp;&rarr;</a>
         </article>
 
       </div>
@@ -781,10 +711,10 @@
   <section class="faq" id="faq" data-screen-label="FAQ">
     <div class="faq-head">
       <div class="reveal">
-        <p class="eyebrow" data-i18n="faq.eyebrow">Frequently asked</p>
-        <h2 data-i18n="faq.title">Things people<br/><em>want to know.</em></h2>
+        <p class="eyebrow">Frequently asked</p>
+        <h2>Things people<br/><em>want to know.</em></h2>
       </div>
-      <p class="lede reveal" data-delay="1" data-i18n="faq.lede">
+      <p class="lede reveal" data-delay="1">
         Practical answers to the questions we&rsquo;re asked most often. If yours isn&rsquo;t here, message us &mdash; we&rsquo;ll write back.
       </p>
     </div>
@@ -792,40 +722,40 @@
     <div class="faq-section" data-screen-label="FAQ · Sound journeys">
       <div class="heading reveal">
         <p class="num">01</p>
-        <h3 data-i18n="faq1.title">About<br/><em>sound journeys.</em></h3>
+        <h3>About<br/><em>sound journeys.</em></h3>
       </div>
       <div class="qa reveal" data-delay="1">
         <details>
-          <summary><span data-i18n="faq.q.sj1">What actually happens in a session?</span><span class="plus" aria-hidden="true"></span></summary>
-          <div class="answer" data-i18n="faq.a.sj1">You lie down on a mat, close your eyes, and rest while we play live instruments &mdash; handpan, gong, and Tibetan and crystal bowls. That&rsquo;s it. No participation required. Most people fall somewhere between awake and asleep for the whole thing.</div>
+          <summary><span>What actually happens in a session?</span><span class="plus" aria-hidden="true"></span></summary>
+          <div class="answer">You lie down on a mat, close your eyes, and rest while we play live instruments &mdash; handpan, gong, and Tibetan and crystal bowls. That&rsquo;s it. No participation required. Most people fall somewhere between awake and asleep for the whole thing.</div>
         </details>
         <details>
-          <summary><span data-i18n="faq.q.sj2">Do I need any experience or background?</span><span class="plus" aria-hidden="true"></span></summary>
-          <div class="answer" data-i18n="faq.a.sj2">None at all. You don&rsquo;t need to know anything about music or sound work. If you can lie still for an hour, you&rsquo;re ready.</div>
+          <summary><span>Do I need any experience or background?</span><span class="plus" aria-hidden="true"></span></summary>
+          <div class="answer">None at all. You don&rsquo;t need to know anything about music or sound work. If you can lie still for an hour, you&rsquo;re ready.</div>
         </details>
         <details>
-          <summary><span data-i18n="faq.q.sj3">What does it feel like?</span><span class="plus" aria-hidden="true"></span></summary>
-          <div class="answer" data-i18n="faq.a.sj3">Different for everyone. Some people feel deeply relaxed. Some notice their mind going quiet. Some feel nothing unusual and just leave feeling rested. All of those are fine outcomes.</div>
+          <summary><span>What does it feel like?</span><span class="plus" aria-hidden="true"></span></summary>
+          <div class="answer">Different for everyone. Some people feel deeply relaxed. Some notice their mind going quiet. Some feel nothing unusual and just leave feeling rested. All of those are fine outcomes.</div>
         </details>
         <details>
-          <summary><span data-i18n="faq.q.sj4">Is it like meditation?</span><span class="plus" aria-hidden="true"></span></summary>
-          <div class="answer" data-i18n="faq.a.sj4">Not exactly. You don&rsquo;t have to focus or follow any instructions. The sound does most of the work &mdash; you just show up and let it.</div>
+          <summary><span>Is it like meditation?</span><span class="plus" aria-hidden="true"></span></summary>
+          <div class="answer">Not exactly. You don&rsquo;t have to focus or follow any instructions. The sound does most of the work &mdash; you just show up and let it.</div>
         </details>
         <details>
-          <summary><span data-i18n="faq.q.sj5">Can I fall asleep?</span><span class="plus" aria-hidden="true"></span></summary>
-          <div class="answer" data-i18n="faq.a.sj5">Yes, and plenty of people do.</div>
+          <summary><span>Can I fall asleep?</span><span class="plus" aria-hidden="true"></span></summary>
+          <div class="answer">Yes, and plenty of people do.</div>
         </details>
         <details>
-          <summary><span data-i18n="faq.q.sj6">What should I wear and bring?</span><span class="plus" aria-hidden="true"></span></summary>
-          <div class="answer" data-i18n="faq.a.sj6">Loose, comfortable clothes. We provide mats. Bring a light layer if you run cold &mdash; lying still for an hour can make you cooler than expected.</div>
+          <summary><span>What should I wear and bring?</span><span class="plus" aria-hidden="true"></span></summary>
+          <div class="answer">Loose, comfortable clothes. We provide mats. Bring a light layer if you run cold &mdash; lying still for an hour can make you cooler than expected.</div>
         </details>
         <details>
-          <summary><span data-i18n="faq.q.sj7">Should I eat beforehand?</span><span class="plus" aria-hidden="true"></span></summary>
-          <div class="answer" data-i18n="faq.a.sj7">Eat light. A full meal right before makes it harder to relax.</div>
+          <summary><span>Should I eat beforehand?</span><span class="plus" aria-hidden="true"></span></summary>
+          <div class="answer">Eat light. A full meal right before makes it harder to relax.</div>
         </details>
         <details>
-          <summary><span data-i18n="faq.q.sj8">Are there any reasons I shouldn&rsquo;t come?</span><span class="plus" aria-hidden="true"></span></summary>
-          <div class="answer" data-i18n="faq.a.sj8">If you&rsquo;re pregnant, have epilepsy, a recent surgery, a hearing condition, or significant sound sensitivity &mdash; message us first and we&rsquo;ll figure out what works for you.</div>
+          <summary><span>Are there any reasons I shouldn&rsquo;t come?</span><span class="plus" aria-hidden="true"></span></summary>
+          <div class="answer">If you&rsquo;re pregnant, have epilepsy, a recent surgery, a hearing condition, or significant sound sensitivity &mdash; message us first and we&rsquo;ll figure out what works for you.</div>
         </details>
       </div>
     </div>
@@ -833,32 +763,32 @@
     <div class="faq-section" data-screen-label="FAQ · Handpan lessons">
       <div class="heading reveal">
         <p class="num">02</p>
-        <h3 data-i18n="faq2.title">About<br/><em>handpan lessons.</em></h3>
+        <h3>About<br/><em>handpan lessons.</em></h3>
       </div>
       <div class="qa reveal" data-delay="1">
         <details>
-          <summary><span data-i18n="faq.q.hp1">Do I need musical experience to learn handpan?</span><span class="plus" aria-hidden="true"></span></summary>
-          <div class="answer" data-i18n="faq.a.hp1">No. Most people who come to us have never played an instrument before. The handpan is built so that almost everything you play sounds good &mdash; there are no wrong notes in the traditional sense.</div>
+          <summary><span>Do I need musical experience to learn handpan?</span><span class="plus" aria-hidden="true"></span></summary>
+          <div class="answer">No. Most people who come to us have never played an instrument before. The handpan is built so that almost everything you play sounds good &mdash; there are no wrong notes in the traditional sense.</div>
         </details>
         <details>
-          <summary><span data-i18n="faq.q.hp2">How quickly can I learn?</span><span class="plus" aria-hidden="true"></span></summary>
-          <div class="answer" data-i18n="faq.a.hp2">Most people leave their first session able to play simple patterns that actually sound like music. It&rsquo;s one of the fastest instruments to get started on.</div>
+          <summary><span>How quickly can I learn?</span><span class="plus" aria-hidden="true"></span></summary>
+          <div class="answer">Most people leave their first session able to play simple patterns that actually sound like music. It&rsquo;s one of the fastest instruments to get started on.</div>
         </details>
         <details>
-          <summary><span data-i18n="faq.q.hp3">Private or group &mdash; which is better for me?</span><span class="plus" aria-hidden="true"></span></summary>
-          <div class="answer" data-i18n="faq.a.hp3"><strong>Private lessons</strong> are 60 minutes, one student, full focus &mdash; good if you want to move at your own pace or have specific goals. <strong>Group lessons</strong> are 90 minutes for 2&ndash;3 people &mdash; better if you&rsquo;re coming with a friend or travel companion and want a shared experience.</div>
+          <summary><span>Private or group &mdash; which is better for me?</span><span class="plus" aria-hidden="true"></span></summary>
+          <div class="answer"><strong>Private lessons</strong> are 60 minutes, one student, full focus &mdash; good if you want to move at your own pace or have specific goals. <strong>Group lessons</strong> are 90 minutes for 2&ndash;3 people &mdash; better if you&rsquo;re coming with a friend or travel companion and want a shared experience.</div>
         </details>
         <details>
-          <summary><span data-i18n="faq.q.hp4">Do I need my own instrument?</span><span class="plus" aria-hidden="true"></span></summary>
-          <div class="answer" data-i18n="faq.a.hp4">No. We have instruments you can play during the session. If you&rsquo;re thinking about buying one, we&rsquo;re happy to talk you through that too.</div>
+          <summary><span>Do I need my own instrument?</span><span class="plus" aria-hidden="true"></span></summary>
+          <div class="answer">No. We have instruments you can play during the session. If you&rsquo;re thinking about buying one, we&rsquo;re happy to talk you through that too.</div>
         </details>
         <details>
-          <summary><span data-i18n="faq.q.hp5">Where do lessons take place?</span><span class="plus" aria-hidden="true"></span></summary>
-          <div class="answer" data-i18n="faq.a.hp5">At the Noom Studio open-air terrace in Lamai, or we can come to your hotel, villa, or chosen spot across Samui.</div>
+          <summary><span>Where do lessons take place?</span><span class="plus" aria-hidden="true"></span></summary>
+          <div class="answer">At the Noom Studio open-air terrace in Lamai, or we can come to your hotel, villa, or chosen spot across Samui.</div>
         </details>
         <details>
-          <summary><span data-i18n="faq.q.hp6">I&rsquo;m only in Samui for a few days &mdash; is it worth doing just one lesson?</span><span class="plus" aria-hidden="true"></span></summary>
-          <div class="answer" data-i18n="faq.a.hp6">Yes. A single session is enough to learn the basics and leave with something you can keep practicing, even without an instrument.</div>
+          <summary><span>I&rsquo;m only in Samui for a few days &mdash; is it worth doing just one lesson?</span><span class="plus" aria-hidden="true"></span></summary>
+          <div class="answer">Yes. A single session is enough to learn the basics and leave with something you can keep practicing, even without an instrument.</div>
         </details>
       </div>
     </div>
@@ -866,28 +796,28 @@
     <div class="faq-section" data-screen-label="FAQ · Practical">
       <div class="heading reveal">
         <p class="num">03</p>
-        <h3 data-i18n="faq3.title">Practical<br/><em>stuff.</em></h3>
+        <h3>Practical<br/><em>stuff.</em></h3>
       </div>
       <div class="qa reveal" data-delay="1">
         <details>
-          <summary><span data-i18n="faq.q.pr1">How do I book?</span><span class="plus" aria-hidden="true"></span></summary>
-          <div class="answer" data-i18n="faq.a.pr1">Message us on WhatsApp or Instagram. We&rsquo;ll find a time that works.</div>
+          <summary><span>How do I book?</span><span class="plus" aria-hidden="true"></span></summary>
+          <div class="answer">Message us on WhatsApp or Instagram. We&rsquo;ll find a time that works.</div>
         </details>
         <details>
-          <summary><span data-i18n="faq.q.pr2">How much does it cost?</span><span class="plus" aria-hidden="true"></span></summary>
-          <div class="answer" data-i18n="faq.a.pr2">Sound journeys at the studio start at <strong>2,500 THB for two people</strong> (+500 THB each additional guest, max 6). We come to your space from <strong>4,000 THB for four guests</strong> (+500 THB each, max 12). Weekly open sessions on Sundays are <strong>600 THB per person</strong>. Handpan lesson pricing &mdash; message us to confirm.</div>
+          <summary><span>How much does it cost?</span><span class="plus" aria-hidden="true"></span></summary>
+          <div class="answer">Sound journeys at the studio start at <strong>2,500 THB for two people</strong> (+500 THB each additional guest, max 6). We come to your space from <strong>4,000 THB for four guests</strong> (+500 THB each, max 12). Weekly open sessions on Sundays are <strong>600 THB per person</strong>. Handpan lesson pricing &mdash; message us to confirm.</div>
         </details>
         <details>
-          <summary><span data-i18n="faq.q.pr3">Can I bring kids?</span><span class="plus" aria-hidden="true"></span></summary>
-          <div class="answer" data-i18n="faq.a.pr3">Yes, message us and we&rsquo;ll let you know what works depending on age.</div>
+          <summary><span>Can I bring kids?</span><span class="plus" aria-hidden="true"></span></summary>
+          <div class="answer">Yes, message us and we&rsquo;ll let you know what works depending on age.</div>
         </details>
         <details>
-          <summary><span data-i18n="faq.q.pr4">Is the studio indoors or outdoors?</span><span class="plus" aria-hidden="true"></span></summary>
-          <div class="answer" data-i18n="faq.a.pr4">Open-air terrace in Lamai &mdash; surrounded by trees, open sky.</div>
+          <summary><span>Is the studio indoors or outdoors?</span><span class="plus" aria-hidden="true"></span></summary>
+          <div class="answer">Open-air terrace in Lamai &mdash; surrounded by trees, open sky.</div>
         </details>
         <details>
-          <summary><span data-i18n="faq.q.pr5">What if I need to cancel?</span><span class="plus" aria-hidden="true"></span></summary>
-          <div class="answer" data-i18n="faq.a.pr5">Life happens. Just message us as early as you can and we&rsquo;ll sort it out.</div>
+          <summary><span>What if I need to cancel?</span><span class="plus" aria-hidden="true"></span></summary>
+          <div class="answer">Life happens. Just message us as early as you can and we&rsquo;ll sort it out.</div>
         </details>
       </div>
     </div>
@@ -895,20 +825,20 @@
     <div class="faq-section" data-screen-label="FAQ · About Noom">
       <div class="heading reveal">
         <p class="num">04</p>
-        <h3 data-i18n="faq4.title">About Noom<br/><em>Sound Studio.</em></h3>
+        <h3>About Noom<br/><em>Sound Studio.</em></h3>
       </div>
       <div class="qa reveal" data-delay="1">
         <details>
-          <summary><span data-i18n="faq.q.ab1">Who runs Noom Sound Studio?</span><span class="plus" aria-hidden="true"></span></summary>
-          <div class="answer" data-i18n="faq.a.ab1">We&rsquo;re a small team of practitioners based in Koh Samui. <strong>Can (Kazimcan)</strong> leads handpan lessons and jams. Sound journeys run in collaboration with <strong>House of Holistic by Melie</strong>.</div>
+          <summary><span>Who runs Noom Sound Studio?</span><span class="plus" aria-hidden="true"></span></summary>
+          <div class="answer">We&rsquo;re a small team of practitioners based in Koh Samui. <strong>Can (Kazimcan)</strong> leads handpan lessons and jams. Sound journeys run in collaboration with <strong>House of Holistic by Melie</strong>.</div>
         </details>
         <details>
-          <summary><span data-i18n="faq.q.ab2">Where are you based?</span><span class="plus" aria-hidden="true"></span></summary>
-          <div class="answer" data-i18n="faq.a.ab2">Lamai, south coast of Koh Samui, Thailand.</div>
+          <summary><span>Where are you based?</span><span class="plus" aria-hidden="true"></span></summary>
+          <div class="answer">Lamai, south coast of Koh Samui, Thailand.</div>
         </details>
         <details>
-          <summary><span data-i18n="faq.q.ab3">Do you work with hotels, retreats, or venues?</span><span class="plus" aria-hidden="true"></span></summary>
-          <div class="answer" data-i18n="faq.a.ab3">Yes &mdash; message us about private events, venue sessions, or ongoing partnerships.</div>
+          <summary><span>Do you work with hotels, retreats, or venues?</span><span class="plus" aria-hidden="true"></span></summary>
+          <div class="answer">Yes &mdash; message us about private events, venue sessions, or ongoing partnerships.</div>
         </details>
       </div>
     </div>
@@ -919,10 +849,10 @@
     <div class="testimonials-inner">
       <div class="testimonials-head">
         <div class="reveal">
-          <p class="eyebrow" data-i18n="testimonials.eyebrow">What people say</p>
-          <h2 data-i18n="testimonials.title">From those who<br/><em>came &amp; played.</em></h2>
+          <p class="eyebrow">What people say</p>
+          <h2>From those who<br/><em>came &amp; played.</em></h2>
         </div>
-        <p class="lede reveal" data-delay="1" data-i18n="testimonials.lede">
+        <p class="lede reveal" data-delay="1">
           Guests, students, and first-timers &mdash; people who showed up not knowing quite what to expect.
         </p>
       </div>
@@ -932,28 +862,28 @@
         <!-- Replace these with real testimonials from your guests -->
         <div class="testimonial reveal">
           <span class="open-quote" aria-hidden="true">&ldquo;</span>
-          <blockquote data-i18n="t1.quote">I had no idea what a sound journey was before I came. I left feeling like I&rsquo;d slept for ten hours &mdash; completely still in a way I hadn&rsquo;t felt in years. Nothing quite like it.</blockquote>
+          <blockquote>I had no idea what a sound journey was before I came. I left feeling like I&rsquo;d slept for ten hours &mdash; completely still in a way I hadn&rsquo;t felt in years. Nothing quite like it.</blockquote>
           <div class="source">
             <span class="name">Sarah M.</span>
-            <span class="detail" data-i18n="t1.detail">London, UK &middot; Sound Journey</span>
+            <span class="detail">London, UK &middot; Sound Journey</span>
           </div>
         </div>
 
         <div class="testimonial reveal" data-delay="1">
           <span class="open-quote" aria-hidden="true">&ldquo;</span>
-          <blockquote data-i18n="t2.quote">Can gave us a handpan lesson the second day we arrived in Samui. By the end of the hour we were actually playing music together. Best thing we did the whole trip.</blockquote>
+          <blockquote>Can gave us a handpan lesson the second day we arrived in Samui. By the end of the hour we were actually playing music together. Best thing we did the whole trip.</blockquote>
           <div class="source">
             <span class="name">Marco &amp; Elena</span>
-            <span class="detail" data-i18n="t2.detail">Milan, Italy &middot; Handpan Lesson</span>
+            <span class="detail">Milan, Italy &middot; Handpan Lesson</span>
           </div>
         </div>
 
         <div class="testimonial reveal" data-delay="2">
           <span class="open-quote" aria-hidden="true">&ldquo;</span>
-          <blockquote data-i18n="t3.quote">The Sunday sound journey on the terrace became a ritual during my stay. Went three weeks in a row. Worth planning your whole week around it.</blockquote>
+          <blockquote>The Sunday sound journey on the terrace became a ritual during my stay. Went three weeks in a row. Worth planning your whole week around it.</blockquote>
           <div class="source">
             <span class="name">Jana K.</span>
-            <span class="detail" data-i18n="t3.detail">Berlin, Germany &middot; Weekly Session</span>
+            <span class="detail">Berlin, Germany &middot; Weekly Session</span>
           </div>
         </div>
 
@@ -964,19 +894,19 @@
   <!-- ============ CONTACT ============ -->
   <section class="contact" id="contact" data-screen-label="Contact">
     <div class="contact-inner reveal">
-      <p class="eyebrow" data-i18n="contact.eyebrow">Contact</p>
-      <h3 data-i18n="contact.title">Message us<br/><em>directly.</em></h3>
-      <p class="lede" data-i18n="contact.lede">For private lessons, sound journeys, jam invites, events, or collaborations in Koh Samui.</p>
+      <p class="eyebrow">Contact</p>
+      <h3>Message us<br/><em>directly.</em></h3>
+      <p class="lede">For private lessons, sound journeys, jam invites, events, or collaborations in Koh Samui.</p>
       <div class="btn-row">
-        <a class="btn-primary" href="https://wa.me/905468419181" target="_blank" rel="noopener" data-i18n="contact.whatsapp">Message on WhatsApp</a>
-        <a class="btn-outline" href="https://instagram.com/noomsoundstudio" target="_blank" rel="noopener" data-i18n="contact.instagram">Visit Instagram</a>
+        <a class="btn-primary" href="https://wa.me/905468419181" target="_blank" rel="noopener">Message on WhatsApp</a>
+        <a class="btn-outline" href="https://instagram.com/noomsoundstudio" target="_blank" rel="noopener">Visit Instagram</a>
       </div>
-      <p class="contact-email"><a href="/cdn-cgi/l/email-protection#402e2f2f2d332f352e2433343524292f00272d21292c6e232f2d"><span class="__cf_email__" data-cfemail="9ef0f1f1f3edf1ebf0faedeaebfaf7f1def9f3fff7f2b0fdf1f3">[email&#160;protected]</span></a></p>
+      <p class="contact-email"><a href="mailto:noomsoundstudio@gmail.com">noomsoundstudio@gmail.com</a></p>
 
       <!-- Map -->
       <div class="map-block">
-        <span class="map-label" data-i18n="contact.findUs">Find us</span>
-        <span class="map-address" data-i18n="contact.address">Open-air terrace · Lamai, south coast of Koh Samui, Thailand</span>
+        <span class="map-label">Find us</span>
+        <span class="map-address">Open-air terrace · Lamai, south coast of Koh Samui, Thailand</span>
         <iframe
           class="map-embed"
           src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d37346.153808036186!2d100.045871!3d9.466098!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3054f301e2561677%3A0xf39ad5cdf5a1f7d5!2sNoom%20Sound%20Studio!5e1!3m2!1sen!2sus!4v1777702682015!5m2!1sen!2sus"
@@ -992,9 +922,9 @@
   <!-- ============ MAILING LIST ============ -->
   <section class="mailing" id="mailing" data-screen-label="Mailing list">
     <div class="mailing-inner reveal">
-      <p class="eyebrow" data-i18n="mailing.eyebrow">Stay in the loop</p>
-      <h3 data-i18n="mailing.title">Be the first to<br/><em>know what&rsquo;s on.</em></h3>
-      <p class="sub" data-i18n="mailing.sub">New sessions, open jams, and gatherings — straight to your inbox. No noise, just dates.</p>
+      <p class="eyebrow">Stay in the loop</p>
+      <h3>Be the first to<br/><em>know what&rsquo;s on.</em></h3>
+      <p class="sub">New sessions, open jams, and gatherings — straight to your inbox. No noise, just dates.</p>
 
       <!--
         EMAIL FORM SETUP:
@@ -1005,11 +935,11 @@
         4. That's it — Formspree handles the rest, no server needed.
       -->
       <form class="mailing-form" id="mailingForm" action="https://formspree.io/f/xrejbovo" method="POST">
-        <input type="email" name="email" data-i18n-placeholder="mailing.placeholder" placeholder="Your email address" required autocomplete="email" />
-        <button type="submit" data-i18n="mailing.button">Join the list</button>
+        <input type="email" name="email" placeholder="Your email address" required autocomplete="email" />
+        <button type="submit">Join the list</button>
       </form>
-      <p class="mailing-success" id="mailingSuccess" data-i18n="mailing.success">You&rsquo;re on the list &mdash; we&rsquo;ll be in touch.</p>
-      <p class="mailing-note" data-i18n="mailing.note">No spam. Unsubscribe any time.</p>
+      <p class="mailing-success" id="mailingSuccess">You&rsquo;re on the list &mdash; we&rsquo;ll be in touch.</p>
+      <p class="mailing-note">No spam. Unsubscribe any time.</p>
     </div>
   </section>
 
@@ -1019,12 +949,12 @@
       <div class="meta">Lamai · Koh Samui · Thailand</div>
     </div>
     <div class="row">
-      <span class="meta" data-i18n="footer.comeplay">Come play.</span>
-      <span class="meta">© 2026 &nbsp;·&nbsp; <a href="https://instagram.com/noomsoundstudio" target="_blank" rel="noopener" style="color:var(--ink-mute);text-decoration:none;letter-spacing:0.22em;">@noomsoundstudio</a> &nbsp;·&nbsp; <a href="/cdn-cgi/l/email-protection#e58b8a8a88968a908b81969190818c8aa58288848c89cb868a88" style="color:var(--ink-mute);text-decoration:none;letter-spacing:0.22em;"><span class="__cf_email__" data-cfemail="056b6a6a68766a706b61767170616c6a456268646c692b666a68">[email&#160;protected]</span></a></span>
+      <span class="meta">Come play.</span>
+      <span class="meta">© 2026 &nbsp;·&nbsp; <a href="https://instagram.com/noomsoundstudio" target="_blank" rel="noopener" style="color:var(--ink-mute);text-decoration:none;letter-spacing:0.22em;">@noomsoundstudio</a> &nbsp;·&nbsp; <a href="mailto:noomsoundstudio@gmail.com" style="color:var(--ink-mute);text-decoration:none;letter-spacing:0.22em;">noomsoundstudio@gmail.com</a></span>
     </div>
   </footer>
 
-  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  <script>
     const nav = document.getElementById('nav');
     const onScroll = () => nav.classList.toggle('scrolled', window.scrollY > 80);
     window.addEventListener('scroll', onScroll, { passive: true });
@@ -1054,6 +984,5 @@
       });
     }
   </script>
-  <script src="i18n.js"></script>
 </body>
 </html>
