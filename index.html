@@ -1,4 +1,5 @@
 <!doctype html>
+<!-- @dsCard group="Brand" name="Noom Homepage" subtitle="Single-page merge — Hero, Events, FAQ, Contact" viewport="1440x1080" -->
 <html lang="en">
 <head>
   <meta charset="utf-8" />
@@ -8,12 +9,18 @@
   <style>
     body { margin: 0; background: var(--cream); }
     html { scroll-behavior: smooth; }
-    .reveal { opacity: 0; transform: translateY(24px); transition: opacity 1100ms var(--ease-slow), transform 1100ms var(--ease-slow); }
-    .reveal.in { opacity: 1; transform: none; }
-    .reveal[data-delay="1"] { transition-delay: 120ms; }
-    .reveal[data-delay="2"] { transition-delay: 240ms; }
-    .reveal[data-delay="3"] { transition-delay: 360ms; }
-    .reveal[data-delay="4"] { transition-delay: 480ms; }
+    .reveal {
+      opacity: 0; transform: translateY(28px); filter: blur(6px);
+      transition: opacity 1200ms var(--ease-slow), transform 1200ms var(--ease-slow), filter 1200ms var(--ease-slow);
+      will-change: opacity, transform, filter;
+    }
+    .reveal.in { opacity: 1; transform: none; filter: blur(0); }
+    .reveal[data-delay="1"] { transition-delay: 130ms; }
+    .reveal[data-delay="2"] { transition-delay: 260ms; }
+    .reveal[data-delay="3"] { transition-delay: 390ms; }
+    .reveal[data-delay="4"] { transition-delay: 520ms; }
+    /* auto-stagger for grid children revealed together */
+    .reveal[data-delay="5"] { transition-delay: 650ms; }
 
     .nav {
       position: fixed; top: 0; left: 0; right: 0; z-index: 50;
@@ -32,6 +39,14 @@
     .nav a { border-bottom: 0; }
     .nav .links { display: flex; gap: 36px; align-items: center; font-family: var(--sans); font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink); }
     .nav .links a:hover { color: var(--clay); }
+    /* underline grow on nav links */
+    .nav .links > a { position: relative; }
+    .nav .links > a::after {
+      content: ''; position: absolute; left: 0; right: 100%; bottom: -5px; height: 1px;
+      background: var(--clay);
+      transition: right 360ms var(--ease-slow);
+    }
+    .nav .links > a:hover::after { right: 0; }
 
     /* Language dropdown */
     .lang { position: relative; }
@@ -105,12 +120,24 @@
     /* Hero */
     .hero {
       position: relative; height: 100vh; min-height: 720px;
-      background: url('assets/photo-noom-sunset-handpan.png') center / cover no-repeat;
+      background: var(--cream-deep);
+      overflow: hidden;
       display: flex; align-items: flex-end;
       color: var(--cream);
     }
+    .hero-media {
+      position: absolute; inset: 0; z-index: 0;
+      background: url('assets/photo-noom-sunset-handpan.png') center / cover no-repeat;
+      transform: scale(1.04);
+      animation: kenburns 32s var(--ease-slow) 0s infinite alternate;
+      will-change: transform;
+    }
+    @keyframes kenburns {
+      from { transform: scale(1.04) translate3d(0, 0, 0); }
+      to   { transform: scale(1.13) translate3d(-1.5%, -2%, 0); }
+    }
     .hero::before {
-      content: ''; position: absolute; inset: 0;
+      content: ''; position: absolute; inset: 0; z-index: 1;
       background:
         linear-gradient(180deg, rgba(42,38,34,0.32) 0%, rgba(42,38,34,0.05) 28%, rgba(42,38,34,0) 50%, rgba(42,38,34,0.35) 72%, rgba(42,38,34,0.72) 100%),
         linear-gradient(90deg, rgba(42,38,34,0.45) 0%, rgba(42,38,34,0.15) 30%, rgba(42,38,34,0) 60%);
@@ -143,15 +170,20 @@
       background: var(--cream); color: var(--ink); border: 0; border-bottom: 0;
       padding: 16px 28px;
       font-family: var(--sans); font-size: 12px; font-weight: 500; letter-spacing: 0.22em; text-transform: uppercase;
-      transition: background 300ms var(--ease-slow), color 300ms;
+      transition: background 300ms var(--ease-slow), color 300ms, transform 400ms var(--ease-slow), box-shadow 400ms var(--ease-slow);
       text-shadow: none;
     }
-    .hero a.cta:hover { background: var(--clay); color: var(--cream); }
+    .hero a.cta:hover { background: var(--clay); color: var(--cream); transform: translateY(-3px); box-shadow: 0 16px 32px -16px rgba(42,38,34,0.5); }
     .hero .scroll-hint {
       position: absolute; bottom: 28px; right: clamp(28px, 6vw, 96px); z-index: 2;
       font-family: var(--sans); font-size: 11px; letter-spacing: 0.28em; text-transform: uppercase;
       color: var(--cream); opacity: 0.75;
       writing-mode: vertical-rl;
+      animation: scrollbob 2.8s var(--ease-slow) infinite;
+    }
+    @keyframes scrollbob {
+      0%, 100% { transform: translateY(0); opacity: 0.5; }
+      50%      { transform: translateY(10px); opacity: 0.9; }
     }
 
     /* Intro */
@@ -263,9 +295,9 @@
       padding: clamp(28px, 2.4vw, 40px) clamp(24px, 2vw, 32px);
       display: flex; flex-direction: column;
       min-height: 360px;
-      transition: background 500ms var(--ease-slow);
+      transition: background 500ms var(--ease-slow), transform 500ms var(--ease-slow), box-shadow 500ms var(--ease-slow);
     }
-    .ev:hover { background: var(--cream); }
+    .ev:hover { background: var(--cream); transform: translateY(-4px); box-shadow: 0 22px 48px -30px rgba(42,38,34,0.4); z-index: 1; }
     .ev .top {
       display: flex; justify-content: space-between; align-items: baseline; gap: 12px;
       margin-bottom: 28px;
@@ -456,9 +488,9 @@
       border-bottom: 1px solid var(--ink-faint);
       padding: clamp(32px, 3vw, 52px) clamp(24px, 2.5vw, 40px);
       display: flex; flex-direction: column;
-      transition: background 500ms var(--ease-slow);
+      transition: background 500ms var(--ease-slow), transform 500ms var(--ease-slow), box-shadow 500ms var(--ease-slow);
     }
-    .testimonial:hover { background: var(--cream); }
+    .testimonial:hover { background: var(--cream); transform: translateY(-4px); box-shadow: 0 22px 48px -30px rgba(42,38,34,0.4); z-index: 1; }
     .testimonial .open-quote {
       font-family: var(--serif); font-size: 52px; line-height: 1;
       color: var(--ink-faint); margin-bottom: 16px; display: block; user-select: none;
@@ -589,6 +621,15 @@
       .faq-section .heading { position: static; }
       .contact-inner { grid-template-columns: 1fr; gap: 48px; }
     }
+
+    /* ── Respect reduced-motion ── */
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .reveal { opacity: 1; transform: none; filter: none; transition: none; }
+      .hero-media { animation: none; transform: scale(1.04); }
+      .scroll-hint { animation: none; }
+      .ev:hover, .testimonial:hover, .hero a.cta:hover { transform: none; }
+    }
   </style>
 </head>
 <template id="__bundler_thumbnail">
@@ -641,6 +682,7 @@
   </nav>
 
   <header class="hero" id="top" data-screen-label="Hero">
+    <div class="hero-media" aria-hidden="true"></div>
     <div class="hero-inner">
       <div>
         <p class="eyebrow reveal" data-i18n="hero.eyebrow">Koh Samui · Thailand</p>
@@ -667,7 +709,7 @@
       <p class="reveal" data-delay="1" data-i18n="intro.p2">Come curious, leave with something.</p>
     </div>
     <div class="photo-side reveal" data-delay="1">
-      <img src="assets/photo-intro.jpg" alt="Noom Sound Studio" onerror="this.style.display='none';this.parentNode.querySelector('.photo-placeholder').style.display='block'"/>
+      <img src="assets/photo-noom-sunset-handpan.jpg" alt="Noom Sound Studio" onerror="this.style.display='none';this.parentNode.querySelector('.photo-placeholder').style.display='block'"/>
       <p class="photo-placeholder" style="display:none">Add your photo here</p>
     </div>
   </section>
@@ -745,14 +787,14 @@
         <article class="ev reveal" data-delay="1">
           <div class="top">
             <span class="num">02</span>
-            <span class="price free" data-i18n="common.free">Free</span>
+            <span class="price" data-i18n="ev2.price">฿650</span>
           </div>
-          <h3 data-i18n="ev2.title">Sound<br/><em>&amp; Movement.</em></h3>
-          <p class="desc" data-i18n="ev2.desc">Outdoor weekly session &mdash; live instruments and gentle movement, side by side. Open to all.</p>
+          <h3 data-i18n="ev2.title">Monthly<br/><em>Sound Therapy.</em></h3>
+          <p class="desc" data-i18n="ev2.desc">Monthly sound journey at Mulajoy with House of Holistic Melie &mdash; live instruments, deep rest, side by side. Open to all.</p>
           <div class="when">
             <span class="label" data-i18n="common.whenWhere">When &amp; where</span>
-            <span data-i18n="ev2.when">Weekly &middot; outdoor<br/>
-            <em>Day &amp; location announced</em></span>
+            <span data-i18n="ev2.when">First Thursday monthly &middot; 75 min<br/>
+            <em>Mulajoy &middot; with House of Holistic Melie</em></span>
           </div>
           <a class="cta" href="#contact" data-i18n="common.messageJoin">Message to join &nbsp;&rarr;</a>
         </article>
@@ -775,16 +817,15 @@
         <article class="ev reveal" data-delay="3">
           <div class="top">
             <span class="num">04</span>
-            <span class="price free" data-i18n="common.free">Free</span>
           </div>
-          <h3 data-i18n="ev4.title">Open<br/><em>Jam.</em></h3>
-          <p class="desc" data-i18n="ev4.desc">Drop-in evening for musicians and curious listeners. Bring an instrument, or just come and listen.</p>
+          <h3 data-i18n="ev4.title">Book us<br/><em>on Airbnb.</em></h3>
+          <p class="desc" data-i18n="ev4.desc">Find Noom Sound Studio on Airbnb Experiences &mdash; book a private sound journey or handpan session for your group.</p>
           <div class="when">
             <span class="label" data-i18n="common.whenWhere">When &amp; where</span>
-            <span data-i18n="ev4.when">Dates vary &middot; around Samui<br/>
-            <em>Follow for the next one</em></span>
+            <span data-i18n="ev4.when">Airbnb Experiences &middot; Koh Samui<br/>
+            <em>Book anytime</em></span>
           </div>
-          <a class="cta" href="#contact" data-i18n="common.messageJoin">Message to join &nbsp;&rarr;</a>
+          <a class="cta" href="https://www.airbnb.com/services/7139446?availabilityKey=LBaakpMGGBgyMDI2LTA3LTAxVDAwOjMwOjAwLjAwMFoAAA%3D%3D&amp;checkin=2026-07-01" target="_blank" rel="noopener" data-i18n="ev4.cta">Book on Airbnb &nbsp;&rarr;</a>
         </article>
 
       </div>
@@ -985,7 +1026,7 @@
         <a class="btn-primary" href="https://wa.me/905468419181" target="_blank" rel="noopener" data-i18n="contact.whatsapp">Message on WhatsApp</a>
         <a class="btn-outline" href="https://instagram.com/noomsoundstudio" target="_blank" rel="noopener" data-i18n="contact.instagram">Visit Instagram</a>
       </div>
-      <p class="contact-email"><a href="/cdn-cgi/l/email-protection#1b7574747668746e757f686f6e7f72745b7c767a727735787476"><span class="__cf_email__" data-cfemail="e58b8a8a88968a908b81969190818c8aa58288848c89cb868a88">[email&#160;protected]</span></a></p>
+      <p class="contact-email"><a href="/cdn-cgi/l/email-protection#d7b9b8b8baa4b8a2b9b3a4a3a2b3beb897b0bab6bebbf9b4b8ba"><span class="__cf_email__" data-cfemail="a0cecfcfcdd3cfd5cec4d3d4d5c4c9cfe0c7cdc1c9cc8ec3cfcd">[email&#160;protected]</span></a></p>
 
       <!-- Map -->
       <div class="map-block">
@@ -1034,7 +1075,7 @@
     </div>
     <div class="row">
       <span class="meta" data-i18n="footer.comeplay">Come play.</span>
-      <span class="meta">© 2026 &nbsp;·&nbsp; <a href="https://instagram.com/noomsoundstudio" target="_blank" rel="noopener" style="color:var(--ink-mute);text-decoration:none;letter-spacing:0.22em;">@noomsoundstudio</a> &nbsp;·&nbsp; <a href="/cdn-cgi/l/email-protection#4a2425252739253f242e393e3f2e23250a2d272b232664292527" style="color:var(--ink-mute);text-decoration:none;letter-spacing:0.22em;"><span class="__cf_email__" data-cfemail="f79998989a8498829993848382939e98b7909a969e9bd994989a">[email&#160;protected]</span></a></span>
+      <span class="meta">© 2026 &nbsp;·&nbsp; <a href="https://instagram.com/noomsoundstudio" target="_blank" rel="noopener" style="color:var(--ink-mute);text-decoration:none;letter-spacing:0.22em;">@noomsoundstudio</a> &nbsp;·&nbsp; <a href="/cdn-cgi/l/email-protection#f19f9e9e9c829e849f9582858495989eb1969c90989ddf929e9c" style="color:var(--ink-mute);text-decoration:none;letter-spacing:0.22em;"><span class="__cf_email__" data-cfemail="036d6c6c6e706c766d67707776676a6c43646e626a6f2d606c6e">[email&#160;protected]</span></a></span>
     </div>
   </footer>
 
@@ -1047,6 +1088,24 @@
       entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
     }, { threshold: 0.12 });
     document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+    // Subtle hero parallax — content drifts up, media drifts down as you scroll
+    const heroInner = document.querySelector('.hero-inner');
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (heroInner && !reduceMotion) {
+      let ticking = false;
+      const parallax = () => {
+        const y = window.scrollY;
+        if (y < window.innerHeight) {
+          heroInner.style.transform = 'translateY(' + (y * 0.18) + 'px)';
+          heroInner.style.opacity = String(Math.max(0, 1 - y / (window.innerHeight * 0.85)));
+        }
+        ticking = false;
+      };
+      window.addEventListener('scroll', () => {
+        if (!ticking) { requestAnimationFrame(parallax); ticking = true; }
+      }, { passive: true });
+    }
 
     // Mailing list form — sends to Formspree, shows inline success message
     const mailingForm = document.getElementById('mailingForm');
