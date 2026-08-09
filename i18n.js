@@ -939,6 +939,13 @@
     },
   };
 
+  // Merge in the v2 page strings (i18n-extra.js), if present.
+  if (window.NOOM_T_EXTRA) {
+    Object.keys(window.NOOM_T_EXTRA).forEach(lang => {
+      T[lang] = Object.assign(T[lang] || {}, window.NOOM_T_EXTRA[lang]);
+    });
+  }
+
   // Names for the dropdown
   const LANG_NAMES = {
     en: { native: 'English', code: 'EN' },
