@@ -4,7 +4,7 @@
    sparing accents drawn from sunset photography.
    ========================================================= */
 
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Inter:wght@300;400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@300;400;500&display=swap');
 
 :root {
   /* ---------- Color · Surfaces ---------- */
@@ -35,19 +35,19 @@
   --accent:       var(--clay);
 
   /* ---------- Type families ---------- */
-  --serif: 'Cormorant Garamond', 'EB Garamond', Georgia, 'Times New Roman', serif;
-  --sans:  'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
-  --mono:  'IBM Plex Mono', ui-monospace, monospace;
+  --serif: 'Cormorant Garamond', 'EB Garamond', Georgia, 'Times New Roman', serif; /* @kind font */
+  --sans:  'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif; /* @kind font */
+  --mono:  'IBM Plex Mono', ui-monospace, monospace; /* @kind font */
 
   /* ---------- Type scale (editorial, generous) ---------- */
-  --fs-display: clamp(56px, 8vw, 112px);
-  --fs-h1:      clamp(40px, 5.5vw, 72px);
-  --fs-h2:      clamp(32px, 3.6vw, 48px);
-  --fs-h3:      clamp(24px, 2.4vw, 32px);
-  --fs-lead:    22px;   /* opening paragraphs */
-  --fs-body:    17px;
-  --fs-small:   14px;
-  --fs-meta:    12px;   /* labels, eyebrows, dates */
+  --fs-display: clamp(56px, 8vw, 112px); /* @kind font */
+  --fs-h1:      clamp(40px, 5.5vw, 72px); /* @kind font */
+  --fs-h2:      clamp(32px, 3.6vw, 48px); /* @kind font */
+  --fs-h3:      clamp(24px, 2.4vw, 32px); /* @kind font */
+  --fs-lead:    22px;   /* @kind font */
+  --fs-body:    17px;   /* @kind font */
+  --fs-small:   14px;   /* @kind font */
+  --fs-meta:    12px;   /* @kind font */
 
   /* ---------- Spacing (editorial rhythm) ---------- */
   --s-1: 4px;
@@ -73,15 +73,15 @@
   --shadow-3: 0 24px 60px -28px rgba(42,38,34,0.25);
 
   /* ---------- Motion ---------- */
-  --ease-slow: cubic-bezier(0.22, 0.61, 0.36, 1);
-  --dur-slow: 900ms;
-  --dur-med:  500ms;
-  --dur-fast: 250ms;
+  --ease-slow: cubic-bezier(0.22, 0.61, 0.36, 1); /* @kind other */
+  --dur-slow: 900ms; /* @kind other */
+  --dur-med:  500ms; /* @kind other */
+  --dur-fast: 250ms; /* @kind other */
 
   /* ---------- Layout ---------- */
-  --measure: 64ch;        /* prose line-length */
-  --container: 1200px;
-  --gutter: clamp(24px, 4vw, 64px);
+  --measure: 64ch;        /* @kind other */
+  --container: 1200px;    /* @kind spacing */
+  --gutter: clamp(24px, 4vw, 64px); /* @kind spacing */
 }
 
 /* ---------------- Base resets ---------------- */
