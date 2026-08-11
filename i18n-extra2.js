@@ -95,7 +95,7 @@ window.NOOM_T_EXTRA.ru = {
   'pillar1.body': '<strong style="font-weight:500;color:var(--ink)">Пробный урок.</strong> Одно занятие, чтобы познакомиться с инструментом.<br/><br/><strong style="font-weight:500;color:var(--ink)">Курс из 8 уроков.</strong> По 90 минут, в вашем темпе.<br/><br/><strong style="font-weight:500;color:var(--ink)">Трёхдневное путешествие.</strong> Десять часов — уйдёте с собственной записанной пьесой.<br/><br/>На открытой террасе Noom Studio в Ламае или мы приедем к вам в отель или виллу.',
   'pillar1.cta': 'Посмотреть уроки и курсы &nbsp;&rarr;',
 
-  'faq.a.pr2': 'Уроки хэндпана: пробный урок — <strong>2 000 THB</strong>; трёхдневное путешествие — <strong>10 000 THB</strong>; курс из 8 уроков (по 90 минут) — <strong>15 000 THB</strong>. Групповые уроки: +1 000 THB за каждого дополнительного участника, до трёх. Частные звуковые путешествия в студии — <strong>2 500 THB за двоих</strong> (+500 THB за гостя, до 7). Выезд к вам — от <strong>4 000 THB за двоих</strong> (+500 THB за гостя, до 10). Еженедельные открытые воскресные сессии — <strong>600 THB с человека</strong>.',
+  'faq.a.pr2': 'Уроки хэндпана: пробный урок — <strong>2 000 THB</strong>; трёхдневное путешествие — <strong>10 000 THB</strong>; курс из 8 уроков (по 90 минут) — <strong>12 000 THB</strong>. Групповые уроки: +1 000 THB за каждого дополнительного участника, до трёх. Частные звуковые путешествия в студии — <strong>2 500 THB за двоих</strong> (+500 THB за гостя, до 7). Выезд к вам — от <strong>4 000 THB за двоих</strong> (+500 THB за гостя, до 10). Еженедельные открытые воскресные сессии — <strong>600 THB с человека</strong>.',
 
   'common.msgBook': 'Написать и записаться &nbsp;&rarr;',
 
@@ -200,7 +200,7 @@ window.NOOM_T_EXTRA.tr = {
   'pillar1.body': '<strong style="font-weight:500;color:var(--ink)">Tanışma dersi.</strong> Enstrümanla tanışmak için tek seans.<br/><br/><strong style="font-weight:500;color:var(--ink)">Sekiz derslik kurs.</strong> Her biri 90 dakika, kendi hızında.<br/><br/><strong style="font-weight:500;color:var(--ink)">Üç Günlük Handpan Yolculuğu.</strong> On saat — kendi kaydedilmiş parçanla ayrıl.<br/><br/>Lamai’deki Noom Studio açık terasında ya da otelinize/villanıza geliriz.',
   'pillar1.cta': 'Ders ve kurslara bak &nbsp;&rarr;',
 
-  'faq.a.pr2': 'Handpan dersleri: tanışma dersi <strong>2.000 THB</strong>; Üç Günlük Handpan Yolculuğu <strong>10.000 THB</strong>; sekiz derslik kurs (her biri 90 dk) <strong>15.000 THB</strong>. Grup derslerinde her ek kişi için 1.000 THB eklenir, en fazla üç kişi. Stüdyoda özel ses yolculukları <strong>iki kişi için 2.500 THB</strong> (+her ek misafir 500 THB, en fazla 7). Bulunduğunuz yere geliş <strong>iki kişi için 4.000 THB</strong>’den (+misafir başına 500 THB, en fazla 10). Pazar açık seansları <strong>kişi başı 600 THB</strong>.',
+  'faq.a.pr2': 'Handpan dersleri: tanışma dersi <strong>2.000 THB</strong>; Üç Günlük Handpan Yolculuğu <strong>10.000 THB</strong>; sekiz derslik kurs (her biri 90 dk) <strong>12.000 THB</strong>. Grup derslerinde her ek kişi için 1.000 THB eklenir, en fazla üç kişi. Stüdyoda özel ses yolculukları <strong>iki kişi için 2.500 THB</strong> (+her ek misafir 500 THB, en fazla 7). Bulunduğunuz yere geliş <strong>iki kişi için 4.000 THB</strong>’den (+misafir başına 500 THB, en fazla 10). Pazar açık seansları <strong>kişi başı 600 THB</strong>.',
 
   'common.msgBook': 'Rezervasyon için yazın &nbsp;&rarr;',
 
@@ -305,7 +305,7 @@ window.NOOM_T_EXTRA.he = {
   'pillar1.body': '<strong style="font-weight:500;color:var(--ink)">שיעור היכרות.</strong> סשן אחד להכיר את הכלי.<br/><br/><strong style="font-weight:500;color:var(--ink)">קורס שמונה שיעורים.</strong> 90 דקות כל אחד, בקצב שלכם.<br/><br/><strong style="font-weight:500;color:var(--ink)">מסע הנדפן של שלושה ימים.</strong> עשר שעות — צאו עם יצירה מוקלטת משלכם.<br/><br/>במרפסת הפתוחה של נום סטודיו בלמאי, או שנגיע למלון או לווילה שלכם.',
   'pillar1.cta': 'לשיעורים ולקורסים &nbsp;&larr;',
 
-  'faq.a.pr2': 'שיעורי הנדפן: שיעור היכרות <strong>2,000 THB</strong>; מסע ההנדפן של שלושה ימים <strong>10,000 THB</strong>; קורס שמונה שיעורים (90 דק׳ כל אחד) <strong>15,000 THB</strong>. בשיעורים קבוצתיים מתווספים 1,000 THB לכל נגן נוסף, עד שלושה. מסעות צליל פרטיים בסטודיו <strong>2,500 THB לשניים</strong> (+500 THB לאורח נוסף, עד 7). אצלכם החל מ־<strong>4,000 THB לשניים</strong> (+500 THB לאורח, עד 10). הסשנים הפתוחים בימי ראשון <strong>600 THB לאדם</strong>.',
+  'faq.a.pr2': 'שיעורי הנדפן: שיעור היכרות <strong>2,000 THB</strong>; מסע ההנדפן של שלושה ימים <strong>10,000 THB</strong>; קורס שמונה שיעורים (90 דק׳ כל אחד) <strong>12,000 THB</strong>. בשיעורים קבוצתיים מתווספים 1,000 THB לכל נגן נוסף, עד שלושה. מסעות צליל פרטיים בסטודיו <strong>2,500 THB לשניים</strong> (+500 THB לאורח נוסף, עד 7). אצלכם החל מ־<strong>4,000 THB לשניים</strong> (+500 THB לאורח, עד 10). הסשנים הפתוחים בימי ראשון <strong>600 THB לאדם</strong>.',
 
   'common.msgBook': 'כתבו לנו להזמנה &nbsp;&larr;',
 

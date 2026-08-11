@@ -95,7 +95,7 @@ window.NOOM_T_EXTRA.th = {
   'pillar1.body': '<strong style="font-weight:500;color:var(--ink)">คลาสทดลอง.</strong> หนึ่งเซสชันเพื่อทำความรู้จักเครื่องดนตรี<br/><br/><strong style="font-weight:500;color:var(--ink)">คอร์ส 8 คลาส.</strong> คลาสละ 90 นาที ในจังหวะของคุณ<br/><br/><strong style="font-weight:500;color:var(--ink)">คอร์สแฮนด์แพนสามวัน.</strong> สิบชั่วโมง — กลับไปพร้อมเพลงของคุณเองที่บันทึกไว้<br/><br/>ที่ระเบียงเปิดของ Noom Studio ในละไม หรือเราไปที่โรงแรม/วิลล่าของคุณ',
   'pillar1.cta': 'ดูคลาสและคอร์ส &nbsp;&rarr;',
 
-  'faq.a.pr2': 'คลาสแฮนด์แพน: คลาสทดลอง <strong>2,000 บาท</strong>; คอร์สแฮนด์แพนสามวัน <strong>10,000 บาท</strong>; คอร์ส 8 คลาส (คลาสละ 90 นาที) <strong>15,000 บาท</strong> คลาสกลุ่มเพิ่ม 1,000 บาทต่อผู้เล่นหนึ่งคน สูงสุดสามคน ซาวด์เจอร์นี่ส่วนตัวที่สตูดิโอ <strong>2,500 บาทสำหรับสองคน</strong> (+500 บาทต่อคนเพิ่ม สูงสุด 7 คน) ไปที่พักของคุณเริ่ม <strong>4,000 บาทสำหรับสองคน</strong> (+500 บาทต่อคน สูงสุด 10 คน) เซสชันเปิดวันอาทิตย์ <strong>600 บาทต่อคน</strong>',
+  'faq.a.pr2': 'คลาสแฮนด์แพน: คลาสทดลอง <strong>2,000 บาท</strong>; คอร์สแฮนด์แพนสามวัน <strong>10,000 บาท</strong>; คอร์ส 8 คลาส (คลาสละ 90 นาที) <strong>12,000 บาท</strong> คลาสกลุ่มเพิ่ม 1,000 บาทต่อผู้เล่นหนึ่งคน สูงสุดสามคน ซาวด์เจอร์นี่ส่วนตัวที่สตูดิโอ <strong>2,500 บาทสำหรับสองคน</strong> (+500 บาทต่อคนเพิ่ม สูงสุด 7 คน) ไปที่พักของคุณเริ่ม <strong>4,000 บาทสำหรับสองคน</strong> (+500 บาทต่อคน สูงสุด 10 คน) เซสชันเปิดวันอาทิตย์ <strong>600 บาทต่อคน</strong>',
 
   'common.msgBook': 'ทักเพื่อจอง &nbsp;&rarr;',
 
@@ -200,7 +200,7 @@ window.NOOM_T_EXTRA.de = {
   'pillar1.body': '<strong style="font-weight:500;color:var(--ink)">Schnupperstunde.</strong> Eine Session, um das Instrument kennenzulernen.<br/><br/><strong style="font-weight:500;color:var(--ink)">Kurs mit 8 Stunden.</strong> Je 90 Minuten, in deinem Tempo.<br/><br/><strong style="font-weight:500;color:var(--ink)">3-tägige Handpan-Reise.</strong> Zehn Stunden — geh mit deinem eigenen aufgenommenen Stück.<br/><br/>Auf der Open-Air-Terrasse des Noom Studio in Lamai, oder wir kommen zu deinem Hotel oder deiner Villa.',
   'pillar1.cta': 'Unterricht &amp; Kurse ansehen &nbsp;&rarr;',
 
-  'faq.a.pr2': 'Handpan-Unterricht: Eine Schnupperstunde kostet <strong>2.000 THB</strong>; die 3-tägige Handpan-Reise <strong>10.000 THB</strong>; ein Kurs mit 8 Stunden (je 90 Min.) <strong>15.000 THB</strong>. Gruppenstunden kosten 1.000 THB mehr pro zusätzlichem Spieler, bis zu drei. Private Klangreisen im Studio <strong>2.500 THB für zwei</strong> (+500 THB pro weiterem Gast, bis 7). Bei dir vor Ort ab <strong>4.000 THB für zwei</strong> (+500 THB pro Gast, bis 10). Die offenen Sonntags-Sessions kosten <strong>600 THB pro Person</strong>.',
+  'faq.a.pr2': 'Handpan-Unterricht: Eine Schnupperstunde kostet <strong>2.000 THB</strong>; die 3-tägige Handpan-Reise <strong>10.000 THB</strong>; ein Kurs mit 8 Stunden (je 90 Min.) <strong>12.000 THB</strong>. Gruppenstunden kosten 1.000 THB mehr pro zusätzlichem Spieler, bis zu drei. Private Klangreisen im Studio <strong>2.500 THB für zwei</strong> (+500 THB pro weiterem Gast, bis 7). Bei dir vor Ort ab <strong>4.000 THB für zwei</strong> (+500 THB pro Gast, bis 10). Die offenen Sonntags-Sessions kosten <strong>600 THB pro Person</strong>.',
 
   'common.msgBook': 'Schreib uns zur Buchung &nbsp;&rarr;',
 
@@ -305,7 +305,7 @@ window.NOOM_T_EXTRA.fr = {
   'pillar1.body': '<strong style="font-weight:500;color:var(--ink)">Cours découverte.</strong> Une séance pour rencontrer l’instrument.<br/><br/><strong style="font-weight:500;color:var(--ink)">Forfait 8 cours.</strong> 90 minutes chacun, à ton rythme.<br/><br/><strong style="font-weight:500;color:var(--ink)">Voyage Handpan de 3 jours.</strong> Dix heures — repars avec ton propre morceau enregistré.<br/><br/>Sur la terrasse en plein air du Noom Studio à Lamai, ou nous venons à ton hôtel ou ta villa.',
   'pillar1.cta': 'Voir les cours &amp; forfaits &nbsp;&rarr;',
 
-  'faq.a.pr2': 'Cours de handpan : le cours découverte est à <strong>2 000 THB</strong> ; le Voyage Handpan de 3 jours à <strong>10 000 THB</strong> ; un forfait de 8 cours (90 min chacun) à <strong>15 000 THB</strong>. Les cours en groupe ajoutent 1 000 THB par joueur supplémentaire, jusqu’à trois. Voyages sonores privés au studio : <strong>2 500 THB pour deux</strong> (+500 THB par invité supplémentaire, jusqu’à 7). Chez toi à partir de <strong>4 000 THB pour deux</strong> (+500 THB par invité, jusqu’à 10). Les sessions ouvertes du dimanche sont à <strong>600 THB par personne</strong>.',
+  'faq.a.pr2': 'Cours de handpan : le cours découverte est à <strong>2 000 THB</strong> ; le Voyage Handpan de 3 jours à <strong>10 000 THB</strong> ; un forfait de 8 cours (90 min chacun) à <strong>12 000 THB</strong>. Les cours en groupe ajoutent 1 000 THB par joueur supplémentaire, jusqu’à trois. Voyages sonores privés au studio : <strong>2 500 THB pour deux</strong> (+500 THB par invité supplémentaire, jusqu’à 7). Chez toi à partir de <strong>4 000 THB pour deux</strong> (+500 THB par invité, jusqu’à 10). Les sessions ouvertes du dimanche sont à <strong>600 THB par personne</strong>.',
 
   'common.msgBook': 'Écris-nous pour réserver &nbsp;&rarr;',
 
