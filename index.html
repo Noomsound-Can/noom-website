@@ -1,5 +1,4 @@
 <!doctype html>
-<!-- @dsCard group="Brand" name="Noom Homepage v2" subtitle="Handpan-learning focus — 3-Day Journey flagship + lesson packages" viewport="1440x1080" -->
 <html lang="en">
 <head>
   <meta charset="utf-8" />
@@ -398,6 +397,7 @@
     .sj-head h2 { font-family: var(--serif); font-weight: 400; font-size: clamp(40px, 5vw, 68px); line-height: 1.06; letter-spacing: -0.006em; margin: 24px 0 0; }
     .sj-head h2 em { font-style: italic; font-weight: 300; }
     .sj-head .lede { font-family: var(--serif); font-style: italic; color: var(--ink-soft); font-size: 18px; line-height: 1.6; max-width: 42ch; margin: 0; }
+    .sj-grid { grid-template-columns: repeat(3, 1fr) !important; }
     .sj-grid { display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid var(--ink-faint); border-left: 1px solid var(--ink-faint); }
     .sj .pkg { min-height: 0; }
     @media (max-width: 820px) { .sj-head { grid-template-columns: 1fr; gap: 24px; } .sj-grid { grid-template-columns: 1fr; } }
@@ -433,8 +433,11 @@
       font-size: 18px; line-height: 1.6; max-width: 42ch; margin: 0;
     }
 
+    .ev[data-order="1"] { order: 1; }
+    .ev[data-order="2"] { order: 2; }
+    .ev[data-order="3"] { order: 3; }
     .events-grid {
-      display: grid; grid-template-columns: repeat(4, 1fr);
+      display: grid; grid-template-columns: repeat(3, 1fr);
       border-top: 1px solid var(--ink-faint);
       border-left: 1px solid var(--ink-faint);
     }
@@ -696,6 +699,7 @@
 
     @media (max-width: 980px) {
       .events-grid { grid-template-columns: 1fr 1fr; }
+      .ev[data-order="3"] { grid-column: span 2; }
     }
     @media (max-width: 820px) {
       .hero-inner { grid-template-columns: 1fr; gap: 24px; }
@@ -719,6 +723,61 @@
       .hero-media { animation: none; transform: scale(1.04); }
       .scroll-hint { animation: none; }
       .ev:hover, .hero a.cta:hover { transform: none; }
+    }
+
+    /* ── Schedule strip ── */
+    .sched { padding: clamp(56px, 7vw, 96px) clamp(28px, 5vw, 72px); background: var(--cream); border-top: 1px solid var(--ink-faint); }
+    .sched-inner { max-width: 880px; margin: 0 auto; }
+    .sched .eyebrow { text-align: center; margin: 0 auto 40px; max-width: none; }
+    .sched-rows { list-style: none; margin: 0 0 26px; padding: 0; border-top: 1px solid var(--ink-faint); }
+    .sched-rows li { display: grid; grid-template-columns: 1fr auto; gap: 8px 32px; align-items: baseline; padding: 22px 0; border-bottom: 1px solid var(--ink-faint); }
+    .sched-rows h3 { font-family: var(--serif); font-weight: 400; font-size: clamp(24px, 2.8vw, 38px); line-height: 1; letter-spacing: 0.08em; text-transform: uppercase; margin: 0; color: var(--ink); }
+    .sched-rows .loc { font-family: var(--sans); font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-mute); margin: 12px 0 0; max-width: none; }
+    .sched-rows .t { font-family: var(--serif); font-size: clamp(24px, 2.6vw, 32px); color: var(--ink); }
+    .sched-rows .tw { text-align: right; }
+    .sched-rows .dates { font-family: var(--sans); font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-mute); margin: 12px 0 0; max-width: none; }
+    .sched-notify { grid-column: 1 / -1; text-align: center; margin: 10px 0 0; max-width: none; }
+    .sched-notify a { font-family: var(--sans); font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--ink-mute); border-bottom-color: var(--ink-faint); }
+    .sched-notify a:hover { color: var(--clay); border-bottom-color: var(--clay); }
+    .sched-moonline { grid-column: 1 / -1; font-family: var(--sans); font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--clay); text-align: center; margin: 16px 0 0; padding-top: 16px; border-top: 1px solid var(--shell); max-width: none; }
+    .sched-where { font-family: var(--serif); font-style: italic; font-size: 17px; color: var(--ink-soft); text-align: center; margin: 0 0 26px; max-width: none; }
+    .sched-format { font-family: var(--serif); font-size: clamp(17px, 1.5vw, 21px); line-height: 1.5; color: var(--ink); text-align: center; margin: 0; padding: 22px 0; border-top: 1px solid var(--ink-faint); border-bottom: 1px solid var(--ink-faint); max-width: none; }
+    .sched-cta { display: flex; justify-content: center; margin-top: 36px; }
+
+    /* ── The Regulars ── */
+    .reg { padding: clamp(56px, 7vw, 96px) clamp(28px, 5vw, 72px); background: var(--cream); }
+    .reg-panel { max-width: 1120px; margin: 0 auto; background: var(--cream-deep); padding: clamp(32px, 4.4vw, 68px); display: grid; grid-template-columns: 1.15fr 1fr; gap: clamp(32px, 4.4vw, 68px); }
+    .reg h2 { font-family: var(--serif); font-weight: 400; font-size: clamp(30px, 3.6vw, 52px); line-height: 1.1; letter-spacing: -0.004em; margin: 22px 0 30px; }
+    .reg-body p { font-family: var(--serif); font-size: clamp(17px, 1.4vw, 20px); line-height: 1.65; color: var(--ink-soft); margin: 0 0 18px; max-width: 44ch; }
+    .reg-how { list-style: none; margin: 0; padding: 22px 0 0; border-top: 1px solid var(--ink-faint); display: grid; gap: 14px; }
+    .reg-how .label { display: block; font-family: var(--sans); font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--ink-mute); margin-bottom: 10px; }
+    .reg-how p { font-family: var(--serif); font-size: 17px; line-height: 1.6; color: var(--ink-soft); margin: 0; max-width: 40ch; }
+    .reg-cta-row { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; margin-top: 30px; }
+    .reg-foot { font-family: var(--sans); font-size: 10px; letter-spacing: 0.26em; text-transform: uppercase; color: var(--ink-mute); margin: 34px 0 0; max-width: none; }
+
+    /* ── Workshops teaser ── */
+    .wk { position: relative; padding: clamp(64px, 8vw, 124px) clamp(28px, 5vw, 72px); background: var(--cream); border-top: 1px solid var(--ink-faint); overflow: hidden; }
+    .wk-bg { position: absolute; inset: -60px; background: url('assets/photo-jam.jpg') center / cover no-repeat; filter: blur(22px); transform: scale(1.06); }
+    .wk-wash { position: absolute; inset: 0; background: rgba(244, 236, 223, 0.62); }
+    .wk-inner { position: relative; max-width: 1120px; margin: 0 auto; display: grid; grid-template-columns: 1.1fr 1fr; gap: clamp(32px, 4.4vw, 72px); align-items: start; }
+    .wk-soon { font-family: var(--sans); font-size: 10px; letter-spacing: 0.28em; text-transform: uppercase; color: var(--clay); margin: 0 0 10px; max-width: none; }
+    .wk h2 { font-family: var(--serif); font-weight: 400; font-size: clamp(30px, 3.4vw, 50px); line-height: 1.1; margin: 20px 0 28px; }
+    .wk-body p { font-family: var(--serif); font-size: clamp(17px, 1.4vw, 20px); line-height: 1.65; color: var(--ink-soft); margin: 0 0 18px; max-width: 46ch; }
+    .wk-prices { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--ink-faint); }
+    .wk-prices li { display: flex; justify-content: space-between; align-items: baseline; gap: 24px; padding: 16px 0; border-bottom: 1px solid var(--ink-faint); font-family: var(--serif); font-size: 19px; color: var(--ink); }
+    .wk-prices li .p { white-space: nowrap; }
+    .wk-note { font-family: var(--serif); font-style: italic; font-size: 16px; color: var(--ink-soft); margin: 18px 0 0; max-width: 40ch; }
+
+    @media (max-width: 1240px) and (min-width: 721px) {
+      .nav .links a[href="#reviews"] { display: none; }
+    }
+    @media (max-width: 1080px) and (min-width: 721px) {
+      .nav .links a[href="#workshops"] { display: none; }
+      .nav .links { gap: 14px; }
+    }
+    @media (max-width: 900px) {
+      .reg-panel, .wk-inner { grid-template-columns: 1fr; }
+      .sched-rows li { gap: 6px 20px; }
     }
   </style>
 </head>
@@ -744,9 +803,11 @@
       <span style="font-family: var(--sans); font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--ink-mute); margin-left: 10px;">Sound Studio</span>
     </a>
     <div class="links">
+      <a href="#sessions" data-i18n="nav.sessions">Sessions</a>
       <a href="#learn" data-i18n="nav.learn">Learn handpan</a>
       <a href="#soundjourneys" data-i18n="nav.sj">Sound journeys</a>
-      <a href="#events" data-i18n="nav.events">What&rsquo;s on</a>
+      <a href="#workshops" data-i18n="nav.workshops">Workshops</a>
+      <a href="#regulars" data-i18n="nav.regulars">The Regulars</a>
       <a href="#reviews" data-i18n="nav.reviews">Reviews</a>
       <a href="#faq" data-i18n="nav.faq">FAQ</a>
       <a href="#contact" data-i18n="nav.contact">Contact</a>
@@ -786,7 +847,7 @@
         </p>
         <div class="cta-row reveal" data-delay="3">
           <a class="cta" href="#journey" data-i18n="hero.cta1">Start learning &nbsp;&rarr;</a>
-          <a class="cta ghost" href="#events" data-i18n="hero.cta2">See what&rsquo;s on</a>
+          <a class="cta ghost" href="#soundjourneys" data-i18n="hero.cta2">Sound journeys</a>
         </div>
       </div>
     </div>
@@ -820,9 +881,144 @@
             <li><span class="n">06</span><span data-i18n="jrn.i6">A certificate to take home</span></li>
           </ul>
           <div class="journey-cta-row">
-            <a class="btn-ink" href="https://instagram.com/noomsoundstudio" target="_blank" rel="noopener" data-i18n="jrn.cta">Message to book</a>
+            <a class="btn-ink" href="https://wa.me/905468419181?text=Hi%20Noom%2C%20I%20would%20like%20to%20know%20more%20about%20the%203-Day%20Handpan%20Journey." target="_blank" rel="noopener" data-i18n="jrn.cta">Message to book</a>
             <span class="journey-price" data-i18n="jrn.note">We&rsquo;ll find dates that fit your stay.</span>
           </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SCHEDULE STRIP ============ -->
+  <section class="sched" id="sessions" data-screen-label="Sessions">
+    <div class="sched-inner">
+      <p class="eyebrow reveal" data-i18n="sched.eyebrow">Sound journeys &middot; Noom Terrace</p>
+      <ul class="sched-rows reveal" data-delay="1">
+        <li>
+          <div>
+            <h3 data-i18n="sched.d1">Wednesday</h3>
+            <p class="loc" data-i18n="sched.l1">Noom Terrace, Lamai</p>
+          </div>
+          <span class="t">17:30</span>
+        </li>
+        <li>
+          <div>
+            <h3 data-i18n="sched.d2">Sunday</h3>
+            <p class="loc" data-i18n="sched.l2">Noom Terrace, Lamai</p>
+          </div>
+          <span class="t">17:30</span>
+        </li>
+        <li>
+          <div>
+            <h3 data-i18n="sched.d3">Full moon</h3>
+            <p class="loc" data-i18n="sched.l3">Location announced each month</p>
+          </div>
+          <div class="tw">
+            <span class="t">18:00</span>
+            <p class="dates" data-i18n="sched.dates">Monthly &middot; 26 Sept &middot; 26 Oct &middot; 24 Nov &middot; 24 Dec</p>
+          </div>
+          <!-- EDIT EACH MONTH: full moon location -->
+          <p class="sched-moonline" data-i18n="sched.moon">26 September. Location announced soon.</p>
+          <p class="sched-notify"><a href="#mailing" data-i18n="sched.notify">Tell me when it is announced</a></p>
+        </li>
+      </ul>
+      <p class="sched-where reveal" data-delay="1" data-i18n="sched.where">Five minutes from Lamai beach, in the forest above the sea.</p>
+      <p class="sched-format reveal" data-delay="2" data-i18n="sched.format">75 minutes. 600 THB. Handpan, crystal and Tibetan bowls, gong. Limited mats.</p>
+      <div class="sched-cta reveal" data-delay="2">
+        <a class="btn-ink" href="https://wa.me/905468419181?text=Hi%20Noom%2C%20I%20would%20like%20a%20mat%20for%20a%20Sound%20Journey.%20Which%20day%20has%20space%3F" target="_blank" rel="noopener" data-i18n="sched.cta">Book a mat</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ THE REGULARS ============ -->
+  <section class="reg" id="regulars" data-screen-label="The Regulars">
+    <div class="reg-panel reveal">
+      <div class="reg-body">
+        <p class="eyebrow" data-i18n="reg.eyebrow">The Regulars</p>
+        <h2 data-i18n="reg.title">2,000 THB. Four sessions.<br/><em>Valid one year.</em></h2>
+        <p data-i18n="reg.p1">Use them at any Noom session, weekly or full moon. No booking window, no expiry pressure, no membership fee.</p>
+        <p data-i18n="reg.p2">Bring a friend and spend two at once. The pass is not tied to your name.</p>
+        <p data-i18n="reg.p3">Two full passes buy a private evening on the terrace for up to eight guests, on your date and at your time. Book one week ahead, subject to availability.</p>
+      </div>
+      <div>
+        <ul class="reg-how">
+          <li><span class="label" data-i18n="reg.howl">How to get one</span>
+            <p data-i18n="reg.how1">Message us and we send a QR code to pay, or pay cash at your first session.</p>
+          </li>
+          <li><p data-i18n="reg.how2">You get a PDF pass straight away, and a printed card when you arrive.</p></li>
+        </ul>
+        <div class="reg-cta-row">
+          <a class="btn-ink" href="https://wa.me/905468419181?text=Hi%20Noom%2C%20I%20would%20like%20to%20get%20The%20Regulars%20pass." target="_blank" rel="noopener" data-i18n="reg.cta">Get a pass</a>
+          <a class="btn-quiet" href="https://wa.me/905468419181?text=Hi%20Noom%2C%20I%20have%20two%20passes%20and%20would%20like%20to%20book%20a%20private%20evening%20on%20the%20terrace." target="_blank" rel="noopener" data-i18n="reg.private">Private evening</a>
+        </div>
+        <p class="reg-foot">Noom Sound Studio &middot; House of Holistic</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SOUND JOURNEYS (PRIVATE) ============ -->
+  <section class="sj" id="soundjourneys" data-screen-label="Sound journeys">
+    <div class="sj-inner">
+      <div class="sj-head">
+        <div class="reveal">
+          <p class="eyebrow" data-i18n="sj.eyebrow">Sound journeys &middot; open &amp; private</p>
+          <h2 data-i18n="sj.title">Rest, while<br/><em>we play.</em></h2>
+        </div>
+        <p class="lede reveal" data-delay="1" data-i18n="sj.lede">Live handpan, gong and bowls, played while you lie back and rest. Join the open session on the terrace, or book privately for two or a small group &mdash; here, or wherever you&rsquo;re staying.</p>
+      </div>
+      <div class="sj-grid">
+        <article class="pkg reveal">
+          <p class="tag" data-i18n="sj0.tag">Weekly &amp; open</p>
+          <h3 data-i18n="sj0.title">Wednesday, Sunday<br/><em>&amp; full moon.</em></h3>
+          <p class="price-big">&#3647;600</p>
+          <p class="per" data-i18n="sj0.per">Per person &middot; 75 min &middot; limited mats</p>
+          <p class="desc" data-i18n="sj0.desc">The open session on the terrace, twice a week at 17:30, plus one full moon evening a month. Come alone or bring someone.</p>
+          <a class="cta" href="#sessions" data-i18n="sj0.cta">See the schedule &nbsp;&rarr;</a>
+        </article>
+        <article class="pkg reveal" data-delay="1">
+          <p class="tag" data-i18n="sj1.tag">At the studio</p>
+          <h3 data-i18n="sj1.title">Noom Terrace,<br/><em>Lamai.</em></h3>
+          <p class="price-big" data-i18n="sj1.price">from &#3647;2,500</p>
+          <p class="per" data-i18n="sj1.per">For two &middot; +&#3647;500 per extra guest &middot; up to seven</p>
+          <p class="desc" data-i18n="sj1.desc">An hour of live sound on the open-air terrace &mdash; mats, tea, and the evening air included.</p>
+          <a class="cta" href="https://wa.me/905468419181?text=Hi%20Noom%2C%20I%20would%20like%20a%20private%20sound%20journey%20on%20the%20terrace.%20My%20dates%20are%3A" target="_blank" rel="noopener" data-i18n="common.msgBook">Message to book &nbsp;&rarr;</a>
+        </article>
+        <article class="pkg reveal" data-delay="2">
+          <p class="tag" data-i18n="sj2.tag">We come to you</p>
+          <h3 data-i18n="sj2.title">At your<br/><em>place.</em></h3>
+          <p class="price-big" data-i18n="sj2.price">from &#3647;4,000</p>
+          <p class="per" data-i18n="sj2.per">For two &middot; +&#3647;500 per guest &middot; up to ten</p>
+          <p class="desc" data-i18n="sj2.desc">Your villa, hotel, or retreat &mdash; we bring the instruments and set the room.</p>
+          <a class="cta" href="https://wa.me/905468419181?text=Hi%20Noom%2C%20I%20would%20like%20a%20sound%20journey%20at%20my%20villa.%20My%20dates%20are%3A" target="_blank" rel="noopener" data-i18n="common.msgBook">Message to book &nbsp;&rarr;</a>
+        </article>
+      </div>
+      <ul class="pkg-notes reveal">
+        <li><span class="label" data-i18n="sj.n1l">Spas, hotels &amp; studios</span><p class="text" data-i18n="sj.n1t" style="font-size:22px;width:100%;height:69px">We collaborate with spas, yoga and wellness spaces, and hotels across Samui &mdash; for regular sessions or one-off events, just message.</p></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ WORKSHOPS ============ -->
+  <section class="wk" id="workshops" data-screen-label="Workshops">
+    <div class="wk-bg" aria-hidden="true"></div>
+    <div class="wk-wash" aria-hidden="true"></div>
+    <div class="wk-inner">
+      <div class="wk-body reveal">
+        <p class="wk-soon" data-i18n="wk.soon">Coming soon</p>
+        <p class="eyebrow" data-i18n="wk.eyebrow">Workshops</p>
+        <h2 data-i18n="wk.title">Learn to play the<br/><em>instruments yourself.</em></h2>
+        <p data-i18n="wk.p1">Three days of hands-on sound, in small groups on the terrace. Bowls on day one. Gong and metal on day two. Putting it together on day three. You play the instruments, not just listen to them.</p>
+        <p data-i18n="wk.p2">We are still shaping this one. The aim is simple: give you the most we can in the least time, so you leave able to hold a session yourself.</p>
+      </div>
+      <div class="reveal" data-delay="1">
+        <ul class="wk-prices">
+          <li><span data-i18n="wk.d1">One day</span><span class="p">&#3647;4,000</span></li>
+          <li><span data-i18n="wk.d2">Two days</span><span class="p">&#3647;7,500</span></li>
+          <li><span data-i18n="wk.d3">All three days</span><span class="p">&#3647;10,000</span></li>
+        </ul>
+        <p class="wk-note" data-i18n="wk.note">Any single day, any two days, or all three. Each day stands alone.</p>
+        <div class="reg-cta-row">
+          <a class="btn-ink" href="#mailing" data-i18n="wk.cta">Tell me when it opens</a>
         </div>
       </div>
     </div>
@@ -924,8 +1120,8 @@
         <span class="note" data-i18n="rev.note1">Three days. No musical background needed.</span>
       </div>
       <div class="rev-cta reveal" data-delay="2" data-cta="listened">
-        <a class="btn-ink" href="#events" data-i18n="rev.cta2">Learn about sound journeys</a>
-        <a class="btn-quiet" href="https://wa.me/905468419181?text=Hi%20Can%2C%20I%27d%20like%20to%20book%20a%20private%20sound%20journey." target="_blank" rel="noopener" data-i18n="rev.cta2b">Book a private journey</a>
+        <a class="btn-ink" href="#sessions" data-i18n="rev.cta2">Learn about sound journeys</a>
+        <a class="btn-quiet" href="https://wa.me/905468419181?text=Hi%20Noom%2C%20I%20would%20like%20a%20private%20sound%20journey%20on%20the%20terrace.%20My%20dates%20are%3A" target="_blank" rel="noopener" data-i18n="rev.cta2b">Book a private journey</a>
         <span class="note" data-i18n="rev.note2">At our villa &mdash; or we come to your space.</span>
       </div>
     </div>
@@ -948,7 +1144,7 @@
         <p class="per" data-i18n="p1.per">One session</p>
         <p class="desc" data-i18n="p1.desc">Meet the instrument. Feel how it plays, sound your first notes, and find out if handpan is for you &mdash; no commitment, no experience needed.</p>
         <p class="desc" style="margin-top:0.9em" data-i18n="p1.credit">Continue with the 3-Day Handpan Journey and <strong style="font-weight:500;color:var(--ink)">half the demo lesson cost</strong> is deducted from the Journey price.</p>
-        <a class="cta" href="https://instagram.com/noomsoundstudio" target="_blank" rel="noopener" data-i18n="common.msgBook">Message to book &nbsp;&rarr;</a>
+        <a class="cta" href="https://wa.me/905468419181?text=Hi%20Noom%2C%20I%20would%20like%20to%20try%20a%20handpan%20lesson.%20When%20are%20you%20free%3F" target="_blank" rel="noopener" data-i18n="common.msgBook">Message to book &nbsp;&rarr;</a>
       </article>
       <article class="pkg signature reveal" data-delay="1">
         <p class="tag" data-i18n="p2.tag">Signature</p>
@@ -964,7 +1160,7 @@
         <p class="price-big">&#3647;12,000</p>
         <p class="per" data-i18n="p3.per">Eight lessons &middot; 90 min each</p>
         <p class="desc" data-i18n="p3.desc">For those staying longer, or coming back. Technique, rhythm, repertoire &mdash; a steady practice built at your own pace.</p>
-        <a class="cta" href="https://instagram.com/noomsoundstudio" target="_blank" rel="noopener" data-i18n="common.msgBook">Message to book &nbsp;&rarr;</a>
+        <a class="cta" href="https://wa.me/905468419181?text=Hi%20Noom%2C%20I%20am%20interested%20in%20the%20eight%20lesson%20handpan%20course." target="_blank" rel="noopener" data-i18n="common.msgBook">Message to book &nbsp;&rarr;</a>
       </article>
     </div>
     <ul class="pkg-notes reveal">
@@ -974,54 +1170,6 @@
     </ul>
   </section>
 
-  <!-- ============ SOUND JOURNEYS (PRIVATE) ============ -->
-  <section class="sj" id="soundjourneys" data-screen-label="Sound journeys">
-    <div class="sj-inner">
-      <div class="sj-head">
-        <div class="reveal">
-          <p class="eyebrow" data-i18n="sj.eyebrow">Sound journeys &middot; private</p>
-          <h2 data-i18n="sj.title">Rest, while<br/><em>we play.</em></h2>
-        </div>
-        <p class="lede reveal" data-delay="1" data-i18n="sj.lede">Live handpan, gong and bowls, played while you lie back and rest. Book privately for two or a small group &mdash; on our terrace, or wherever you&rsquo;re staying. The weekly open session is in What&rsquo;s on.</p>
-      </div>
-      <div class="sj-grid">
-        <article class="pkg reveal">
-          <p class="tag" data-i18n="sj1.tag">At the studio</p>
-          <h3 data-i18n="sj1.title">Noom Terrace,<br/><em>Lamai.</em></h3>
-          <p class="price-big" data-i18n="sj1.price">from &#3647;2,500</p>
-          <p class="per" data-i18n="sj1.per">For two &middot; +&#3647;500 per extra guest &middot; up to seven</p>
-          <p class="desc" data-i18n="sj1.desc">An hour of live sound on the open-air terrace &mdash; mats, tea, and the evening air included.</p>
-          <a class="cta" href="https://instagram.com/noomsoundstudio" target="_blank" rel="noopener" data-i18n="common.msgBook">Message to book &nbsp;&rarr;</a>
-        </article>
-        <article class="pkg reveal" data-delay="1">
-          <p class="tag" data-i18n="sj2.tag">We come to you</p>
-          <h3 data-i18n="sj2.title">At your<br/><em>place.</em></h3>
-          <p class="price-big" data-i18n="sj2.price">from &#3647;4,000</p>
-          <p class="per" data-i18n="sj2.per">For two &middot; +&#3647;500 per guest &middot; up to ten</p>
-          <p class="desc" data-i18n="sj2.desc">Your villa, hotel, or retreat &mdash; we bring the instruments and set the room.</p>
-          <a class="cta" href="https://instagram.com/noomsoundstudio" target="_blank" rel="noopener" data-i18n="common.msgBook">Message to book &nbsp;&rarr;</a>
-        </article>
-      </div>
-      <ul class="pkg-notes reveal">
-        <li><span class="label" data-i18n="sj.n1l">Spas, hotels &amp; studios</span><p class="text" data-i18n="sj.n1t" style="font-size:22px;width:100%;height:69px">We collaborate with spas, yoga and wellness spaces, and hotels across Samui &mdash; for regular sessions or one-off events, just message.</p></li>
-      </ul>
-    </div>
-  </section>
-
-  <section class="intro" data-screen-label="Intro">
-    <div class="body">
-      <div class="ornament reveal"></div>
-      <p class="reveal" data-i18n="intro.p1">
-        We&rsquo;re a team of sound and movement practitioners based in Koh Samui. We teach handpan, host sound journeys with live instruments, run open jams, and hold weekly sessions &mdash; because we believe this kind of practice should be accessible to everyone, not just those who already know what it is.
-      </p>
-      <p class="reveal" data-delay="1" data-i18n="intro.p2">Come curious, leave with something.</p>
-    </div>
-    <div class="photo-side reveal" data-delay="1">
-      <img src="assets/photo-intro.jpg" alt="Noom Sound Studio" onerror="this.style.display='none';this.parentNode.querySelector('.photo-placeholder').style.display='block'"/>
-      <p class="photo-placeholder" style="display:none">Add your photo here</p>
-    </div>
-  </section>
-
   <section class="pillars" id="pillars" data-screen-label="What we do">
     <div class="pillars-head">
       <div class="reveal">
@@ -1029,7 +1177,7 @@
         <h2 data-i18n="pillars.title">Four ways to come<br/><em>and play.</em></h2>
       </div>
       <p class="reveal" data-delay="1" data-i18n="pillars.lede">
-        Pick what suits you. Lessons are by appointment; jams and journeys run on set dates; the weekly session is open to anyone passing through.
+        Pick what suits you. Lessons are by appointment; jams and journeys run on set dates; the weekly sessions are open to anyone passing through.
       </p>
     </div>
 
@@ -1043,8 +1191,8 @@
     <article class="pillar reveal">
       <div class="num">02</div>
       <h3 data-i18n="pillar2.title">Sound journeys</h3>
-      <p data-i18n="pillar2.body">Live handpan, gong, and Tibetan/crystal bowls &mdash; played while you lie back and rest. No experience needed.<br/><br/><strong style="font-weight:500;color:var(--ink)">Private</strong> sessions at the studio or we come to your space &mdash; message us to arrange.<br/><br/><strong style="font-weight:500;color:var(--ink)">Weekly open session</strong> every Sunday at 17:30 on the Noom Studio terrace, Lamai &mdash; limited spaces.</p>
-      <a href="#events" data-i18n="pillar2.cta">Join the next one &nbsp;&rarr;</a>
+      <p data-i18n="pillar2.body">Live handpan, gong, and Tibetan/crystal bowls &mdash; played while you lie back and rest. No experience needed.<br/><br/><strong style="font-weight:500;color:var(--ink)">Private</strong> sessions at the studio or we come to your space &mdash; message us to arrange.<br/><br/><strong style="font-weight:500;color:var(--ink)">Weekly open sessions</strong> every Wednesday and Sunday at 17:30 on the Noom Studio terrace, Lamai, plus a full moon session each month &mdash; limited mats.</p>
+      <a href="#sessions" data-i18n="pillar2.cta">Join the next one &nbsp;&rarr;</a>
     </article>
 
     <article class="pillar reveal">
@@ -1071,69 +1219,56 @@
           <h2 data-i18n="events.title">Sessions, jams<br/><em>&amp; gatherings.</em></h2>
         </div>
         <p class="lede reveal" data-delay="1" data-i18n="events.lede">
-          Open to anyone passing through. Dates and locations shift with the season &mdash; message us to be on the list for the next one.
+          The weekly sound journeys, plus the two sessions we hold at Mulajoy. Full moon dates are up in Sessions.
         </p>
       </div>
 
       <div class="events-grid">
 
-        <article class="ev reveal">
+        <article class="ev reveal" data-delay="1" data-order="3">
           <div class="top">
-            <span class="num">01</span>
-            <span class="price" data-i18n="ev1.price">฿600</span>
-          </div>
-          <h3 data-i18n="ev1.title">Weekly<br/><em>Sound Journey.</em></h3>
-          <p class="desc" data-i18n="ev1.desc">Lie back while we play handpan, gong, and bowls live. An hour of rest, no participation needed.</p>
-          <div class="when">
-            <span class="label" data-i18n="common.whenWhere">When &amp; where</span>
-            <span data-i18n="ev1.when">Every Sunday &middot; 17:30<br/>
-            <em>60 min &middot; Noom Studio Terrace, Lamai</em></span>
-          </div>
-          <a class="cta" href="#contact" data-i18n="common.join">Join &nbsp;&rarr;</a>
-        </article>
-
-        <article class="ev reveal" data-delay="1">
-          <div class="top">
-            <span class="num">02</span>
+            <span class="num">03</span>
             <span class="price" data-i18n="ev2.price">฿650</span>
           </div>
           <h3 data-i18n="ev2.title">Monthly<br/><em>Sound Therapy.</em></h3>
           <p class="desc" data-i18n="ev2.desc">Monthly sound journey at Mulajoy with House of Holistic Melie &mdash; live instruments, deep rest, side by side. Open to all.</p>
           <div class="when">
             <span class="label" data-i18n="common.whenWhere">When &amp; where</span>
-            <span data-i18n="ev2.when">First Thursday monthly &middot; 75 min<br/>
+            <span data-i18n="ev2.when">First Thursday monthly &middot; 17:00 &middot; 60 min<br/>
             <em>Mulajoy &middot; with House of Holistic Melie</em></span>
           </div>
-          <a class="cta" href="#contact" data-i18n="common.messageJoin">Message to join &nbsp;&rarr;</a>
+          <a class="cta" href="https://wa.me/905468419181?text=Hi%20Noom%2C%20I%20would%20like%20to%20join%20the%20monthly%20sound%20therapy%20at%20Mulajoy." target="_blank" rel="noopener" data-i18n="common.messageJoin">Message to join &nbsp;&rarr;</a>
+          <a class="cta" href="#mailing" style="margin-top:10px" data-i18n="sched.notify">Tell me when it is announced</a>
         </article>
 
-        <article class="ev reveal" data-delay="2">
+        <article class="ev reveal" data-order="1">
           <div class="top">
-            <span class="num">03</span>
+            <span class="num">01</span>
+            <span class="price" data-i18n="ev1.price">฿600</span>
+          </div>
+          <h3 data-i18n="ev1.title">Weekly<br/><em>Sound Journey.</em></h3>
+          <p class="desc" data-i18n="ev1.desc">Lie back while we play handpan, gong, and bowls live. Seventy-five minutes of rest, no participation needed.</p>
+          <div class="when">
+            <span class="label" data-i18n="common.whenWhere">When &amp; where</span>
+            <span data-i18n="ev1.when">Wednesday &amp; Sunday &middot; 17:30<br/>
+            <em>75 min &middot; Noom Terrace, Lamai</em></span>
+          </div>
+          <a class="cta" href="#sessions" data-i18n="ev1.cta">See the schedule &nbsp;&rarr;</a>
+        </article>
+
+        <article class="ev reveal" data-order="2">
+          <div class="top">
+            <span class="num">02</span>
             <span class="price" data-i18n="ev3.price">By contribution</span>
           </div>
           <h3 data-i18n="ev3.title">Children's<br/><em>Rhythm Workshop.</em></h3>
           <p class="desc" data-i18n="ev3.desc">Playful group session for kids &mdash; first sounds, simple patterns, an hour of playing together. Instruments provided.</p>
           <div class="when">
             <span class="label" data-i18n="common.whenWhere">When &amp; where</span>
-            <span data-i18n="ev3.when">Every Tuesday &middot; 10:30am<br/>
-            <em>Mulajoy</em></span>
+            <span data-i18n="ev3.when">Every Wednesday &middot; 11:00<br/>
+            <em>Mulajoy &middot; ages six to fourteen</em></span>
           </div>
-          <a class="cta" href="#contact" data-i18n="common.messageJoin">Message to join &nbsp;&rarr;</a>
-        </article>
-
-        <article class="ev reveal" data-delay="3">
-          <div class="top">
-            <span class="num">04</span>
-          </div>
-          <h3 data-i18n="ev4.title">Book us<br/><em>on Airbnb.</em></h3>
-          <p class="desc" data-i18n="ev4.desc">Find Noom Sound Studio on Airbnb Experiences &mdash; book a private sound journey or handpan session for your group.</p>
-          <div class="when">
-            <span class="label" data-i18n="common.whenWhere">When &amp; where</span>
-            <span data-i18n="ev4.when">Airbnb Experiences &middot; Koh Samui<br/>
-            <em>Book anytime</em></span>
-          </div>
-          <a class="cta" href="https://www.airbnb.com/services/7139446?availabilityKey=LBaakpMGGBgyMDI2LTA3LTAxVDAwOjMwOjAwLjAwMFoAAA%3D%3D&amp;checkin=2026-07-01" target="_blank" rel="noopener" data-i18n="ev4.cta">Book on Airbnb &nbsp;&rarr;</a>
+          <a class="cta" href="https://wa.me/905468419181?text=Hi%20Noom%2C%20I%20would%20like%20to%20bring%20my%20child%20to%20the%20rhythm%20workshop." target="_blank" rel="noopener" data-i18n="common.messageJoin">Message to join &nbsp;&rarr;</a>
         </article>
 
       </div>
@@ -1238,7 +1373,7 @@
         </details>
         <details>
           <summary><span data-i18n="faq.q.pr2">How much does it cost?</span><span class="plus" aria-hidden="true"></span></summary>
-          <div class="answer" data-i18n="faq.a.pr2">Handpan lessons: a demo lesson is <strong>2,000 THB</strong>; the 3-Day Handpan Journey is <strong>10,000 THB</strong>; an 8-lesson course (90 min each) is <strong>12,000 THB</strong>. Group lessons add 1,000 THB per extra player, up to three. Private sound journeys at the studio are <strong>2,500 THB for two</strong> (+500 THB per extra guest, up to 7). We come to your place from <strong>4,000 THB for two</strong> (+500 THB per guest, up to 10). Weekly open sessions on Sundays are <strong>600 THB per person</strong>.</div>
+          <div class="answer" data-i18n="faq.a.pr2">Handpan lessons: a demo lesson is <strong>2,000 THB</strong>; the 3-Day Handpan Journey is <strong>10,000 THB</strong>; an 8-lesson course (90 min each) is <strong>12,000 THB</strong>. Group lessons add 1,000 THB per extra player, up to three. Private sound journeys at the studio are <strong>2,500 THB for two</strong> (+500 THB per extra guest, up to 7). We come to your place from <strong>4,000 THB for two</strong> (+500 THB per guest, up to 10). Weekly sound journeys on Wednesdays and Sundays are <strong>600 THB per person</strong>, and a four-session pass is <strong>2,000 THB</strong>.</div>
         </details>
         <details>
           <summary><span data-i18n="faq.q.pr3">Can I bring kids?</span><span class="plus" aria-hidden="true"></span></summary>
@@ -1251,6 +1386,18 @@
         <details>
           <summary><span data-i18n="faq.q.pr5">What if I need to cancel?</span><span class="plus" aria-hidden="true"></span></summary>
           <div class="answer" data-i18n="faq.a.pr5">Life happens. Just message us as early as you can and we&rsquo;ll sort it out.</div>
+        </details>
+        <details>
+          <summary><span data-i18n="faq.q.pr6">How do I pay for a pass?</span><span class="plus" aria-hidden="true"></span></summary>
+          <div class="answer" data-i18n="faq.a.pr6">We send a QR code on WhatsApp, or you pay cash at your first session. You get a PDF pass straight away and a printed card when you arrive.</div>
+        </details>
+        <details>
+          <summary><span data-i18n="faq.q.pr7">Can someone else use my pass?</span><span class="plus" aria-hidden="true"></span></summary>
+          <div class="answer" data-i18n="faq.a.pr7">Yes. Bring a friend and spend two sessions at once.</div>
+        </details>
+        <details>
+          <summary><span data-i18n="faq.q.pr8">Where is the full moon session held?</span><span class="plus" aria-hidden="true"></span></summary>
+          <div class="answer" data-i18n="faq.a.pr8">The location changes each month and is announced on this page.</div>
         </details>
       </div>
     </div>
@@ -1303,7 +1450,7 @@
       <h3 data-i18n="contact.title">Message us<br/><em>directly.</em></h3>
       <p class="lede" data-i18n="contact.lede">For private lessons, sound journeys, jam invites, events, or collaborations in Koh Samui.</p>
       <div class="btn-row">
-        <a class="btn-primary" href="https://wa.me/905468419181" target="_blank" rel="noopener" data-i18n="contact.whatsapp">Message on WhatsApp</a>
+        <a class="btn-primary" href="https://wa.me/905468419181?text=Hi%20Noom%2C%20I%20have%20a%20question." target="_blank" rel="noopener" data-i18n="contact.whatsapp">Message on WhatsApp</a>
         <a class="btn-outline" href="https://instagram.com/noomsoundstudio" target="_blank" rel="noopener" data-i18n="contact.instagram">Visit Instagram</a>
       </div>
       <p class="contact-email"><a href="mailto:noomsoundstudio@gmail.com">noomsoundstudio@gmail.com</a></p>
@@ -1350,7 +1497,7 @@
 
   <footer class="footer">
     <div class="row">
-      <div style="font-family: var(--serif); font-style: italic; font-size: 24px; color: var(--ink);">Noom <span style="font-family: var(--sans); font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--ink-mute); margin-left: 8px; font-style: normal;">Sound Studio</span></div>
+      <div style="font-family: var(--serif); font-style: italic; font-size: 24px; color: var(--ink);">Noom <span style="font-family: var(--sans); font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--ink-mute); margin-left: 8px; font-style: normal;">Sound Studio &nbsp;&middot;&nbsp; House of Holistic</span></div>
       <div class="meta" data-i18n="footer.place">Lamai · Koh Samui · Thailand</div>
     </div>
     <div class="row">
@@ -1475,6 +1622,7 @@
   </script>
   <script src="i18n-extra.js"></script>
   <script src="i18n-extra2.js"></script>
+  <script src="i18n-extra3.js"></script>
   <script src="i18n.js"></script>
 </body>
 </html>
