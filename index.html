@@ -58,7 +58,7 @@ a:hover{color:var(--clay)}
 
 /* Hero with two doors */
 .hero{position:relative;min-height:100svh;background:var(--cream-deep);overflow:hidden;display:flex;align-items:flex-end;color:var(--cream)}
-.hero-media{position:absolute;inset:0;z-index:0;background:url('assets/photo-gong-handpan-sunset.jpg') 55% 40% / 120% no-repeat;transform:scale(1.04);animation:kenburns 32s var(--ease-slow) 0s infinite alternate;will-change:transform}
+.hero-media{position:absolute;inset:0;z-index:0;background:url('assets/photo-gong-handpan-sunset.jpg') 55% 40% / cover no-repeat;transform:scale(1.04);animation:kenburns 32s var(--ease-slow) 0s infinite alternate;will-change:transform}
 @keyframes kenburns{from{transform:scale(1.04) translate3d(0,0,0)}to{transform:scale(1.13) translate3d(-1.5%,-2%,0)}}
 .hero::before{content:'';position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(42,38,34,0.5) 0%,rgba(42,38,34,0.34) 26%,rgba(42,38,34,0.38) 52%,rgba(42,38,34,0.6) 78%,rgba(42,38,34,0.82) 100%),linear-gradient(90deg,rgba(42,38,34,0.45) 0%,rgba(42,38,34,0.16) 34%,rgba(42,38,34,0) 62%);pointer-events:none}
 .hero-inner{position:relative;z-index:2;padding:118px clamp(24px,6vw,96px) clamp(40px,5vw,72px);width:100%;max-width:1280px;margin:0 auto}
@@ -896,7 +896,7 @@ html{scroll-behavior:auto}
 <p class="grouplabel" data-i18n="contact.herel">Getting here</p>
 <ul>
 <li data-i18n="contact.here1">Five minutes inland from Lamai beach.</li>
-<li data-i18n="contact.here2">Park at the top and walk down. We will send a pin when you book.</li>
+<li data-i18n="contact.here2">Park at the bottom and take the stairs to the studio — just follow the music. We will send a video for finding the location once it is booked.</li>
 <li data-i18n="contact.here3">Arrive ten minutes early so you can settle.</li>
 </ul>
 <span class="map-address" data-i18n="contact.address">Open-air terrace · Lamai, south coast of Koh Samui, Thailand</span>
