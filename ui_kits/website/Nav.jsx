@@ -1,4 +1,4 @@
-function Nav() {
+export function Nav() {
   const [scrolled, setScrolled] = React.useState(false);
   React.useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 80);
@@ -28,4 +28,3 @@ function Nav() {
     </nav>
   );
 }
-window.Nav = Nav;

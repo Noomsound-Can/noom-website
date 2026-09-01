@@ -25,10 +25,18 @@ assets/                  ← photography, logo, iconography
 preview/                 ← design-system tab cards (one HTML file each)
 ui_kits/
   website/               ← the public marketing site (handpan lessons, sessions, calendar)
-    index.html
-    *.jsx                ← reusable section + component recreations
+    index.html           ← @dsCard homepage; loads _ds_bundle.js + composes sections
+    <Name>.jsx           ← exported section components (Nav, Hero, Intro, Calendar,
+    <Name>.d.ts             Sessions, Audio, About, Footer) — on the DS namespace
 slides/                  ← (none — no deck template was provided)
 ```
+
+The eight website sections are exported design-system components: each pairs a
+`<Name>.jsx` (`export function <Name>`) with a `<Name>.d.ts`. Consume them via
+`const { Calendar } = window.NoomSoundStudioDesignSystem_ffadb8`. The **Calendar**
+section is data-driven: edit the `CALENDAR` array in `Calendar.jsx` to add dated
+rows, each of which may carry an optional `link` + `linkLabel` to make the title and
+a terracotta arrow link out (e.g. the monthly *Noom & Melie at Mulajoy Samui* night).
 
 ---
 

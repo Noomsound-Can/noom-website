@@ -1,4 +1,4 @@
-function About() {
+export function About() {
   return (
     <section id="about" style={{ padding: 'var(--s-9) var(--gutter)', background: 'var(--cream-soft)' }}>
       <div style={{ maxWidth: 1200, margin: '0 auto', display: 'grid', gridTemplateColumns: '5fr 6fr', gap: 'clamp(32px, 6vw, 96px)', alignItems: 'center' }}>
@@ -20,4 +20,3 @@ function About() {
     </section>
   );
 }
-window.About = About;

@@ -1,4 +1,4 @@
-function Intro() {
+export function Intro() {
   return (
     <section style={{ padding: 'var(--s-10) var(--gutter)', display: 'grid', gridTemplateColumns: '1fr 2fr 1fr' }}>
       <div className="reveal" style={{ gridColumn: 2 }}>
@@ -13,4 +13,3 @@ function Intro() {
     </section>
   );
 }
-window.Intro = Intro;

@@ -17,7 +17,7 @@ function SessionCard({ kind, title, body, price, duration, primary }) {
   );
 }
 
-function Sessions() {
+export function Sessions() {
   return (
     <section id="sessions" style={{ padding: 'var(--s-9) var(--gutter)', background: 'var(--paper)' }}>
       <div style={{ maxWidth: 1100, margin: '0 auto' }}>
@@ -33,4 +33,3 @@ function Sessions() {
     </section>
   );
 }
-window.Sessions = Sessions;

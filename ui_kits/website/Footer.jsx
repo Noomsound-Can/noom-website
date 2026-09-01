@@ -1,4 +1,4 @@
-function Footer() {
+export function Footer() {
   return (
     <footer id="write" style={{ padding: 'var(--s-9) var(--gutter) var(--s-7)', background: 'var(--paper)', borderTop: '1px solid var(--ink-faint)' }}>
       <div style={{ maxWidth: 1100, margin: '0 auto', display: 'grid', gridTemplateColumns: '1.5fr 1fr 1fr 1fr', gap: 48 }}>
@@ -32,4 +32,3 @@ function Footer() {
     </footer>
   );
 }
-window.Footer = Footer;

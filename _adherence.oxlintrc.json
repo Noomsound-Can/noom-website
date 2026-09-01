@@ -1,0 +1,202 @@
+{
+  "plugins": [
+    "react",
+    "import"
+  ],
+  "rules": {
+    "react/forbid-elements": [
+      "warn",
+      {
+        "forbid": []
+      }
+    ],
+    "no-restricted-imports": [
+      "warn",
+      {
+        "patterns": [
+          {
+            "group": [
+              "i18n-extra.js",
+              "i18n-extra2.js",
+              "i18n-extra3.js",
+              "i18n-extra4.js",
+              "i18n.js",
+              "ui_kits/website/**"
+            ],
+            "message": "Import design-system components from 'index.js', not component internals."
+          }
+        ]
+      }
+    ],
+    "no-restricted-syntax": [
+      "warn",
+      {
+        "selector": "Literal[value=/#[0-9a-fA-F]{3,8}\\b/]",
+        "message": "Raw hex color — use a design-system color token via var()."
+      },
+      {
+        "selector": "Literal[value=/\\b\\d+px\\b/]",
+        "message": "Raw px value — use a design-system spacing token via var()."
+      },
+      {
+        "selector": "Literal[value=/font-family\\s*:\\s*(?!['\\\"]?(?:Cormorant Garamond|IBM Plex Mono|Inter))/i]",
+        "message": "Font not provided by the design system. Available: Cormorant Garamond, IBM Plex Mono, Inter."
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": [
+        "**/index.js"
+      ],
+      "rules": {
+        "no-restricted-imports": "off"
+      }
+    }
+  ],
+  "x-omelette": {
+    "components": {
+      "About": {
+        "replaces": []
+      },
+      "Audio": {
+        "replaces": []
+      },
+      "Calendar": {
+        "replaces": []
+      },
+      "Footer": {
+        "replaces": []
+      },
+      "Hero": {
+        "replaces": []
+      },
+      "Intro": {
+        "replaces": []
+      },
+      "Nav": {
+        "replaces": []
+      },
+      "Sessions": {
+        "replaces": []
+      }
+    },
+    "tokens": [
+      "--accent",
+      "--bg",
+      "--bg-alt",
+      "--clay",
+      "--container",
+      "--cream",
+      "--cream-deep",
+      "--cream-soft",
+      "--dur-fast",
+      "--dur-med",
+      "--dur-slow",
+      "--ease-slow",
+      "--fg",
+      "--fg-mute",
+      "--fg-soft",
+      "--fs-body",
+      "--fs-display",
+      "--fs-h1",
+      "--fs-h2",
+      "--fs-h3",
+      "--fs-lead",
+      "--fs-meta",
+      "--fs-small",
+      "--gutter",
+      "--ink",
+      "--ink-faint",
+      "--ink-mute",
+      "--ink-soft",
+      "--measure",
+      "--mono",
+      "--paper",
+      "--r-0",
+      "--r-1",
+      "--r-2",
+      "--r-pill",
+      "--rule",
+      "--s-1",
+      "--s-10",
+      "--s-2",
+      "--s-3",
+      "--s-4",
+      "--s-5",
+      "--s-6",
+      "--s-7",
+      "--s-8",
+      "--s-9",
+      "--sage",
+      "--sand",
+      "--sans",
+      "--serif",
+      "--shadow-1",
+      "--shadow-2",
+      "--shadow-3",
+      "--shell"
+    ],
+    "tokenKinds": {
+      "--cream": "color",
+      "--cream-soft": "color",
+      "--cream-deep": "color",
+      "--paper": "color",
+      "--shell": "color",
+      "--ink": "color",
+      "--ink-soft": "color",
+      "--ink-mute": "color",
+      "--ink-faint": "color",
+      "--clay": "color",
+      "--sage": "color",
+      "--sand": "color",
+      "--bg": "color",
+      "--bg-alt": "color",
+      "--fg": "color",
+      "--fg-soft": "color",
+      "--fg-mute": "color",
+      "--rule": "color",
+      "--accent": "color",
+      "--serif": "font",
+      "--sans": "font",
+      "--mono": "font",
+      "--fs-display": "font",
+      "--fs-h1": "font",
+      "--fs-h2": "font",
+      "--fs-h3": "font",
+      "--fs-lead": "font",
+      "--fs-body": "font",
+      "--fs-small": "font",
+      "--fs-meta": "font",
+      "--s-1": "spacing",
+      "--s-2": "spacing",
+      "--s-3": "spacing",
+      "--s-4": "spacing",
+      "--s-5": "spacing",
+      "--s-6": "spacing",
+      "--s-7": "spacing",
+      "--s-8": "spacing",
+      "--s-9": "spacing",
+      "--s-10": "spacing",
+      "--r-0": "spacing",
+      "--r-1": "spacing",
+      "--r-2": "spacing",
+      "--r-pill": "spacing",
+      "--shadow-1": "shadow",
+      "--shadow-2": "shadow",
+      "--shadow-3": "shadow",
+      "--ease-slow": "other",
+      "--dur-slow": "other",
+      "--dur-med": "other",
+      "--dur-fast": "other",
+      "--measure": "other",
+      "--container": "spacing",
+      "--gutter": "spacing"
+    },
+    "fontFamilies": [
+      "Cormorant Garamond",
+      "IBM Plex Mono",
+      "Inter"
+    ]
+  }
+}

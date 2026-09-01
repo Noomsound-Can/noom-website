@@ -25,7 +25,7 @@ function AudioRow({ title, meta, dur }) {
   );
 }
 
-function Audio() {
+export function Audio() {
   return (
     <section style={{ padding: 'var(--s-9) var(--gutter)' }}>
       <div style={{ maxWidth: 900, margin: '0 auto' }}>
@@ -40,4 +40,3 @@ function Audio() {
     </section>
   );
 }
-window.Audio = Audio;

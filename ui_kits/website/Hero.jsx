@@ -1,4 +1,4 @@
-function Hero() {
+export function Hero() {
   return (
     <section id="top" style={{ position: 'relative', minHeight: '100vh', display: 'grid', gridTemplateColumns: '1.3fr 1fr', alignItems: 'stretch' }}>
       <div style={{
@@ -25,4 +25,3 @@ function Hero() {
     </section>
   );
 }
-window.Hero = Hero;
