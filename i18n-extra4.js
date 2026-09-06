@@ -106,7 +106,7 @@ th: {
   'contact.lede2': 'สำหรับคลาส ซาวด์เจอร์นี่ เวิร์กช็อป งานอีเวนต์ หรือความร่วมมือบนเกาะสมุย',
   'contact.herel': 'การเดินทาง',
   'contact.here1': 'ห่างจากหาดละไมเข้ามาห้านาที',
-  'contact.here2': 'จอดรถด้านบนแล้วเดินลงมา เราจะส่งพินให้เมื่อคุณจอง',
+  'contact.here2': 'จอดรถด้านล่างแล้วเดินขึ้นบันไดไปสตูดิโอ แค่เดินตามเสียงเพลงมา เราจะส่งวิดีโอบอกทางให้เมื่อคุณจองแล้ว',
   'contact.here3': 'มาถึงก่อนสิบนาทีเพื่อตั้งตัว',
 
   'mailing.sub2': 'สถานที่คืนพระจันทร์เต็มดวงประกาศที่นี่ก่อน พร้อมเซสชันและงานใหม่ ๆ',
@@ -215,7 +215,7 @@ de: {
   'contact.lede2': 'Für Unterricht, Klangreisen, Workshops, Veranstaltungen oder Zusammenarbeit auf Koh Samui.',
   'contact.herel': 'Anfahrt',
   'contact.here1': 'Fünf Minuten landeinwärts vom Strand von Lamai.',
-  'contact.here2': 'Oben parken und hinuntergehen. Wir senden dir einen Pin, wenn du buchst.',
+  'contact.here2': 'Parke unten und nimm die Treppe zum Studio hoch — folge einfach der Musik. Wir senden dir ein Video zum Finden des Orts, sobald du gebucht hast.',
   'contact.here3': 'Komm zehn Minuten früher, damit du ankommen kannst.',
 
   'mailing.sub2': 'Der Vollmondort wird hier zuerst bekannt gegeben, dazu neue Sessions und Zusammenkünfte.',
@@ -324,7 +324,7 @@ fr: {
   'contact.lede2': 'Pour les cours, les voyages sonores, les ateliers, les événements ou les collaborations à Koh Samui.',
   'contact.herel': 'Pour venir',
   'contact.here1': 'Cinq minutes à l\u2019intérieur depuis la plage de Lamai.',
-  'contact.here2': 'Garez-vous en haut et descendez à pied. Nous envoyons un point GPS à la réservation.',
+  'contact.here2': 'Garez-vous en bas et prenez l’escalier jusqu’au studio — suivez simplement la musique. Nous vous envoyons une vidéo pour trouver le lieu une fois la réservation faite.',
   'contact.here3': 'Arrivez dix minutes avant pour vous poser.',
 
   'mailing.sub2': 'Le lieu de la pleine lune est annoncé ici en premier, avec les nouvelles séances et rencontres.',
@@ -433,7 +433,7 @@ ru: {
   'contact.lede2': 'Об уроках, звуковых путешествиях, воркшопах, событиях или сотрудничестве на Ко Самуи.',
   'contact.herel': 'Как добраться',
   'contact.here1': 'Пять минут от пляжа Ламай в сторону холмов.',
-  'contact.here2': 'Припаркуйтесь наверху и спуститесь пешком. Мы пришлём точку при бронировании.',
+  'contact.here2': 'Паркуйтесь внизу и поднимитесь по лестнице в студию — просто идите на звук музыки. Мы пришлём видео с объяснением, как найти место, после бронирования.',
   'contact.here3': 'Приходите на десять минут раньше, чтобы освоиться.',
 
   'mailing.sub2': 'Место полнолуния объявляется здесь первым, вместе с новыми сессиями и встречами.',
@@ -542,7 +542,7 @@ tr: {
   'contact.lede2': 'Dersler, ses yolculukları, atölyeler, etkinlikler ya da Koh Samui\u2019deki iş birlikleri için.',
   'contact.herel': 'Buraya gelmek',
   'contact.here1': 'Lamai plajından beş dakika içeride.',
-  'contact.here2': 'Yukarıya park edip aşağı yürüyün. Rezervasyonda konum atıyoruz.',
+  'contact.here2': 'Aşağıya park edip merdivenlerden stüdyoya çıkın — müziği takip edin. Rezervasyon yapıldığında yeri bulmanız için bir video göndereceğiz.',
   'contact.here3': 'Yerleşebilmek için on dakika önce gelin.',
 
   'mailing.sub2': 'Dolunay yeri ilk burada duyurulur, yeni seanslar ve buluşmalarla birlikte.',
@@ -651,7 +651,7 @@ he: {
   'contact.lede2': 'לשיעורים, מסעות צליל, סדנאות, אירועים או שיתופי פעולה בקוֹ סָמוּי.',
   'contact.herel': 'איך מגיעים',
   'contact.here1': 'חמש דקות פנימה מחוף לאמאי.',
-  'contact.here2': 'להחנות למעלה ולרדת ברגל. נשלח נקודה במפה כשתזמינו.',
+  'contact.here2': 'תחנו למטה ותעלו במדרגות לסטודיו — פשוט תעקבו אחרי המוזיקה. נשלח סרטון למציאת המקום כשתזמינו.',
   'contact.here3': 'להגיע עשר דקות מראש, כדי להתמקם.',
 
   'mailing.sub2': 'מקום הירח המלא מוכרז כאן קודם, יחד עם מפגשים והתכנסויות חדשים.',
@@ -783,6 +783,33 @@ const NOOM_V44 = {
 };
 Object.keys(NOOM_V44).forEach(function (lang) {
   NOOM_V4[lang] = Object.assign(NOOM_V4[lang] || {}, NOOM_V44[lang]);
+});
+
+/* v4.5 — wa.p2both: shared history + venue list, including the "More about us" link.
+   The <a href="about/"> anchor must stay in every language: it renders only on the
+   homepage, so the depth is correct as written. */
+const NOOM_V45 = {
+ "th": {
+  "wa.p2both": "เราเล่นด้วยกันมากกว่าหนึ่งปี กว่าห้าสิบเซสชันแล้ว เราได้รับเชิญไปเล่นที่ Kamalaya, Anantara Lawana, W, Conrad, Absolute Sanctuary, Samujana, Vikasa, 5 Elements และ Samaya Wellness และมีที่ในโปรแกรมเวลเนสของ Kamalaya <a href=\"about/\">อ่านเพิ่มเติมเกี่ยวกับเรา</a>"
+ },
+ "de": {
+  "wa.p2both": "Wir spielen seit über einem Jahr zusammen, bisher mehr als fünfzig Sessions. Wir wurden eingeladen, bei Kamalaya, Anantara Lawana, W, Conrad, Absolute Sanctuary, Samujana, Vikasa, 5 Elements und Samaya Wellness zu spielen, und wir haben einen Platz im Wellnessprogramm von Kamalaya. <a href=\"about/\">Mehr über uns</a>."
+ },
+ "fr": {
+  "wa.p2both": "Nous jouons ensemble depuis plus d’un an, plus de cinquante séances à ce jour. Nous avons été invités à jouer à Kamalaya, Anantara Lawana, W, Conrad, Absolute Sanctuary, Samujana, Vikasa, 5 Elements et Samaya Wellness, et nous avons une place dans le programme bien-être de Kamalaya. <a href=\"about/\">En savoir plus sur nous</a>."
+ },
+ "ru": {
+  "wa.p2both": "Мы играем вместе больше года, уже более пятидесяти сессий. Нас приглашали играть в Kamalaya, Anantara Lawana, W, Conrad, Absolute Sanctuary, Samujana, Vikasa, 5 Elements и Samaya Wellness, и у нас есть место в велнес-программе Kamalaya. <a href=\"about/\">Подробнее о нас</a>."
+ },
+ "tr": {
+  "wa.p2both": "Bir yıldan fazla birlikte çalıyoruz, şimdiye kadar ellinin üzerinde seans. Kamalaya, Anantara Lawana, W, Conrad, Absolute Sanctuary, Samujana, Vikasa, 5 Elements ve Samaya Wellness’ta çalmaya davet edildik ve Kamalaya wellness programında yerimiz var. <a href=\"about/\">Hakkımızda daha fazlası</a>."
+ },
+ "he": {
+  "wa.p2both": "אנחנו מנגנים יחד יותר משנה, למעלה מחמישים מפגשים עד כה. הוזמנו לנגן ב־Kamalaya, Anantara Lawana, W, Conrad, Absolute Sanctuary, Samujana, Vikasa, 5 Elements ו־Samaya Wellness, ויש לנו מקום בתוכנית הבריאות של Kamalaya. <a href=\"about/\">עוד עלינו</a>."
+ }
+};
+Object.keys(NOOM_V45).forEach(function (lang) {
+  NOOM_V4[lang] = Object.assign(NOOM_V4[lang] || {}, NOOM_V45[lang]);
 });
 
 Object.keys(NOOM_V4).forEach(function (lang) {
