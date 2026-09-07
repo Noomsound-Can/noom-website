@@ -196,7 +196,8 @@ a.btn-quiet:hover{background:var(--ink);color:var(--cream)}
 .wa-legal{font-family:var(--sans);font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--ink-mute);margin:28px 0 0 !important;max-width:none}
 .wa-ig{margin:clamp(28px,3vw,44px) 0 0;padding-top:24px;border-top:1px solid var(--ink-faint);display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap}
 .wa-ig p{font-family:var(--serif);font-style:italic;font-size:17px;color:var(--ink-soft);margin:0;max-width:40ch}
-@media (max-width:860px){.wa-photo{aspect-ratio:4/3}.wa-cols{grid-template-columns:1fr;gap:24px}}
+@media (max-width:860px){.wa-photo{aspect-ratio:4/3;object-position:50% 50%}.wa-cols{grid-template-columns:1fr;gap:24px}}
+@media (max-width:640px){.wa-photo{aspect-ratio:1/1;object-position:50% 50%}}
 
 /* Reviews + venues */
 .rev{padding:clamp(56px,8vw,124px) clamp(24px,5vw,72px);background:var(--cream);border-top:1px solid var(--ink-faint)}
