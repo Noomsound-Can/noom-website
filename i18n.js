@@ -2,8 +2,8 @@
    Noom Sound Studio — i18n
    - English is the source of truth (already in HTML)
    - On first load, captures EN strings, then overlays per-language map
-   - IP-based detection via ipapi.co (free, CORS), with navigator.language
-     fallback and persisted choice in localStorage
+   - Language from persisted choice in localStorage, then navigator.language,
+     then English (no IP-based detection)
    - Translations below are a starting point. We recommend a native
      speaker review the TH/DE/FR/RU copy before going live —
      especially the FAQ answers.
@@ -15,22 +15,6 @@
   const SUPPORTED = ['en', 'th', 'de', 'fr', 'ru', 'tr', 'he'];
   const RTL_LANGS = ['he'];
   const STORAGE_KEY = 'noom-lang';
-
-  // ----- Country → language mapping (IP-based detection) -----
-  const COUNTRY_TO_LANG = {
-    // Thai
-    TH: 'th',
-    // German-speaking
-    DE: 'de', AT: 'de', CH: 'de', LI: 'de',
-    // French-speaking
-    FR: 'fr', BE: 'fr', LU: 'fr', MC: 'fr',
-    // Russian / CIS (Russian as common 2nd lang)
-    RU: 'ru', BY: 'ru', KZ: 'ru', KG: 'ru', UZ: 'ru', TJ: 'ru', AM: 'ru', AZ: 'ru', MD: 'ru',
-    // Turkish
-    TR: 'tr',
-    // Hebrew
-    IL: 'he',
-  };
 
   // ===================================================================
   // TRANSLATIONS
@@ -1005,25 +989,12 @@
   }
 
   // ----- Detection -----
-  async function detectLang() {
+  function detectLang() {
     // 1) Explicit user choice
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved && SUPPORTED.includes(saved)) return saved;
 
-    // 2) IP-based (free, CORS-enabled). Soft-fails to navigator.language.
-    try {
-      const ctrl = new AbortController();
-      const timeout = setTimeout(() => ctrl.abort(), 2500);
-      const resp = await fetch('https://ipapi.co/json/', { signal: ctrl.signal });
-      clearTimeout(timeout);
-      if (resp.ok) {
-        const data = await resp.json();
-        const cc = (data && data.country_code || '').toUpperCase();
-        if (cc && COUNTRY_TO_LANG[cc]) return COUNTRY_TO_LANG[cc];
-      }
-    } catch (_) { /* fall through */ }
-
-    // 3) Browser language
+    // 2) Browser language
     const nav = (navigator.language || navigator.userLanguage || 'en').toLowerCase();
     const base = nav.split('-')[0];
     if (SUPPORTED.includes(base)) return base;
@@ -1063,11 +1034,10 @@
   function boot() {
     snapshotOriginals();
     setupDropdown();
-    // Render EN immediately so nothing flashes; then asynchronously detect.
+    // Render EN immediately so nothing flashes; then apply detected language.
     applyLang('en');
-    detectLang().then(lang => {
-      if (lang && lang !== 'en') applyLang(lang);
-    });
+    const lang = detectLang();
+    if (lang && lang !== 'en') applyLang(lang);
   }
 
   if (document.readyState === 'loading') {
