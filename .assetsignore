@@ -1,0 +1,19 @@
+.git
+.gitignore
+preview
+ui_kits
+screenshots
+thumbnail.html
+_ds_bundle.js
+_ds_manifest.json
+_adherence.oxlintrc.json
+styles.css
+uploads
+README.md
+SKILL.md
+wrangler.jsonc
+.assetsignore
+Noom Homepage v4.html
+index .html
+assets/photo-noom-sunset-handpan.png
+assets/photo-journey-terrace.png
