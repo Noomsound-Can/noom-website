@@ -40,7 +40,7 @@
   const whenOf = (b) => b.slots.map((s) => s.label).join(" / ");
 
   const ACTION_WORDS = {
-    confirm: "Confirmed", decline: "Declined", cancel: "Cancelled", manual: "Added",
+    confirm: "Confirmed", decline: "Declined", cancel: "Cancelled", manual: "Added", mats: "Mats changed",
     close: "Closed", reopen: "Reopened", expire: "Expired, no answer in 24 h,",
   };
   const lastLine = (l) =>
@@ -198,8 +198,16 @@
           ? (g.notes || "Added by hand")
           : `Website${g.price_thb != null ? `, ${thb(g.price_thb)}` : ""}`;
         const text = closed ? MSG.closed(g.name, o) : null;
+        // One mat less or more for this guest; below 1 is the cancel cross instead.
+        const count = off
+          ? `<span class="n">${g.party_size}</span>`
+          : `<span class="nm-step">
+              <button type="button" class="nm-pm" data-act="mats" data-ref="${esc(g.ref)}" data-n="${g.party_size - 1}"${g.party_size <= 1 ? " disabled" : ""} aria-label="One mat less for ${esc(g.name)}">&minus;</button>
+              <span class="n">${g.party_size}</span>
+              <button type="button" class="nm-pm" data-act="mats" data-ref="${esc(g.ref)}" data-n="${g.party_size + 1}"${o.taken >= o.manual_max ? " disabled" : ""} aria-label="One mat more for ${esc(g.name)}">+</button>
+            </span>`;
         return `<li class="${off ? "off" : ""}">
-          <span class="n">${g.party_size}</span>
+          ${count}
           <span class="g">${esc(g.name)}<small>${esc(from)} &middot; ${esc(g.ref)}${off ? ` &middot; ${esc(g.status)}` : ""}</small></span>
           ${g.whatsapp ? `<a class="nm-wa-mini" href="${esc(wa(g.whatsapp, text))}" target="_blank" rel="noopener">${closed ? "Tell" : "Chat"}</a>` : ""}
           ${off ? "" : `<button type="button" class="nm-x" data-act="cancel" data-ref="${esc(g.ref)}" aria-label="Cancel ${esc(g.name)}">&times;</button>`}
@@ -247,7 +255,7 @@
   }
 
   // ---------- notice ----------
-  function notice({ text, sub, warn, links = [], buttons = [] }) {
+  function notice({ text, sub, warn, links = [], buttons = [], scroll = true }) {
     const n = $("notice");
     n.className = `nm-notice${warn ? " warn" : ""}`;
     n.innerHTML =
@@ -258,7 +266,7 @@
           `<a class="nm-btn wa" href="${esc(l.href)}" target="_blank" rel="noopener">${esc(l.label)}</a>`).join("")}${buttons.join("")}</div>`
         : "");
     n.hidden = false;
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    if (scroll) window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
   const calendarNote = (c) =>
@@ -321,6 +329,23 @@
         links: phone ? [{ label: `Tell ${first(f.name)} on WhatsApp`, href: wa(phone, text) }] : [],
       });
     }, "Could not save");
+  }
+
+  // No confirm dialog and no scroll: each tap is one mat and easy to undo with the
+  // other button. The sticky notice shows the result where Can is on the page.
+  async function matsAction(ref, n, btn) {
+    const f = findRef(ref);
+    if (!f?.guest) return;
+    const before = f.guest.party_size;
+    await run(btn, async () => {
+      const r = await api(`/api/admin/booking/${encodeURIComponent(ref)}`, { action: "mats", party_size: n });
+      notice({
+        text: `${f.name}: ${plural(before, "mat")} to ${n}. Now ${f.session.taken - before + n}/${f.session.capacity} on ${f.when}.`,
+        sub: calendarNote(r.calendar),
+        warn: r.calendar === false,
+        scroll: false,
+      });
+    }, "Could not change the mats");
   }
 
   async function occurrenceAction(id, act, btn) {
@@ -410,6 +435,7 @@
     if (!el) return;
     const act = el.dataset.act;
     if (act === "confirm" || act === "decline" || act === "cancel") bookingAction(el.dataset.ref, act, el);
+    else if (act === "mats") matsAction(el.dataset.ref, Number(el.dataset.n), el);
     else if (act === "close" || act === "reopen") occurrenceAction(el.dataset.occ, act, el);
     else if (act === "add") {
       state.openForm = el.dataset.occ;

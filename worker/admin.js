@@ -2,7 +2,7 @@
 // expiry of unanswered holds. index.js only routes here with a verified Access email.
 
 import { addDays, dayStartMs, isDate, isoUtc, localDate, localTime } from "./availability.js";
-import { CAN_WHATSAPP, makeRef, sessionName, slotLabel, thb, validateManual, whatsappLink } from "./booking.js";
+import { CAN_WHATSAPP, makeRef, priceFor, sessionName, slotLabel, thb, validateManual, whatsappLink } from "./booking.js";
 import { PUBLIC_REPLY_TO, alertRecipients, sendEmail } from "./email.js";
 import { createEvent, deleteEvent, patchEvent } from "./gcal.js";
 import {
@@ -154,10 +154,11 @@ async function adminBookings(url, env, email) {
 // -> { ok, ref, status, calendar }. calendar: true, false (fix it by hand) or 'off' (local).
 async function adminBookingAction(body, env, ctx, email, ref) {
   const action = body.action;
-  if (!["confirm", "decline", "cancel"].includes(action)) return json({ error: "bad_action" }, 400);
+  if (!["confirm", "decline", "cancel", "mats"].includes(action)) return json({ error: "bad_action" }, 400);
   const b = await env.DB.prepare("SELECT * FROM booking WHERE ref = ?").bind(ref).first();
   if (!b) return json({ error: "not_found" }, 404);
   const service = await env.DB.prepare("SELECT * FROM service WHERE id = ?").bind(b.service_id).first();
+  if (action === "mats") return adminMats(body, env, email, b, service);
   const nowIso = isoUtc(Date.now());
 
   let res;
@@ -209,6 +210,33 @@ async function adminBookingAction(body, env, ctx, email, ref) {
 
   if (action === "confirm" && b.email) ctx.waitUntil(confirmEmail(env, service, b));
   return json({ ok: true, ref, status, calendar });
+}
+
+// POST /api/admin/booking/:ref { action: 'mats', party_size } on a group session guest:
+// one of a group of 6 cannot come, make it 5. Same ceiling as adding a guest
+// (capacity + MANUAL_OVER), checked in one statement. A website guest's price follows
+// the new size; a manual guest has no price. To remove the whole booking, cancel it.
+async function adminMats(body, env, email, b, service) {
+  if (!b.occurrence_id) return json({ error: "group_only" }, 400);
+  if (b.status !== "confirmed") return json({ error: "wrong_status", status: b.status }, 409);
+  const n = Number(body.party_size);
+  if (!Number.isInteger(n) || n < 1) return json({ error: "invalid", fields: { party_size: "At least 1. To remove the booking, cancel it." } }, 400);
+  if (n === b.party_size) return json({ ok: true, ref: b.ref, party_size: n, calendar: true });
+  const occ = await findOccurrence(env, b.occurrence_id);
+  if (!occ) return json({ error: "unknown_occurrence" }, 400);
+  const price = b.price_thb == null ? null : priceFor(service, n);
+
+  const res = await env.DB.prepare(
+    `UPDATE booking SET party_size = ?1, price_thb = ?2
+      WHERE ref = ?3 AND status = 'confirmed'
+        AND (SELECT COALESCE(SUM(party_size), 0) FROM booking
+              WHERE occurrence_id = ?4 AND status = 'confirmed' AND ref != ?3) + ?1 <= ?5`,
+  ).bind(n, price, b.ref, b.occurrence_id, manualLimit(occ)).run();
+  if (res.meta.changes !== 1) return json({ error: "full", fields: { party_size: "Not enough mats left." } }, 409);
+
+  await log(env, email, "mats", b.ref, `${b.party_size} to ${n}`);
+  const calendar = await calendarStep(env, `mats ${b.ref}`, () => syncOccurrenceEvent(env, b.occurrence_id));
+  return json({ ok: true, ref: b.ref, party_size: n, price_thb: price, calendar });
 }
 
 // POST /api/admin/manual { occurrence, name, party_size, whatsapp?, notes? }

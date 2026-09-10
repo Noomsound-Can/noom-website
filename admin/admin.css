@@ -70,6 +70,11 @@
 .nm-guests{list-style:none;margin:10px 0 0;padding:0;border-top:1px solid var(--shell)}
 .nm-guests li{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--shell)}
 .nm-guests .n{font-family:var(--mono);font-size:14px;min-width:18px;text-align:center;color:var(--ink)}
+.nm-step{display:inline-flex;align-items:center;gap:2px;flex:0 0 auto}
+.nm-pm{all:unset;box-sizing:border-box;cursor:pointer;width:30px;height:32px;display:inline-flex;align-items:center;justify-content:center;font-family:var(--sans);font-size:16px;color:var(--ink);border:1px solid var(--ink-faint);background:var(--paper)}
+.nm-pm:hover{border-color:var(--ink)}
+.nm-pm:focus-visible{outline:2px solid var(--clay);outline-offset:1px}
+.nm-pm:disabled{opacity:.3;cursor:default}
 .nm-guests .g{flex:1;min-width:0;font-family:var(--serif);font-size:17px;line-height:1.3;color:var(--ink)}
 .nm-guests .g small{display:block;font-family:var(--sans);font-size:11px;color:var(--ink-mute);letter-spacing:0.02em}
 .nm-guests li.off{opacity:.55}
