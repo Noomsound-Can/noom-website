@@ -122,6 +122,12 @@ export function validateBooking(body, service) {
     errors.location = "Please tell us the villa, hotel or area.";
   }
 
+  // Partner bookings (step 8): the partner names the session themselves.
+  const serviceLabel = service.kind === "partner" ? str(body.service_label, 80) : "";
+  if (service.kind === "partner" && serviceLabel.length < 2) {
+    errors.service_label = "Please give the session a name, for example Sound bath for two.";
+  }
+
   const slots = Array.isArray(body.slots) ? body.slots : [];
   const clean = [];
   for (const s of slots) {
@@ -157,6 +163,20 @@ export function validateBooking(body, service) {
 
   if (Object.keys(errors).length) return { errors };
   return {
-    data: { name, whatsapp, email, party_size: party, location: location || null, notes, slots: clean },
+    data: {
+      name, whatsapp, email, party_size: party, location: location || null, notes, slots: clean,
+      service_label: serviceLabel || null,
+    },
   };
+}
+
+// 'Lime Samui' -> 'lime-samui-7k3q'. The random end keeps a partner link from being
+// guessed: anyone with it can make confirmed bookings invoiced to that partner.
+export function partnerSlug(name, random = crypto.getRandomValues(new Uint8Array(4))) {
+  const base = String(name).toLowerCase().normalize("NFKD").replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "").slice(0, 40) || "partner";
+  const alphabet = "abcdefghjkmnpqrstuvwxyz23456789";
+  let tail = "";
+  for (const b of random) tail += alphabet[b % alphabet.length];
+  return `${base}-${tail}`;
 }

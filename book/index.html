@@ -94,15 +94,21 @@
 <form class="bk-step" id="stepDetails" hidden novalidate aria-labelledby="hDetails">
 <p class="grouplabel" id="hDetails">3 &nbsp;&middot;&nbsp; Your details</p>
 <div class="bk-fields">
+<label class="bk-field bk-wide" id="labelField" hidden>
+<span>Session name</span>
+<input name="service_label" maxlength="80" placeholder="Sunset sound bath for two" autocomplete="off" />
+<em class="bk-hint">Name it however suits your guests. It shows on your confirmation.</em>
+<em class="bk-err" data-for="service_label"></em>
+</label>
 <label class="bk-field">
-<span>Name</span>
+<span id="nameLabel">Name</span>
 <input name="name" autocomplete="name" required maxlength="80" />
 <em class="bk-err" data-for="name"></em>
 </label>
 <label class="bk-field">
-<span>WhatsApp number</span>
+<span id="waLabel">WhatsApp number</span>
 <input name="whatsapp" type="tel" autocomplete="tel" inputmode="tel" required maxlength="40" placeholder="+66 81 234 5678" />
-<em class="bk-hint">With the country code. We confirm here.</em>
+<em class="bk-hint" id="waHint">With the country code. We confirm here.</em>
 <em class="bk-err" data-for="whatsapp"></em>
 </label>
 <label class="bk-field">
@@ -111,11 +117,11 @@
 <em class="bk-err" data-for="party_size"></em>
 </label>
 <label class="bk-field" id="locationField" hidden>
-<span>Villa, hotel or area</span>
+<span id="locationLabel">Villa, hotel or area</span>
 <input name="location" maxlength="160" placeholder="Villa name, Bophut" />
 <em class="bk-err" data-for="location"></em>
 </label>
-<label class="bk-field">
+<label class="bk-field" id="emailField">
 <span>Email <i>(optional)</i></span>
 <input name="email" type="email" autocomplete="email" maxlength="120" />
 <em class="bk-err" data-for="email"></em>
@@ -131,7 +137,7 @@
 <div class="bk-sum-row"><span id="sumService"></span><span class="bk-price" id="sumPrice"></span></div>
 <p class="bk-sum-when" id="sumWhen"></p>
 <p class="bk-request" id="sumRequest">This is a request. We will message you on WhatsApp to confirm.</p>
-<p class="bk-pay">Pay on the day, in cash, by bank transfer or Thai QR.</p>
+<p class="bk-pay" id="sumPay">Pay on the day, in cash, by bank transfer or Thai QR.</p>
 <button class="btn-ink" type="submit" id="submitBtn">Send request</button>
 <p class="bk-err bk-form-err" id="formError" role="alert"></p>
 </div>

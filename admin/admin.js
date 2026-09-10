@@ -10,7 +10,7 @@
   const TERRACE = "Noom Terrace, Lamai";
   const REFRESH_AFTER_MS = 60 * 1000;
 
-  const state = { data: null, loadedAt: 0, busy: false, showAll: false, openForm: null };
+  const state = { data: null, partners: null, loadedAt: 0, busy: false, showAll: false, openForm: null };
   try {
     state.showAll = localStorage.getItem("noomAdminShowAll") === "1";
   } catch {}
@@ -89,9 +89,18 @@
   async function load() {
     $("refresh").disabled = true;
     try {
-      state.data = await api("/api/admin/bookings?days=30");
+      const [data, partners] = await Promise.all([
+        api("/api/admin/bookings?days=30"),
+        api("/api/admin/partners").catch((err) => {
+          if (err instanceof AuthError) throw err;
+          return null; // the bookings still show; the partner list says it failed
+        }),
+      ]);
+      state.data = data;
+      state.partners = partners;
       state.loadedAt = Date.now();
       render();
+      renderPartners();
     } catch (err) {
       if (err instanceof AuthError) return loginNotice();
       if (!state.data) $("days").innerHTML = `<p class="nm-quiet">Could not load the bookings (${esc(err.message)}). Tap Refresh.</p>`;
@@ -252,6 +261,84 @@
         <button type="button" class="nm-btn" data-act="closeform">Cancel</button>
       </div>
     </form>`;
+  }
+
+  // ---------- partners (step 8) ----------
+  const SITE = "https://www.noomsound.studio";
+  const partnerLink = (slug) => `${SITE}/book/?partner=${slug}`;
+  const partnerMail = (p) =>
+    `mailto:${encodeURIComponent(p.email || "")}?subject=${encodeURIComponent("Your booking link for Noom Sound Studio")}` +
+    `&body=${encodeURIComponent(
+      `Hello ${p.name},\n\n` +
+      `Here is your own link to book Noom Sound Studio sessions for your guests:\n${partnerLink(p.slug)}\n\n` +
+      `Pick a free time and name the session. It is confirmed straight away, 60 minutes, ` +
+      `invoiced to ${p.name} per our agreement. A confirmation email comes to this address.\n\n` +
+      `Please keep the link within your team.\n\nCan\nNoom Sound Studio`,
+    )}`;
+
+  function renderPartners() {
+    const box = $("partners");
+    if (!state.partners) {
+      box.innerHTML = `<p class="nm-quiet">The partner list could not load. Tap Refresh.</p>`;
+      return;
+    }
+    box.innerHTML = state.partners.length
+      ? state.partners.map((p) => `<article class="nm-item nm-partner" data-status="${p.active ? "active" : "off"}">
+          <div class="nm-row"><span class="nm-title">${esc(p.name)}</span>
+            <span class="nm-badge ${p.active ? "confirmed" : ""}">${p.active ? "Link on" : "Link off"}</span></div>
+          <p class="nm-meta">${esc(p.email || "no email")} &middot; ${plural(p.bookings, "booking")}</p>
+          <p class="nm-link">${esc(partnerLink(p.slug))}</p>
+          <div class="nm-actions">
+            ${p.active ? `<button type="button" class="nm-btn ink small" data-act="copy" data-link="${esc(partnerLink(p.slug))}">Copy link</button>
+            <a class="nm-btn small" href="${esc(partnerMail(p))}">Email link</a>` : ""}
+            <button type="button" class="nm-btn ${p.active ? "danger" : ""} small" data-act="${p.active ? "poff" : "pon"}" data-slug="${esc(p.slug)}">${p.active ? "Switch off" : "Switch on"}</button>
+          </div>
+        </article>`).join("")
+      : `<p class="nm-quiet">No partners yet. Add the first one below.</p>`;
+  }
+
+  async function copyLink(link) {
+    try {
+      await navigator.clipboard.writeText(link);
+      notice({ text: "Link copied. Paste it into WhatsApp or an email to the partner.", scroll: false });
+    } catch {
+      window.prompt("Copy this link:", link);
+    }
+  }
+
+  async function partnerToggle(slug, act, btn) {
+    const p = state.partners.find((x) => x.slug === slug);
+    if (!p) return;
+    if (act === "poff" && !window.confirm(`Switch off the link for ${p.name}? It stops taking bookings at once. Bookings already made stay.`)) return;
+    await run(btn, async () => {
+      await api(`/api/admin/partner/${encodeURIComponent(slug)}`, { action: act === "poff" ? "off" : "on" });
+      notice({ text: `${p.name}: link switched ${act === "poff" ? "off" : "on"}.`, scroll: false });
+    }, "Could not change the link");
+  }
+
+  async function partnerSubmit(form) {
+    const err = form.querySelector(".nm-err");
+    const f = form.elements;
+    const body = { name: f.namedItem("name").value, email: f.namedItem("email").value };
+    err.textContent = "";
+    const btn = form.querySelector('button[type="submit"]');
+    await run(btn, async () => {
+      try {
+        const r = await api("/api/admin/partners", body);
+        form.reset();
+        notice({
+          text: `Added ${body.name.trim()}. Their link: ${partnerLink(r.slug)}`,
+          sub: "Copy it or email it from the Partners list.",
+          scroll: false,
+        });
+      } catch (e) {
+        if (e.data?.fields) {
+          err.textContent = Object.values(e.data.fields).join(" ");
+          throw Object.assign(new Error("shown"), { shown: true });
+        }
+        throw e;
+      }
+    }, "Could not add the partner");
   }
 
   // ---------- notice ----------
@@ -436,6 +523,8 @@
     const act = el.dataset.act;
     if (act === "confirm" || act === "decline" || act === "cancel") bookingAction(el.dataset.ref, act, el);
     else if (act === "mats") matsAction(el.dataset.ref, Number(el.dataset.n), el);
+    else if (act === "copy") copyLink(el.dataset.link);
+    else if (act === "poff" || act === "pon") partnerToggle(el.dataset.slug, act, el);
     else if (act === "close" || act === "reopen") occurrenceAction(el.dataset.occ, act, el);
     else if (act === "add") {
       state.openForm = el.dataset.occ;
@@ -451,7 +540,8 @@
     const form = e.target.closest("form.nm-form");
     if (!form) return;
     e.preventDefault();
-    manualSubmit(form);
+    if (form.id === "partnerForm") partnerSubmit(form);
+    else manualSubmit(form);
   });
 
   $("refresh").addEventListener("click", load);

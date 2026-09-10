@@ -2,7 +2,17 @@
 // expiry of unanswered holds. index.js only routes here with a verified Access email.
 
 import { addDays, dayStartMs, isDate, isoUtc, localDate, localTime } from "./availability.js";
-import { CAN_WHATSAPP, makeRef, priceFor, sessionName, slotLabel, thb, validateManual, whatsappLink } from "./booking.js";
+import {
+  CAN_WHATSAPP,
+  makeRef,
+  partnerSlug,
+  priceFor,
+  sessionName,
+  slotLabel,
+  thb,
+  validateManual,
+  whatsappLink,
+} from "./booking.js";
 import { PUBLIC_REPLY_TO, alertRecipients, sendEmail } from "./email.js";
 import { createEvent, deleteEvent, patchEvent } from "./gcal.js";
 import {
@@ -24,6 +34,7 @@ export async function adminRoute(request, env, ctx, email) {
   const url = new URL(request.url);
   const path = url.pathname;
   if (request.method === "GET" && path === "/api/admin/bookings") return adminBookings(url, env, email);
+  if (request.method === "GET" && path === "/api/admin/partners") return adminPartners(env);
   if (request.method !== "POST") return json({ error: "not_found" }, 404);
 
   // JSON only: a cross-site form cannot send this content type without a CORS
@@ -39,7 +50,10 @@ export async function adminRoute(request, env, ctx, email) {
   }
 
   if (path === "/api/admin/manual") return adminManual(body, env, email);
-  let m = /^\/api\/admin\/booking\/([A-Za-z0-9-]{1,40})$/.exec(path);
+  if (path === "/api/admin/partners") return adminAddPartner(body, env, email);
+  let m = /^\/api\/admin\/partner\/([a-z0-9-]{1,60})$/.exec(path);
+  if (m) return adminPartnerAction(body, env, email, m[1]);
+  m = /^\/api\/admin\/booking\/([A-Za-z0-9-]{1,40})$/.exec(path);
   if (m) return adminBookingAction(body, env, ctx, email, m[1]);
   m = /^\/api\/admin\/occurrence\/([a-z0-9-]{1,80})$/.exec(path);
   if (m) return adminOccurrence(body, env, email, m[1]);
@@ -120,7 +134,7 @@ async function adminBookings(url, env, email) {
       .map((b) => ({
         ...clean(b),
         status: shownStatus(b, nowMs),
-        service: b.service_name,
+        service: b.service_label || b.service_name, // a partner names its own session
         partner: b.partner_name,
         slots: slotsByRef.get(b.ref) || [],
         service_name: undefined,
@@ -302,6 +316,53 @@ async function adminOccurrence(body, env, email, id) {
   await log(env, email, action, id, null);
   const calendar = await calendarStep(env, `${action} ${id}`, () => syncOccurrenceEvent(env, id));
   return json({ ok: true, id, status, calendar });
+}
+
+// ---------- partners (step 8) ----------
+
+// GET /api/admin/partners -> [{ slug, name, email, active, created_at, bookings }]
+async function adminPartners(env) {
+  const { results } = await env.DB.prepare(
+    `SELECT p.slug, p.name, p.email, p.active, p.created_at,
+            (SELECT count(*) FROM booking b WHERE b.partner_slug = p.slug AND b.status = 'confirmed') AS bookings
+       FROM partner p ORDER BY p.active DESC, p.name`,
+  ).all();
+  return json(results);
+}
+
+// POST /api/admin/partners { name, email } -> { ok, slug }. The link is
+// /book/?partner=<slug>; the slug ends in 4 random characters so it cannot be guessed.
+async function adminAddPartner(body, env, email) {
+  const name = typeof body.name === "string" ? body.name.trim().slice(0, 80) : "";
+  const pEmail = typeof body.email === "string" ? body.email.trim().slice(0, 120) : "";
+  const fields = {};
+  if (name.length < 2) fields.name = "Enter the partner's name.";
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(pEmail)) fields.email = "Enter the email that should get their confirmations.";
+  if (Object.keys(fields).length) return json({ error: "invalid", fields }, 400);
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const slug = partnerSlug(name);
+    try {
+      await env.DB.prepare(
+        "INSERT INTO partner (slug, name, email, contact, active, created_at) VALUES (?, ?, ?, ?, 1, ?)",
+      ).bind(slug, name, pEmail, pEmail, isoUtc(Date.now())).run();
+      await log(env, email, "partner_add", slug, name);
+      return json({ ok: true, slug });
+    } catch (err) {
+      if (!/UNIQUE/i.test(err.message)) throw err;
+    }
+  }
+  return json({ error: "try_again" }, 503);
+}
+
+// POST /api/admin/partner/:slug { action: 'off' | 'on' }. An 'off' link stops taking
+// bookings at once; bookings already made stay.
+async function adminPartnerAction(body, env, email, slug) {
+  if (!["off", "on"].includes(body.action)) return json({ error: "bad_action" }, 400);
+  const res = await env.DB.prepare("UPDATE partner SET active = ? WHERE slug = ?")
+    .bind(body.action === "on" ? 1 : 0, slug).run();
+  if (res.meta.changes !== 1) return json({ error: "not_found" }, 404);
+  await log(env, email, `partner_${body.action}`, slug, null);
+  return json({ ok: true, slug, active: body.action === "on" });
 }
 
 // Hourly Cron: a hold nobody confirmed or declined within 24 h is declined, its

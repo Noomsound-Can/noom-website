@@ -92,7 +92,10 @@ export async function book(request, env, ctx) {
 
   const service = await activeService(env, body.service);
   if (!service || service.kind === "group") return json({ error: "unknown_service" }, 400);
-  if (service.kind === "partner") return json({ error: "unknown_service" }, 400); // step 8
+  // A partner link books the partner service only, and only with an active partner.
+  const partner = body.partner ? await activePartner(env, body.partner) : null;
+  if (body.partner && !partner) return json({ error: "unknown_partner" }, 400);
+  if ((service.kind === "partner") !== !!partner) return json({ error: "unknown_service" }, 400);
 
   const v = validateBooking(body, service);
   if (v.errors) return json({ error: "invalid", fields: v.errors }, 400);
@@ -107,7 +110,7 @@ export async function book(request, env, ctx) {
     ).bind(d.whatsapp, nowIso),
   ]);
   if (recent.results[0].n >= MAX_BOOKINGS_PER_HOUR) return json({ error: "busy" }, 429);
-  if (open.results[0].n >= MAX_OPEN_REQUESTS_PER_NUMBER) return json({ error: "too_many_open" }, 429);
+  if (!partner && open.results[0].n >= MAX_OPEN_REQUESTS_PER_NUMBER) return json({ error: "too_many_open" }, 429);
 
   // Every write re-validates against a fresh calendar read, never the cache.
   const first = d.slots[0].date;
@@ -132,7 +135,7 @@ export async function book(request, env, ctx) {
   for (let attempt = 0; attempt < 3 && !ref; attempt++) {
     const candidate = makeRef();
     try {
-      if (await insertHold(env, candidate, service, d, price, nowMs)) ref = candidate;
+      if (await insertHold(env, candidate, service, d, price, nowMs, partner)) ref = candidate;
       else return json({ error: "slot_taken" }, 409);
     } catch (err) {
       if (!/UNIQUE/i.test(err.message)) throw err; // ref collision, try another
@@ -141,26 +144,51 @@ export async function book(request, env, ctx) {
   if (!ref) return json({ error: "try_again" }, 503);
 
   const labels = d.slots.map((s) => slotLabel(s.startMs));
-  const waText =
-    `Hi Can, I just sent a booking request on the website. Reference ${ref}: ` +
-    `${service.name}, ${labels.join(" / ")}` +
-    `${d.party_size > 1 ? `, ${d.party_size} guests` : ""}.`;
+  const waText = partner
+    ? `Hi Can, ${partner.name} just booked on the website. Reference ${ref}: ` +
+      `${d.service_label}, ${labels.join(" / ")}, ${d.party_size} guest${d.party_size > 1 ? "s" : ""}.`
+    : `Hi Can, I just sent a booking request on the website. Reference ${ref}: ` +
+      `${service.name}, ${labels.join(" / ")}` +
+      `${d.party_size > 1 ? `, ${d.party_size} guests` : ""}.`;
 
-  ctx.waitUntil(afterRequest(env, { ref, service, d, price, labels }));
+  ctx.waitUntil(afterRequest(env, { ref, service, d, price, labels, partner }));
 
   return json({
     ref,
-    status: "pending",
+    status: partner ? "confirmed" : "pending",
     whatsapp_url: whatsappLink(CAN_WHATSAPP, waText),
     price_thb: price,
     slots: labels,
   });
 }
 
+// GET /api/partner?slug=<slug> -> { slug, name, service } for an active partner link.
+// Only the partner's name goes out, never their email.
+export async function partnerInfo(request, env) {
+  const partner = await activePartner(env, new URL(request.url).searchParams.get("slug"));
+  if (!partner) return json({ error: "unknown_partner" }, 404);
+  const s = await activeService(env, "partner-slot");
+  if (!s) return json({ error: "unknown_partner" }, 404);
+  return json({
+    slug: partner.slug,
+    name: partner.name,
+    service: {
+      id: s.id, name: s.name, kind: s.kind, duration_min: s.duration_min,
+      min_guests: s.min_guests, max_guests: s.max_guests, sessions: s.sessions,
+      session_window_days: s.session_window_days, price_thb: null,
+    },
+  });
+}
+
+function activePartner(env, slug) {
+  return env.DB.prepare("SELECT * FROM partner WHERE slug = ? AND active = 1").bind(String(slug || "")).first();
+}
+
 // One atomic batch: the booking row goes in only if none of its slots overlaps a live
 // booking slot (plus that booking's buffer); the slot rows go in only if the booking did.
 // D1 runs a batch as one transaction, so two guests racing for a slot cannot both win.
-async function insertHold(env, ref, service, d, price, nowMs) {
+// A partner booking goes in confirmed straight away (spec 6.3), with no hold.
+async function insertHold(env, ref, service, d, price, nowMs, partner = null) {
   const nowIso = isoUtc(nowMs);
   const overlap = `EXISTS (
       SELECT 1 FROM booking_slot x
@@ -179,12 +207,15 @@ async function insertHold(env, ref, service, d, price, nowMs) {
   const stmts = [
     env.DB.prepare(
       `INSERT INTO booking (ref, service_id, starts_at_utc, ends_at_utc, name, whatsapp, email,
-                            party_size, notes, location, price_thb, source, status, hold_expires_at)
-       SELECT ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'web', 'pending', ? WHERE ${guards}`,
+                            party_size, notes, location, price_thb, source, status, hold_expires_at,
+                            partner_slug, service_label)
+       SELECT ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? WHERE ${guards}`,
     ).bind(
       ref, service.id, isoUtc(d.slots[0].startMs), isoUtc(d.slots.at(-1).endMs),
       d.name, d.whatsapp, d.email, d.party_size, d.notes, d.location, price,
-      isoUtc(nowMs + HOLD_MS), ...guardBinds,
+      partner ? "partner" : "web", partner ? "confirmed" : "pending",
+      partner ? null : isoUtc(nowMs + HOLD_MS), partner?.slug ?? null, d.service_label ?? null,
+      ...guardBinds,
     ),
     ...d.slots.map((s) =>
       env.DB.prepare(
@@ -197,60 +228,73 @@ async function insertHold(env, ref, service, d, price, nowMs) {
   return res[0].meta.changes === 1;
 }
 
-// Where a private booking happens: the terrace, or the villa the guest typed.
+// Where a private booking happens: the terrace, the villa the guest typed, or for a
+// partner booking the room or villa they typed, else the partner itself.
 export function bookingWhere(service, b) {
-  return service.id === "sound-journey-terrace" ? TERRACE : b.location || "";
+  if (service.id === "sound-journey-terrace") return TERRACE;
+  if (b.source === "partner") return [b.partner_name, b.location].filter(Boolean).join(", ");
+  return b.location || "";
 }
 
 // Event body text for a private booking. b: booking fields (ref, name, whatsapp, email,
-// party_size, location, notes, price_thb, source); slots: [{ startMs, endMs }].
+// party_size, location, notes, price_thb, source, and for partners partner_name and
+// service_label); slots: [{ startMs, endMs }].
 export function bookingDetails(service, b, slots) {
   const where = bookingWhere(service, b);
+  const partner = b.source === "partner";
   return [
     `Ref: ${b.ref}`,
-    `Service: ${service.name}`,
+    `Service: ${partner ? `${b.service_label} (partner session)` : service.name}`,
+    partner ? `Partner: ${b.partner_name}` : null,
     `When: ${slots.map((s) => slotLabel(s.startMs)).join(" / ")} (Koh Samui time)`,
     `Name: ${b.name}`,
     `WhatsApp: +${b.whatsapp}  ${whatsappLink(b.whatsapp)}`,
     b.email ? `Email: ${b.email}` : null,
     `Guests: ${b.party_size}`,
     where ? `Where: ${where}` : null,
-    `Price: ${b.price_thb == null ? "hidden" : thb(b.price_thb)}`,
+    `Price: ${partner ? `invoiced to ${b.partner_name}` : b.price_thb == null ? "hidden" : thb(b.price_thb)}`,
     b.notes ? `Notes: ${b.notes}` : null,
     `Source: ${b.source}`,
   ].filter(Boolean).join("\n");
 }
 
 // Noom Bookings event for slot i of a private booking: 'PENDING, ' and yellow while
-// held, plain and green once confirmed (admin, step 7).
+// held, plain and green once confirmed (admin, step 7). Partner bookings (step 8):
+// 'PARTNER, <partner>, <their session name> (n guests)', orange, confirmed from the start.
 export function privateEvent(service, b, slots, i, pending) {
   const n = slots.length;
   const s = slots[i];
   const where = bookingWhere(service, b);
+  const partner = b.source === "partner";
+  const guests = b.party_size > 1 ? ` (${b.party_size} guests)` : "";
   return {
-    summary:
-      `${pending ? "PENDING, " : ""}${service.name}${n > 1 ? ` (${i + 1}/${n})` : ""}, ${b.name}` +
-      `${b.party_size > 1 ? ` (${b.party_size} guests)` : ""}`,
+    summary: partner
+      ? `PARTNER, ${b.partner_name}, ${b.service_label}${guests}`
+      : `${pending ? "PENDING, " : ""}${service.name}${n > 1 ? ` (${i + 1}/${n})` : ""}, ${b.name}${guests}`,
     description: bookingDetails(service, b, slots),
     location: where || undefined,
-    colorId: pending ? "5" : "10",
+    colorId: partner ? "6" : pending ? "5" : "10",
     start: { dateTime: isoUtc(s.startMs), timeZone: "Asia/Bangkok" },
     end: { dateTime: isoUtc(s.endMs), timeZone: "Asia/Bangkok" },
   };
 }
 
-// After the guest has their answer: PENDING calendar events, then the alert email
-// (which says whether the calendar worked), then the guest's email if they gave one.
-async function afterRequest(env, { ref, service, d, price, labels }) {
+// After the guest has their answer: PENDING calendar events (confirmed PARTNER events
+// for a partner link), then the alert email (which says whether the calendar worked),
+// then the guest's email, or for a partner the partner's confirmation.
+async function afterRequest(env, { ref, service, d, price, labels, partner = null }) {
   const n = d.slots.length;
-  const b = { ...d, ref, price_thb: price, source: "web" };
+  const b = {
+    ...d, ref, price_thb: price, source: partner ? "partner" : "web",
+    partner_name: partner?.name, service_label: d.service_label,
+  };
   const details = bookingDetails(service, b, d.slots);
 
   let calendarOk = true;
   for (let i = 0; i < n; i++) {
     const s = d.slots[i];
     try {
-      const ev = await createEvent(env, env.GCAL_BOOKINGS_ID, privateEvent(service, b, d.slots, i, true));
+      const ev = await createEvent(env, env.GCAL_BOOKINGS_ID, privateEvent(service, b, d.slots, i, !partner));
       await env.DB.prepare(
         "UPDATE booking_slot SET gcal_event_id = ? WHERE ref = ? AND starts_at_utc = ?",
       ).bind(ev.id, ref, isoUtc(s.startMs)).run();
@@ -258,6 +302,36 @@ async function afterRequest(env, { ref, service, d, price, labels }) {
       calendarOk = false;
       console.log(`book ${ref}: calendar event ${i + 1}/${n} failed: ${err.message}`);
     }
+  }
+
+  if (partner) {
+    await sendEmail(env, {
+      to: alertRecipients(env),
+      subject: `New partner booking ${ref}: ${partner.name}, ${d.service_label}, ${labels[0]}`,
+      replyTo: partner.email || undefined,
+      text:
+        `${details}\n\n` +
+        `Confirmed automatically, invoiced to ${partner.name}.\n` +
+        (calendarOk ? "" : "\nThe calendar event could not be created, add it by hand.\n"),
+    });
+    if (partner.email) {
+      await sendEmail(env, {
+        to: partner.email,
+        subject: `Booking confirmed: ${d.service_label}, ${labels[0]} (${ref})`,
+        replyTo: PUBLIC_REPLY_TO,
+        text:
+          `Hello ${partner.name},\n\n` +
+          `Your booking with Noom Sound Studio is confirmed:\n\n` +
+          `${d.service_label}\n${labels.join("\n")} (Koh Samui time), 60 minutes\n` +
+          `Guest: ${d.name}, ${d.party_size} guest${d.party_size > 1 ? "s" : ""}\n` +
+          `${d.location ? `Where: ${d.location}\n` : ""}` +
+          `${d.notes ? `Notes: ${d.notes}\n` : ""}` +
+          `\nInvoiced to ${partner.name} per our agreement. Your reference is ${ref}.\n` +
+          `To change or cancel, message us on WhatsApp: ${whatsappLink(CAN_WHATSAPP)}\n\n` +
+          `Noom Sound Studio\nLamai, Koh Samui\nhttps://www.noomsound.studio`,
+      });
+    }
+    return;
   }
 
   await sendEmail(env, {

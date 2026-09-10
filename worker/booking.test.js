@@ -2,7 +2,7 @@
 
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { makeRef, priceFor, sessionDurations, slotLabel, validateBooking, validateManual, validateSignup } from "./booking.js";
+import { makeRef, partnerSlug, priceFor, sessionDurations, slotLabel, validateBooking, validateManual, validateSignup } from "./booking.js";
 import { isoUtc } from "./availability.js";
 
 const svc = (o) => ({
@@ -110,6 +110,22 @@ test("manual guest: WhatsApp optional, mats capped by the admin limit", () => {
   assert.equal(validateManual({ ...g, party_size: 3 }, 2).errors.party_size, "Choose between 1 and 2.");
   assert.ok(validateManual(g, 0).errors.party_size);
   assert.ok(validateManual({ ...g, name: "  " }, 10).errors.name);
+});
+
+test("partner booking: session name required, guests from 1 (migration 0005)", () => {
+  const partner = svc({ id: "partner-slot", kind: "partner", duration_min: 60, min_guests: 1, max_guests: 10, price_thb: null });
+  const b = { ...ok, party_size: 1, service_label: "  Sunset sound bath for two " };
+  assert.equal(validateBooking(b, partner).data.service_label, "Sunset sound bath for two");
+  assert.ok(validateBooking({ ...b, service_label: "" }, partner).errors.service_label);
+  assert.equal(validateBooking({ ...ok, service_label: "ignored" }, terrace).data.service_label, null);
+  assert.equal(priceFor(partner, 4), null);
+});
+
+test("partner slug: readable name plus a random end", () => {
+  assert.equal(partnerSlug("Lime Samui", new Uint8Array([0, 1, 2, 3])), "lime-samui-abcd");
+  assert.equal(partnerSlug("TheXperience Samui!", new Uint8Array([4, 5, 6, 7])), "thexperience-samui-efgh");
+  assert.equal(partnerSlug("  ", new Uint8Array([0, 0, 0, 0])), "partner-aaaa");
+  assert.match(partnerSlug("Samujana"), /^samujana-[a-z2-9]{4}$/);
 });
 
 test("bad slot shapes are rejected", () => {

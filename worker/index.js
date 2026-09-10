@@ -7,7 +7,7 @@
 
 import { accessEmail } from "./access.js";
 import { adminRoute, expireHolds } from "./admin.js";
-import { availability, book, occurrences, services, signup } from "./api.js";
+import { availability, book, occurrences, partnerInfo, services, signup } from "./api.js";
 
 // Local dev has no Access JWT. `wrangler dev --var DEV_ADMIN_EMAIL:dev@local` lets
 // 127.0.0.1 through as that email. Never set DEV_ADMIN_EMAIL in production.
@@ -41,6 +41,9 @@ export default {
       }
       if (url.pathname === "/api/occurrences" && request.method === "GET") {
         return occurrences(request, env);
+      }
+      if (url.pathname === "/api/partner" && request.method === "GET") {
+        return partnerInfo(request, env);
       }
       if (url.pathname === "/api/signup" && request.method === "POST") {
         return signup(request, env, ctx);

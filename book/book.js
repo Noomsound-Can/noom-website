@@ -58,7 +58,9 @@
     date: null,
     picks: [], // [{date, time}], chosen in date order: pick n is session n
     occ: {}, // weekly service only: date -> occurrence from /api/occurrences
+    partner: null, // { slug, name, service } on a partner link (?partner=<slug>, step 8)
   };
+  const PARTNER_SLUG = new URLSearchParams(location.search).get("partner");
 
   // ---------- dates, all in Koh Samui time ----------
   const pad = (n) => String(n).padStart(2, "0");
@@ -102,8 +104,16 @@
   };
   const timesFor = (date) => (state.avail[sessionFor(date)] || {})[date] || [];
 
+  // The name shown for what is being booked: the card title, or on a partner link the
+  // session name the partner typed.
+  const svcTitle = () =>
+    state.partner
+      ? $("stepDetails").elements.namedItem("service_label").value.trim() || "Partner session"
+      : CARDS[state.svc.id].title;
+
   // ---------- services ----------
   async function loadServices() {
+    if (PARTNER_SLUG) return loadPartner();
     try {
       const res = await fetch("/api/services");
       if (!res.ok) throw new Error(res.status);
@@ -116,6 +126,33 @@
     renderCards();
     const wanted = new URLSearchParams(location.search).get("service");
     if (wanted && state.services.some((s) => s.id === wanted)) chooseService(wanted, false);
+  }
+
+  // Partner link: no cards, one 60 minute service, confirmed at once, no price.
+  async function loadPartner() {
+    const off = () => {
+      $("cards").innerHTML =
+        `<p class="bk-quiet">This booking link is not active. Please <a href="https://wa.me/${WA}" target="_blank" rel="noopener">message us on WhatsApp</a>.</p>`;
+    };
+    try {
+      const res = await fetch(`/api/partner?slug=${encodeURIComponent(PARTNER_SLUG)}`);
+      if (!res.ok) return off();
+      state.partner = await res.json();
+    } catch {
+      return off();
+    }
+    const p = state.partner;
+    state.services = [p.service];
+    document.querySelector(".ph-lede").textContent = "Book a session for your guests. Nothing to pay here.";
+    $("hService").textContent = "1  ·  Partner booking";
+    const box = $("cards");
+    box.removeAttribute("role");
+    box.innerHTML = `<div class="bk-partner"><h2>Booking for <em></em></h2><p></p></div>`;
+    box.querySelector("em").textContent = p.name;
+    box.querySelector("p").textContent =
+      `Sessions are ${p.service.duration_min} minutes. Pick a free time and name the session. ` +
+      `It is confirmed as soon as you book and invoiced to ${p.name} per our agreement.`;
+    chooseService(p.service.id, false);
   }
 
   function renderCards() {
@@ -405,12 +442,25 @@
     setParty(s.min_guests, s.max_guests, s.price_base_guests || s.min_guests);
     $("partyLabel").textContent = weekly() ? "Mats" : s.id.startsWith("handpan") ? "Students" : "Guests";
     const loc = $("locationField");
-    loc.hidden = s.id !== "sound-journey-villa";
-    loc.querySelector("input").required = !loc.hidden;
+    loc.hidden = s.id !== "sound-journey-villa" && !state.partner;
+    loc.querySelector("input").required = s.id === "sound-journey-villa";
     $("sumRequest").textContent = weekly()
       ? "Your mats are confirmed as soon as you book."
       : "This is a request. We will message you on WhatsApp to confirm.";
     $("submitBtn").textContent = weekly() ? "Book" : "Send request";
+    if (state.partner) {
+      // The partner books for a guest: the guest's name, a number for the day, the room.
+      $("labelField").hidden = false;
+      $("labelField").querySelector("input").required = true;
+      $("nameLabel").textContent = "Guest name";
+      $("waLabel").textContent = "WhatsApp, guest or your team";
+      $("waHint").textContent = "With the country code. We contact this number on the day.";
+      $("locationLabel").innerHTML = "Villa, room or area <i>(optional)</i>";
+      $("emailField").hidden = true; // the confirmation goes to the partner's email
+      $("sumPay").hidden = true;
+      $("sumRequest").textContent = `Confirmed as soon as you book. Invoiced to ${state.partner.name} per our agreement.`;
+      $("submitBtn").textContent = "Book";
+    }
     clearErrors();
   }
 
@@ -421,7 +471,7 @@
     if (!complete()) return;
     const n = Number($("party").value);
     const p = priceFor(s, n);
-    $("sumService").textContent = CARDS[s.id].title;
+    $("sumService").textContent = svcTitle();
     $("sumPrice").textContent = p == null ? "" : thb(p);
     $("sumWhen").textContent =
       state.picks.map((x) => `${longDate(x.date)}, ${x.time}`).join("\n") +
@@ -469,6 +519,10 @@
       website: f.website.value,
     };
     if (weekly()) body.occurrence = state.occ[state.picks[0].date].id;
+    if (state.partner) {
+      body.partner = state.partner.slug;
+      body.service_label = f.service_label.value;
+    }
     const btn = $("submitBtn");
     const label = btn.textContent;
     btn.disabled = true;
@@ -531,14 +585,16 @@
     $("doneRef").textContent = data.ref;
     const n = body.party_size;
     $("doneWhen").textContent =
-      `${CARDS[state.svc.id].title}\n${data.slots.join("\n")}` +
+      `${svcTitle()}\n${data.slots.join("\n")}` +
       (weekly() ? `\n${state.occ[state.picks[0].date].venue}` : "") +
       (state.svc.min_guests === state.svc.max_guests && !weekly() ? "" : `\n${unit(n)}`) +
       (data.price_thb == null ? "" : `\n${thb(data.price_thb)}, paid on the day`);
-    $("doneLabel").textContent = weekly() ? "Booked" : "Request sent";
-    $("doneRequest").textContent = weekly()
-      ? "Your mats are booked. Please arrive ten minutes early."
-      : "This is a request. We will message you on WhatsApp to confirm.";
+    $("doneLabel").textContent = weekly() || state.partner ? "Booked" : "Request sent";
+    $("doneRequest").textContent = state.partner
+      ? `Confirmed and invoiced to ${state.partner.name}. A confirmation email is on its way to you.`
+      : weekly()
+        ? "Your mats are booked. Please arrive ten minutes early."
+        : "This is a request. We will message you on WhatsApp to confirm.";
     $("doneWa").href = data.whatsapp_url;
     $("stepDone").hidden = false;
     $("book").scrollIntoView({ behavior: "smooth", block: "start" });
@@ -558,6 +614,9 @@
     updateDetails();
   });
   $("stepDetails").addEventListener("submit", submit);
+  $("stepDetails").elements.namedItem("service_label").addEventListener("input", () => {
+    if (complete()) $("sumService").textContent = svcTitle();
+  });
 
   // Guests abroad: say plainly that times are island time.
   if (new Date().getTimezoneOffset() !== -420) {
