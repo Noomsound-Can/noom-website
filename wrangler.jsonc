@@ -1,13 +1,22 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "noom-website",
+  "main": "worker/index.js",
   "compatibility_date": "2026-04-30",
   "observability": {
     "enabled": true
   },
   "assets": {
-    "directory": "."
+    "directory": ".",
+    "binding": "ASSETS"
   },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "noom-booking",
+      "database_id": "56dec000-e05a-4f64-8343-5cf34be06c8e"
+    }
+  ],
   "compatibility_flags": [
     "nodejs_compat"
   ]

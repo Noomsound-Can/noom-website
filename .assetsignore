@@ -17,3 +17,6 @@ Noom Homepage v4.html
 index .html
 assets/photo-noom-sunset-handpan.png
 assets/photo-journey-terrace.png
+worker
+migrations
+docs
