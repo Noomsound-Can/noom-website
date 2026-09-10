@@ -99,6 +99,22 @@ test("weekly occurrences land on Wednesday and Sunday 17:30 Bangkok", () => {
   assert.equal(isoUtc(occ[0].endMs), "2026-09-13T11:45:00Z");
 });
 
+test("Mulajoy: first Thursday of each month only, 17:00 to 18:00 (migration 0004)", () => {
+  const mulajoy = [{ id: "mulajoy-thu", service_id: "mulajoy-monthly", weekday: 4, week_of_month: 1,
+    start_time: "17:00", capacity: 12, venue: "Mulajoy, Lamai", duration_min: 60, buffer_after_min: 30 }];
+  const occ = weeklyOccurrences(mulajoy, [], "2026-09-01", 122); // Sep to Dec
+  assert.deepEqual(occ.map((o) => o.id), [
+    "mulajoy-thu-2026-09-03",
+    "mulajoy-thu-2026-10-01",
+    "mulajoy-thu-2026-11-05",
+    "mulajoy-thu-2026-12-03",
+  ]);
+  assert.equal(isoUtc(occ[1].startMs), "2026-10-01T10:00:00Z");
+  assert.equal(isoUtc(occ[1].endMs), "2026-10-01T11:00:00Z");
+  // A weekly row next to it is unaffected (week_of_month missing = every week).
+  assert.equal(weeklyOccurrences([...recurrences, ...mulajoy], [], FRI, 14).length, 4);
+});
+
 test("weekly session blocks private slots, a cancelled one frees them", () => {
   const occ = weeklyOccurrences(recurrences, [], WED, 1);
   const d = oneDay(demo, blocks({ occurrences: occ }), LONG_AGO, WED);

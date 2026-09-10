@@ -15,6 +15,15 @@
       title: "Sound Journey, Noom Terrace",
       blurb: "Our weekly open session. Handpan, gong, crystal and Tibetan bowls, played live by two of us. Eight mats.",
       meta: "Wednesday and Sunday · 17:30 · 75 min",
+      when: "Choose a Wednesday or Sunday",
+      short: "Sound Journey",
+    },
+    "mulajoy-monthly": {
+      title: "Sound Therapy at Mulajoy",
+      blurb: "A shorter session, held once a month at Mulajoy in Lamai.",
+      meta: "First Thursday of the month · 17:00 · 60 min",
+      when: "Choose a first Thursday",
+      short: "Sound Therapy at Mulajoy",
     },
     "sound-journey-terrace": {
       title: "Private Sound Journey at Noom Terrace",
@@ -142,7 +151,7 @@
     for (const b of $("cards").children) b.setAttribute("aria-checked", String(b.dataset.id === id));
 
     $("whenLabel").textContent = weekly()
-      ? "Choose a Wednesday or Sunday"
+      ? CARDS[id].when
       : multi()
         ? `Choose ${state.svc.sessions} days in order, all within ${state.svc.session_window_days} days`
         : "Choose a day and time";
@@ -156,8 +165,9 @@
   }
 
   // ---------- availability ----------
-  // Weekly sessions: one request covers every month the calendar can show.
-  // Bookable ones become the day's single time, so the rest of the flow is shared.
+  // Group sessions (terrace, Mulajoy): one request covers every month the calendar can
+  // show. Only the chosen service's dates count; bookable ones become the day's single
+  // time, so the rest of the flow is shared.
   async function loadSessions() {
     renderCalendar();
     if (state.loaded.has("occ")) return;
@@ -171,10 +181,14 @@
       state.occ = {};
       state.avail = { 1: {} };
       for (const o of list) {
+        if (o.service_id !== state.svc.id) continue;
         state.occ[o.date] = o;
         if (o.bookable) state.avail[1][o.date] = [o.time];
       }
       state.loaded.add("occ");
+      // Monthly sessions: open on the first month that has a bookable date.
+      const firstOpen = Object.keys(state.avail[1]).sort()[0];
+      if (firstOpen && monthOf(firstOpen) > state.month) state.month = monthOf(firstOpen);
     } catch {
       state.failed = true;
     } finally {
@@ -325,7 +339,7 @@
     if (!o) return;
     if (o.spots_left === 0) {
       info.innerHTML =
-        `This session is full. <a href="https://wa.me/${WA}?text=${encodeURIComponent(`Hi Can, is there a waiting list for the Sound Journey on ${longDate(date)}?`)}" target="_blank" rel="noopener">Message us on WhatsApp</a> and we will tell you if a mat opens up.`;
+        `This session is full. <a href="https://wa.me/${WA}?text=${encodeURIComponent(`Hi Can, is there a waiting list for the ${CARDS[state.svc.id].short} on ${longDate(date)}?`)}" target="_blank" rel="noopener">Message us on WhatsApp</a> and we will tell you if a mat opens up.`;
     } else {
       info.textContent = `${o.venue} · ${o.time} to ${o.end_time} · ${o.taken} of ${o.capacity} mats taken, ${o.spots_left} left`;
     }

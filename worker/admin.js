@@ -2,7 +2,7 @@
 // expiry of unanswered holds. index.js only routes here with a verified Access email.
 
 import { addDays, dayStartMs, isDate, isoUtc, localDate, localTime } from "./availability.js";
-import { CAN_WHATSAPP, makeRef, slotLabel, thb, validateManual, whatsappLink } from "./booking.js";
+import { CAN_WHATSAPP, makeRef, sessionName, slotLabel, thb, validateManual, whatsappLink } from "./booking.js";
 import { PUBLIC_REPLY_TO, alertRecipients, sendEmail } from "./email.js";
 import { createEvent, deleteEvent, patchEvent } from "./gcal.js";
 import {
@@ -14,9 +14,10 @@ import {
   syncOccurrenceEvent,
 } from "./api.js";
 
-// Can, 2026-09-10: the web stops at capacity (8), admin may seat walk-ins and
-// GetYourGuide guests up to 10 on the same night.
-const MANUAL_MAX_MATS = 10;
+// Can, 2026-09-10: the web stops at capacity, admin may seat walk-ins and
+// GetYourGuide guests 2 over it (terrace 8 -> 10, Mulajoy 12 -> 14).
+const MANUAL_OVER = 2;
+const manualLimit = (occ) => occ.capacity + MANUAL_OVER;
 const MAX_DAYS = 62;
 
 export async function adminRoute(request, env, ctx, email) {
@@ -46,7 +47,7 @@ export async function adminRoute(request, env, ctx, email) {
 }
 
 // GET /api/admin/bookings?days=30
-// -> { me, today, days, manual_max, bookings: [...], sessions: [...] }
+// -> { me, today, days, bookings: [...], sessions: [...] }
 // bookings: private and partner bookings with a slot in range, plus every pending
 // one whatever its date. sessions: weekly occurrences in range with their guests.
 // Dates and times are Koh Samui time.
@@ -62,7 +63,7 @@ async function adminBookings(url, env, email) {
   const wanted = `b.occurrence_id IS NULL AND (b.status = 'pending' OR EXISTS (
       SELECT 1 FROM booking_slot s WHERE s.ref = b.ref AND s.starts_at_utc >= ?1 AND s.starts_at_utc < ?2))`;
 
-  const [bookings, slots, guests, logs] = await env.DB.batch([
+  const [bookings, slots, guests, logs, services] = await env.DB.batch([
     env.DB.prepare(
       `SELECT b.*, sv.name AS service_name, sv.kind, p.name AS partner_name, ${lastAction("b.ref")}
          FROM booking b JOIN service sv ON sv.id = b.service_id
@@ -86,7 +87,9 @@ async function adminBookings(url, env, email) {
          FROM admin_log l
         WHERE l.id IN (SELECT max(id) FROM admin_log WHERE action IN ('close', 'reopen') GROUP BY target)`,
     ),
+    env.DB.prepare("SELECT id, name FROM service"),
   ]);
+  const serviceById = new Map(services.results.map((s) => [s.id, s]));
   const sessions = await sessionsWithCounts(env, today, days);
 
   const slotsByRef = new Map();
@@ -113,7 +116,6 @@ async function adminBookings(url, env, email) {
     me: email,
     today,
     days,
-    manual_max: MANUAL_MAX_MATS,
     bookings: bookings.results
       .map((b) => ({
         ...clean(b),
@@ -129,6 +131,10 @@ async function adminBookings(url, env, email) {
       .sort((a, b) => (a.starts_at_utc < b.starts_at_utc ? -1 : 1)),
     sessions: sessions.map((o) => ({
       id: o.id,
+      service_id: o.service_id,
+      title: sessionName(serviceById.get(o.service_id) || { id: o.service_id, name: o.service_id }, "calendar"),
+      name: sessionName(serviceById.get(o.service_id) || { id: o.service_id, name: o.service_id }),
+      manual_max: manualLimit(o),
       date: o.date,
       time: localTime(o.startMs),
       end_time: localTime(o.endMs),
@@ -207,12 +213,12 @@ async function adminBookingAction(body, env, ctx, email, ref) {
 
 // POST /api/admin/manual { occurrence, name, party_size, whatsapp?, notes? }
 // A GetYourGuide, WhatsApp or walk-in guest on a weekly session, source 'manual'.
-// Same atomic guard as /api/signup, but up to MANUAL_MAX_MATS instead of capacity.
+// Same atomic guard as /api/signup, but up to capacity + MANUAL_OVER.
 async function adminManual(body, env, email) {
   const occ = await findOccurrence(env, body.occurrence);
   if (!occ) return json({ error: "unknown_occurrence" }, 400);
   if (occ.status !== "open") return json({ error: "closed" }, 409);
-  const limit = Math.max(occ.capacity, MANUAL_MAX_MATS);
+  const limit = manualLimit(occ);
   const v = validateManual(body, limit - occ.taken);
   if (v.errors) return json({ error: "invalid", fields: v.errors }, 400);
   const d = v.data;

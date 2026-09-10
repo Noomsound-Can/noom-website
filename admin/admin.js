@@ -51,7 +51,7 @@
     confirm: (b) => `Hi ${first(b.name)}, this is Noom Sound Studio. Your ${b.service} on ${whenOf(b)} is confirmed. Your reference is ${b.ref}. See you then.`,
     decline: (b) => `Hi ${first(b.name)}, this is Noom Sound Studio. Thank you for your request (${b.ref}). We are sorry, we cannot make ${whenOf(b)} work. Would another time suit you?`,
     cancel: (name, ref, when) => `Hi ${first(name)}, this is Noom Sound Studio, about your booking ${ref} on ${when}.`,
-    closed: (name, label) => `Hi ${first(name)}, this is Noom Sound Studio. We are sorry, the Sound Journey on ${label} is cancelled. Would you like to join on another day instead?`,
+    closed: (name, o) => `Hi ${first(name)}, this is Noom Sound Studio. We are sorry, the ${o.name} on ${o.label} is cancelled. Would you like to join on another day instead?`,
   };
 
   // ---------- API ----------
@@ -197,7 +197,7 @@
         const from = g.source === "manual"
           ? (g.notes || "Added by hand")
           : `Website${g.price_thb != null ? `, ${thb(g.price_thb)}` : ""}`;
-        const text = closed ? MSG.closed(g.name, o.label) : null;
+        const text = closed ? MSG.closed(g.name, o) : null;
         return `<li class="${off ? "off" : ""}">
           <span class="n">${g.party_size}</span>
           <span class="g">${esc(g.name)}<small>${esc(from)} &middot; ${esc(g.ref)}${off ? ` &middot; ${esc(g.status)}` : ""}</small></span>
@@ -215,7 +215,7 @@
     return `<article class="nm-item nm-session" data-status="${esc(o.status)}">
       <div class="nm-row"><span class="nm-time">${o.time}&ndash;${o.end_time}</span>
         ${closed ? `<span class="nm-badge closed">Closed</span>` : `<span class="nm-count">${o.taken}/${o.capacity}<small>mats</small></span>`}</div>
-      <p class="nm-title">Sound Journey, Terrace</p>
+      <p class="nm-title">${esc(o.title)}</p>
       ${closed ? `<p class="nm-line nm-note">${live.length ? "Guests below are not told automatically. Tap Tell to message them." : "Not shown on the website."}</p>` : `<div class="nm-mats" aria-hidden="true">${cells.join("")}</div>`}
       ${over && !closed ? `<p class="nm-meta">${over} over the ${o.capacity} mats on the website</p>` : ""}
       <ul class="nm-guests">${guests}</ul>
@@ -226,7 +226,7 @@
   }
 
   function manualForm(o) {
-    const room = state.data.manual_max - o.taken;
+    const room = o.manual_max - o.taken;
     const options = room > 0
       ? Array.from({ length: room }, (_, i) => i + 1).map((n) =>
         `<option value="${n}">${plural(n, "mat")}${o.taken + n > o.capacity ? ` (over ${o.capacity})` : ""}</option>`).join("")
@@ -328,19 +328,19 @@
     if (!o) return;
     const live = o.guests.filter((g) => g.status === "confirmed");
     const q = act === "close"
-      ? `Close the Sound Journey on ${o.label}?` +
+      ? `Close the ${o.name} on ${o.label}?` +
         (live.length ? ` ${plural(live.length, "booking")} (${plural(o.taken, "mat")}) stay on the list but nobody is told automatically.` : "")
-      : `Reopen the Sound Journey on ${o.label}? The website takes signups again.`;
+      : `Reopen the ${o.name} on ${o.label}? The website takes signups again.`;
     if (!window.confirm(q)) return;
     await run(btn, async () => {
       const r = await api(`/api/admin/occurrence/${encodeURIComponent(id)}`, { action: act });
       if (act === "close") {
         const noPhone = live.filter((g) => !g.whatsapp).map((g) => g.name);
         notice({
-          text: `Closed ${o.label}. Remember to block this date on GetYourGuide too.`,
+          text: `Closed ${o.label}.${o.service_id === "terrace-weekly" ? " Remember to block this date on GetYourGuide too." : ""}`,
           sub: [calendarNote(r.calendar), noPhone.length ? `No WhatsApp for: ${noPhone.join(", ")}.` : ""].filter(Boolean).join(" "),
           warn: r.calendar === false,
-          links: live.filter((g) => g.whatsapp).map((g) => ({ label: `Tell ${first(g.name)}`, href: wa(g.whatsapp, MSG.closed(g.name, o.label)) })),
+          links: live.filter((g) => g.whatsapp).map((g) => ({ label: `Tell ${first(g.name)}`, href: wa(g.whatsapp, MSG.closed(g.name, o)) })),
         });
       } else {
         notice({ text: `Reopened ${o.label}.`, sub: calendarNote(r.calendar), warn: r.calendar === false });

@@ -42,6 +42,15 @@ export function slotLabel(ms) {
   return `${WEEKDAYS[d.getUTCDay()]} ${d.getUTCDate()} ${MONTHS[d.getUTCMonth()]}, ${hh}:${mm}`;
 }
 
+// How a group session is named in sentences, WhatsApp texts and calendar titles.
+const SESSION_NAMES = {
+  "terrace-weekly": { text: "Sound Journey", calendar: "Sound Journey, Terrace" },
+  "mulajoy-monthly": { text: "Sound Therapy at Mulajoy", calendar: "Sound Therapy, Mulajoy" },
+};
+export function sessionName(service, kind = "text") {
+  return SESSION_NAMES[service.id]?.[kind] || service.name;
+}
+
 export function whatsappLink(digits, text) {
   return `https://wa.me/${digits}${text ? `?text=${encodeURIComponent(text)}` : ""}`;
 }

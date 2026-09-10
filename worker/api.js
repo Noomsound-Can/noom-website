@@ -17,6 +17,7 @@ import {
   makeRef,
   priceFor,
   sessionDurations,
+  sessionName,
   slotLabel,
   thb,
   validateBooking,
@@ -370,7 +371,7 @@ export async function signup(request, env, ctx) {
   const left = await spotsLeft(env, occ.id);
   const label = slotLabel(occ.startMs);
   const mats = `${d.party_size} mat${d.party_size > 1 ? "s" : ""}`;
-  const waText = `Hi Can, I booked ${mats} for the Sound Journey on ${label}. Reference ${ref}.`;
+  const waText = `Hi Can, I booked ${mats} for the ${sessionName(service)} on ${label}. Reference ${ref}.`;
   ctx.waitUntil(afterSignup(env, { ref, service, occ, d, price, label, mats, left }));
 
   return json({
@@ -432,8 +433,11 @@ async function afterSignup(env, { ref, service, occ, d, price, label, mats, left
 // set to "free" so Noom Bookings stops blocking that time for private bookings.
 export async function syncOccurrenceEvent(env, id) {
   if (env.DEV_NO_CALENDAR === "1") return; // local `wrangler dev` only
-  const occ = await env.DB.prepare("SELECT * FROM occurrence WHERE id = ?").bind(id).first();
+  const occ = await env.DB.prepare(
+    "SELECT o.*, sv.id AS sid, sv.name AS service_name FROM occurrence o JOIN service sv ON sv.id = o.service_id WHERE o.id = ?",
+  ).bind(id).first();
   if (!occ) return;
+  const title = sessionName({ id: occ.sid, name: occ.service_name }, "calendar");
   const { results: guests } = await env.DB.prepare(
     `SELECT ref, name, whatsapp, party_size, source, notes FROM booking
       WHERE occurrence_id = ? AND status = 'confirmed' ORDER BY created_at`,
@@ -442,7 +446,7 @@ export async function syncOccurrenceEvent(env, id) {
   if (closed && !occ.gcal_event_id && !guests.length) return; // nothing worth showing
   const taken = guests.reduce((n, g) => n + g.party_size, 0);
   const event = {
-    summary: `${closed ? "CANCELLED, " : ""}Sound Journey, Terrace (${taken}/${occ.capacity})`,
+    summary: `${closed ? "CANCELLED, " : ""}${title} (${taken}/${occ.capacity})`,
     description:
       guests.map((g) =>
         `${g.party_size} · ${g.name}${g.whatsapp ? ` · +${g.whatsapp} ${whatsappLink(g.whatsapp)}` : ""}` +
@@ -513,6 +517,7 @@ function publicOccurrence(o, nowMs) {
   const left = Math.max(0, o.capacity - o.taken);
   return {
     id: o.id,
+    service_id: o.service_id,
     date: o.date,
     time: localTime(o.startMs),
     end_time: localTime(o.endMs),

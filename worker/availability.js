@@ -44,6 +44,8 @@ export function isDate(s) {
 // can also move one session to another time. Cancelled ones are returned too.
 //
 // recurrences: rows joined with their service's duration_min and buffer_after_min.
+//   week_of_month (migration 0004): NULL = every week, 1 = only the first of that
+//   weekday in the month (Mulajoy, first Thursday), 2 = the second, and so on.
 // dbOccurrences: occurrence rows joined with their service's buffer_after_min.
 export function weeklyOccurrences(recurrences, dbOccurrences, fromDate, days) {
   const byKey = new Map();
@@ -51,8 +53,10 @@ export function weeklyOccurrences(recurrences, dbOccurrences, fromDate, days) {
     const date = addDays(fromDate, i);
     const start = dayStartMs(date);
     const weekday = new Date(start + BKK_OFFSET_MS).getUTCDay();
+    const weekOfMonth = Math.ceil(Number(date.slice(8, 10)) / 7);
     for (const r of recurrences) {
       if (r.weekday !== weekday) continue;
+      if (r.week_of_month && r.week_of_month !== weekOfMonth) continue;
       const [h, m] = r.start_time.split(":").map(Number);
       const startMs = start + (h * 60 + m) * MIN_MS;
       byKey.set(`${r.id}-${date}`, {
