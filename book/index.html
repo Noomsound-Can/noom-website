@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Book a session | Noom Sound Studio, Koh Samui</title>
+<meta name="description" content="Book a private sound journey or a handpan lesson with Noom Sound Studio in Lamai, Koh Samui. Pick a free time, we confirm on WhatsApp, you pay on the day." />
+<!-- Repo-only page, never authored in Claude Design. noindex until BUILD-PLAN step 9. -->
+<meta name="robots" content="noindex, nofollow" />
+<link rel="canonical" href="https://www.noomsound.studio/book/" />
+
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="Noom Sound Studio" />
+<meta property="og:url" content="https://www.noomsound.studio/book/" />
+<meta property="og:title" content="Book a session | Noom Sound Studio" />
+<meta property="og:description" content="Private sound journeys and handpan lessons in Lamai, Koh Samui. Pick a time, we confirm on WhatsApp." />
+<meta property="og:image" content="https://www.noomsound.studio/assets/photo-journey-terrace.jpg" />
+
+<link rel="icon" href="/favicon.ico" sizes="32x32" />
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png" />
+<meta name="theme-color" content="#f5efe6" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<script>
+  // Compact layout inside an overlay iframe (BUILD-PLAN step 9) or with ?embed=1.
+  if (window.self !== window.top || /[?&]embed=1\b/.test(location.search)) {
+    document.documentElement.classList.add("embed");
+  }
+</script>
+<link rel="stylesheet" href="../colors_and_type.css" />
+<link rel="stylesheet" href="../page.css" />
+<link rel="stylesheet" href="book.css" />
+</head>
+<body>
+<nav class="nav" id="nav">
+<a href="../" style="color:var(--ink)">
+<span style="font-family:var(--serif);font-style:italic;font-size:22px;letter-spacing:0.04em">Noom</span>
+<span style="font-family:var(--sans);font-size:10px;letter-spacing:0.22em;text-transform:uppercase;color:var(--ink-mute);margin-left:10px">Sound Studio</span>
+</a>
+<div class="links" id="navLinks">
+<a href="../#whatson">What&rsquo;s on</a>
+<a href="../#soundjourneys">Sound journeys</a>
+<a href="../#learn">Learn handpan</a>
+<a href="../#whoweare">Who we are</a>
+<a href="../#faq">FAQ</a>
+<a href="../#contact">Contact</a>
+</div>
+<button class="nav-toggle" id="navToggle" aria-label="Menu" aria-expanded="false" aria-controls="navLinks">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
+<line class="l1" x1="3" y1="6" x2="21" y2="6"></line>
+<line class="l2" x1="3" y1="12" x2="21" y2="12"></line>
+<line class="l3" x1="3" y1="18" x2="21" y2="18"></line>
+</svg>
+</button>
+</nav>
+<div class="nav-scrim" id="navScrim"></div>
+
+<header class="pagehead">
+<div class="ph-inner">
+<p class="crumb"><a href="../">Noom Sound Studio</a> &nbsp;/&nbsp; Book</p>
+<h1>Book a <em>session</em></h1>
+<p class="ph-lede">Pick a free time. We confirm on WhatsApp, and you pay on the day.</p>
+</div>
+</header>
+
+<main class="bk" id="book">
+
+<section class="bk-step" id="stepService" aria-labelledby="hService">
+<p class="grouplabel" id="hService">1 &nbsp;&middot;&nbsp; What would you like?</p>
+<div class="bk-cards" id="cards" role="radiogroup" aria-labelledby="hService">
+<p class="bk-quiet">Loading&hellip;</p>
+</div>
+<p class="bk-weekly">Wednesday and Sunday at 17:30 there is a weekly Sound Journey on the terrace, 600 THB a mat.
+<a href="https://wa.me/905468419181?text=Hi%20Can%2C%20I%20would%20like%20a%20mat%20for%20a%20Sound%20Journey.%20Which%20day%20has%20space%3F" target="_blank" rel="noopener">Message us for a mat</a></p>
+</section>
+
+<section class="bk-step" id="stepWhen" hidden aria-labelledby="hWhen">
+<p class="grouplabel" id="hWhen">2 &nbsp;&middot;&nbsp; <span id="whenLabel">Choose a day and time</span></p>
+<div class="bk-cal">
+<div class="bk-cal-head">
+<button type="button" class="bk-nav" id="prevMonth" aria-label="Previous month">&larr;</button>
+<h2 class="bk-month" id="monthLabel" aria-live="polite"></h2>
+<button type="button" class="bk-nav" id="nextMonth" aria-label="Next month">&rarr;</button>
+</div>
+<div class="bk-grid bk-dow" aria-hidden="true"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
+<div class="bk-grid" id="days"></div>
+<p class="bk-quiet" id="calStatus" aria-live="polite"></p>
+</div>
+<div class="bk-times-wrap" id="timesWrap" hidden>
+<p class="bk-date" id="dateLabel"></p>
+<div class="bk-times" id="times"></div>
+<p class="bk-tz" id="tzNote">Times are Koh Samui time (GMT+7).</p>
+</div>
+<ol class="bk-picks" id="picks" hidden></ol>
+</section>
+
+<form class="bk-step" id="stepDetails" hidden novalidate aria-labelledby="hDetails">
+<p class="grouplabel" id="hDetails">3 &nbsp;&middot;&nbsp; Your details</p>
+<div class="bk-fields">
+<label class="bk-field">
+<span>Name</span>
+<input name="name" autocomplete="name" required maxlength="80" />
+<em class="bk-err" data-for="name"></em>
+</label>
+<label class="bk-field">
+<span>WhatsApp number</span>
+<input name="whatsapp" type="tel" autocomplete="tel" inputmode="tel" required maxlength="40" placeholder="+66 81 234 5678" />
+<em class="bk-hint">With the country code. We confirm here.</em>
+<em class="bk-err" data-for="whatsapp"></em>
+</label>
+<label class="bk-field">
+<span id="partyLabel">Guests</span>
+<select name="party_size" id="party"></select>
+<em class="bk-err" data-for="party_size"></em>
+</label>
+<label class="bk-field" id="locationField" hidden>
+<span>Villa, hotel or area</span>
+<input name="location" maxlength="160" placeholder="Villa name, Bophut" />
+<em class="bk-err" data-for="location"></em>
+</label>
+<label class="bk-field">
+<span>Email <i>(optional)</i></span>
+<input name="email" type="email" autocomplete="email" maxlength="120" />
+<em class="bk-err" data-for="email"></em>
+</label>
+<label class="bk-field bk-wide">
+<span>Anything we should know? <i>(optional)</i></span>
+<textarea name="notes" rows="3" maxlength="1000"></textarea>
+</label>
+<label class="bk-hp" aria-hidden="true">Website <input name="website" tabindex="-1" autocomplete="off" /></label>
+</div>
+
+<div class="bk-summary">
+<div class="bk-sum-row"><span id="sumService"></span><span class="bk-price" id="sumPrice"></span></div>
+<p class="bk-sum-when" id="sumWhen"></p>
+<p class="bk-request">This is a request. We will message you on WhatsApp to confirm.</p>
+<p class="bk-pay">Pay on the day, in cash, by bank transfer or Thai QR.</p>
+<button class="btn-ink" type="submit" id="submitBtn">Send request</button>
+<p class="bk-err bk-form-err" id="formError" role="alert"></p>
+</div>
+</form>
+
+<section class="bk-step bk-done" id="stepDone" hidden aria-live="polite">
+<p class="grouplabel">Request sent</p>
+<h2>Thank you, <em id="doneName"></em>.</h2>
+<p class="bk-ref-label">Your reference</p>
+<p class="bk-ref" id="doneRef"></p>
+<p class="bk-sum-when" id="doneWhen"></p>
+<p class="bk-request">This is a request. We will message you on WhatsApp to confirm.</p>
+<a class="btn-ink bk-wa" id="doneWa" href="#" target="_blank" rel="noopener">Confirm on WhatsApp</a>
+<p class="reply">Tap to send us your reference. It opens WhatsApp with the message ready.</p>
+</section>
+
+</main>
+
+<div class="fullsite-end"><a href="../">Back to Noom Sound Studio</a></div>
+
+<footer class="footer">
+<div class="row">
+<div style="font-family:var(--serif);font-style:italic;font-size:24px;color:var(--ink)">Noom <span style="font-family:var(--sans);font-size:11px;letter-spacing:0.22em;text-transform:uppercase;color:var(--ink-mute);margin-left:8px;font-style:normal">Sound Studio &nbsp;&middot;&nbsp; House of Holistic</span></div>
+<div class="meta">Lamai · Koh Samui · Thailand</div>
+</div>
+<div class="row">
+<span class="meta">Noom Studio Co., Ltd.</span>
+<span class="meta">© 2026 &nbsp;·&nbsp; <a href="https://instagram.com/noomsoundstudio" target="_blank" rel="noopener">@noomsoundstudio</a> &nbsp;·&nbsp; <a href="mailto:noomsoundstudio@gmail.com">noomsoundstudio@gmail.com</a></span>
+</div>
+</footer>
+<script src="../page.js"></script>
+<script src="book.js"></script>
+</body>
+</html>
