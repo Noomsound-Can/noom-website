@@ -15,6 +15,7 @@ import {
   HOLD_MS,
   makeRef,
   priceFor,
+  sessionDurations,
   slotLabel,
   thb,
   validateBooking,
@@ -45,8 +46,10 @@ export async function services(request, env) {
   return json(results);
 }
 
-// GET /api/availability?service=<id>&from=<YYYY-MM-DD>&days=21
+// GET /api/availability?service=<id>&from=<YYYY-MM-DD>&days=21[&session=N]
 // -> { "2026-09-11": ["09:00", "09:30", ...], ... }
+// session (1-based, default 1) picks the length of that session for multi-session
+// services, e.g. the 3rd day of the 3-Day Journey is longer.
 export async function availability(request, env, ctx) {
   const url = new URL(request.url);
   const nowMs = Date.now();
@@ -60,9 +63,12 @@ export async function availability(request, env, ctx) {
   if (!isDate(from)) return json({ error: "bad_from" }, 400);
   if (from < today) from = today;
   const days = clamp(parseInt(url.searchParams.get("days") || "21", 10) || 21, 1, MAX_DAYS);
+  const durations = sessionDurations(service);
+  const session = parseInt(url.searchParams.get("session") || "1", 10);
+  if (!(session >= 1 && session <= durations.length)) return json({ error: "bad_session" }, 400);
 
   try {
-    return json(await serviceSlots(env, ctx, url.origin, service, from, days, nowMs, false));
+    return json(await serviceSlots(env, ctx, url.origin, service, from, days, nowMs, false, durations[session - 1]));
   } catch (err) {
     console.log(`availability: calendar unavailable: ${err.message}`);
     return json({ error: "calendar_unavailable" }, 503);
@@ -104,14 +110,19 @@ export async function book(request, env, ctx) {
   const first = d.slots[0].date;
   const last = d.slots.at(-1).date;
   const span = Math.round((dayStartMs(last) - dayStartMs(first)) / DAY_MS) + 1;
-  let free;
+  const origin = new URL(request.url).origin;
+  const free = {}; // durationMin -> { date: [times] }
   try {
-    free = await serviceSlots(env, ctx, new URL(request.url).origin, service, first, span, nowMs, true);
+    for (const len of new Set(d.slots.map((s) => s.durationMin))) {
+      free[len] = await serviceSlots(env, ctx, origin, service, first, span, nowMs, true, len);
+    }
   } catch (err) {
     console.log(`book: calendar unavailable: ${err.message}`);
     return json({ error: "calendar_unavailable" }, 503);
   }
-  if (!d.slots.every((s) => free[s.date]?.includes(s.time))) return json({ error: "slot_taken" }, 409);
+  if (!d.slots.every((s) => free[s.durationMin][s.date]?.includes(s.time))) {
+    return json({ error: "slot_taken" }, 409);
+  }
 
   const price = priceFor(service, d.party_size);
   let ref;
@@ -254,8 +265,9 @@ async function afterRequest(env, { ref, service, d, price, labels }) {
   }
 }
 
-// Free start times for one service. fresh = skip the 60 s calendar cache (writes).
-async function serviceSlots(env, ctx, origin, service, from, days, nowMs, fresh) {
+// Free start times for one service session of durationMin. fresh = skip the 60 s
+// calendar cache (writes).
+async function serviceSlots(env, ctx, origin, service, from, days, nowMs, fresh, durationMin) {
   const rangeStart = dayStartMs(from);
   const rangeEnd = dayStartMs(addDays(from, days));
   const busy = await calendarBusy(env, ctx, origin, isoUtc(rangeStart), isoUtc(rangeEnd), fresh);
@@ -285,7 +297,7 @@ async function serviceSlots(env, ctx, origin, service, from, days, nowMs, fresh)
 
   const occurrences = weeklyOccurrences(recurrences.results, dbOccurrences.results, from, days);
   return freeSlots({
-    durationMin: service.duration_min,
+    durationMin,
     bufferMin: service.buffer_after_min,
     leadTimeH: service.lead_time_h,
     fromDate: from,

@@ -10,6 +10,13 @@ const MIN_MS = 60 * 1000;
 const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
+// Minutes per session, in date order. session_durations '180,180,240' overrides
+// duration_min (migration 0002); a missing or short list falls back to duration_min.
+export function sessionDurations(service) {
+  const list = String(service.session_durations || "").split(",").map(Number).filter((n) => n > 0);
+  return Array.from({ length: service.sessions || 1 }, (_, i) => list[i] || service.duration_min);
+}
+
 // Party of n: price_thb + max(0, n - price_base_guests) * price_extra_thb. NULL = hidden.
 export function priceFor(service, n) {
   if (service.price_thb == null) return null;
@@ -77,10 +84,14 @@ export function validateBooking(body, service) {
       break;
     }
     const [h, m] = s.time.split(":").map(Number);
-    const startMs = dayStartMs(s.date) + (h * 60 + m) * MIN_MS;
-    clean.push({ date: s.date, time: s.time, startMs, endMs: startMs + service.duration_min * MIN_MS });
+    clean.push({ date: s.date, time: s.time, startMs: dayStartMs(s.date) + (h * 60 + m) * MIN_MS });
   }
   clean.sort((a, b) => a.startMs - b.startMs);
+  const durations = sessionDurations(service);
+  clean.forEach((s, i) => {
+    s.durationMin = durations[i] || service.duration_min;
+    s.endMs = s.startMs + s.durationMin * MIN_MS;
+  });
   if (!errors.slots) {
     const dates = new Set(clean.map((s) => s.date));
     if (clean.length !== service.sessions) {

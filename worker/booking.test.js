@@ -2,7 +2,7 @@
 
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { makeRef, priceFor, slotLabel, validateBooking } from "./booking.js";
+import { makeRef, priceFor, sessionDurations, slotLabel, validateBooking } from "./booking.js";
 import { isoUtc } from "./availability.js";
 
 const svc = (o) => ({
@@ -70,6 +70,25 @@ test("3-Day Journey: three different days inside a 7-day window", () => {
   assert.ok(j(["2026-09-14", "2026-09-16"]).errors.slots); // only two
   assert.deepEqual(j(["2026-09-20", "2026-09-14", "2026-09-16"]).data.slots.map((s) => s.date),
     ["2026-09-14", "2026-09-16", "2026-09-20"]); // sorted
+});
+
+test("3-Day Journey: the last day is 4 h, the others 3 h (migration 0002)", () => {
+  const j4 = { ...journey, session_durations: "180,180,240" };
+  assert.deepEqual(sessionDurations(j4), [180, 180, 240]);
+  assert.deepEqual(sessionDurations(journey), [180, 180, 180]); // before the migration
+  assert.deepEqual(sessionDurations(terrace), [90]);
+  const { data } = validateBooking({ ...ok, party_size: 1, slots: [
+    { date: "2026-09-20", time: "09:00" }, { date: "2026-09-14", time: "09:00" }, { date: "2026-09-16", time: "13:00" },
+  ] }, j4);
+  assert.deepEqual(data.slots.map((s) => s.durationMin), [180, 180, 240]);
+  assert.equal(isoUtc(data.slots[2].endMs), "2026-09-20T06:00:00Z"); // Sun 09:00 to 13:00
+});
+
+test("demo lesson takes a third student at +1,000 (migration 0002)", () => {
+  const demo3 = { ...demo, max_guests: 3 };
+  assert.equal(priceFor(demo3, 3), 4000);
+  assert.equal(validateBooking({ ...ok, party_size: 3 }, demo3).errors, undefined);
+  assert.ok(validateBooking({ ...ok, party_size: 4 }, demo3).errors.party_size);
 });
 
 test("bad slot shapes are rejected", () => {

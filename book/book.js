@@ -24,7 +24,7 @@
     "handpan-demo": {
       title: "Handpan Demo Lesson",
       blurb: "Meet the instrument and play your first notes. No experience needed.",
-      meta: "1 or 2 students",
+      meta: "1 to 3 students",
     },
     "handpan-journey": {
       title: "3-Day Handpan Journey",
@@ -37,12 +37,12 @@
     services: [],
     svc: null,
     month: null, // 'YYYY-MM'
-    avail: {}, // date -> ['HH:MM']
-    loaded: new Set(), // months fetched for the current service
+    avail: {}, // session number -> date -> ['HH:MM'] (sessions can differ in length)
+    loaded: new Set(), // 'session|YYYY-MM' fetched for the current service
     loading: false,
     failed: false,
     date: null,
-    picks: [], // [{date, time}], sorted
+    picks: [], // [{date, time}], chosen in date order: pick n is session n
   };
 
   // ---------- dates, all in Koh Samui time ----------
@@ -74,6 +74,13 @@
   const priceFor = (s, n) =>
     s.price_thb == null ? null : s.price_thb + Math.max(0, n - (s.price_base_guests || 1)) * (s.price_extra_thb || 0);
   const multi = () => state.svc && state.svc.sessions > 1;
+  const complete = () => state.svc && state.picks.length === state.svc.sessions;
+  // The session a day belongs to: its own if already picked, else the next one.
+  const sessionFor = (date) => {
+    const i = state.picks.findIndex((p) => p.date === date);
+    return i >= 0 ? i + 1 : state.picks.length + 1;
+  };
+  const timesFor = (date) => (state.avail[sessionFor(date)] || {})[date] || [];
 
   // ---------- services ----------
   async function loadServices() {
@@ -123,7 +130,7 @@
     for (const b of $("cards").children) b.setAttribute("aria-checked", String(b.dataset.id === id));
 
     $("whenLabel").textContent = multi()
-      ? `Choose ${state.svc.sessions} days within ${state.svc.session_window_days} days, one time each`
+      ? `Choose ${state.svc.sessions} days in order, all within ${state.svc.session_window_days} days`
       : "Choose a day and time";
     setupDetails();
     $("stepWhen").hidden = false;
@@ -135,10 +142,13 @@
   }
 
   // ---------- availability ----------
+  // Loads the shown month for the session being chosen next.
   async function loadMonth() {
     const month = state.month;
+    const session = Math.min(state.picks.length + 1, state.svc.sessions);
+    const key = `${session}|${month}`;
     renderCalendar();
-    if (state.loaded.has(month)) return;
+    if (complete() || state.loaded.has(key)) return;
     const t = today();
     const from = monthOf(t) === month ? t : `${month}-01`;
     const days = daySpan(from, `${month}-${pad(daysIn(month))}`) + 1;
@@ -146,12 +156,13 @@
     state.failed = false;
     renderCalendar();
     try {
-      const res = await fetch(`/api/availability?service=${encodeURIComponent(state.svc.id)}&from=${from}&days=${days}`);
+      const res = await fetch(
+        `/api/availability?service=${encodeURIComponent(state.svc.id)}&from=${from}&days=${days}&session=${session}`,
+      );
       if (!res.ok) throw new Error(res.status);
       const data = await res.json();
-      if (state.month !== month) return; // guest moved on
-      Object.assign(state.avail, data);
-      state.loaded.add(month);
+      state.avail[session] = Object.assign(state.avail[session] || {}, data);
+      state.loaded.add(key);
     } catch {
       state.failed = true;
     } finally {
@@ -166,15 +177,16 @@
     loadMonth();
   }
 
-  // A day can be chosen if it has times and, for the 3-Day Journey, keeps every
-  // chosen day inside the window.
+  // A day can be chosen if it has times. For the 3-Day Journey the days are chosen in
+  // order: a new day comes after the last one and inside the window from the first.
+  // Already chosen days stay open so their time can be changed.
   function dayAllowed(date) {
-    if (!(state.avail[date] || []).length) return false;
+    if (state.picks.some((p) => p.date === date)) return timesFor(date).length > 0;
+    if (complete() && multi()) return false;
+    if (!timesFor(date).length) return false;
     if (!multi() || !state.picks.length) return true;
-    if (state.picks.some((p) => p.date === date)) return true;
-    if (state.picks.length >= state.svc.sessions) return false;
-    const dates = [...state.picks.map((p) => p.date), date].sort();
-    return daySpan(dates[0], dates.at(-1)) <= state.svc.session_window_days - 1;
+    return date > state.picks.at(-1).date &&
+      daySpan(state.picks[0].date, date) <= state.svc.session_window_days - 1;
   }
 
   function renderCalendar() {
@@ -190,7 +202,7 @@
     const lead = (utc(`${month}-01`).getUTCDay() + 6) % 7; // Monday first
     for (let i = 0; i < lead; i++) box.appendChild(document.createElement("span"));
     const t = today();
-    let open = 0;
+    let open = 0; // days that can still be added
     for (let d = 1; d <= daysIn(month); d++) {
       const date = `${month}-${pad(d)}`;
       const b = document.createElement("button");
@@ -199,7 +211,7 @@
       b.textContent = d;
       const ok = !state.loading && dayAllowed(date);
       if (ok) {
-        open++;
+        if (!state.picks.some((p) => p.date === date)) open++;
         b.classList.add("open");
         b.setAttribute("aria-label", `${longDate(date)}, free times`);
         b.addEventListener("click", () => selectDate(date));
@@ -215,11 +227,11 @@
     let status = "";
     if (state.loading) status = "Finding free times…";
     else if (state.failed) status = "Times cannot load right now. Please try again in a minute, or message us on WhatsApp.";
-    else if (!open && multi() && state.picks.length) status = "No more days fit inside the week. Remove a day to choose again.";
-    else if (!open) status = "No free times left this month. Try the next one.";
-    else if (multi() && state.picks.length < state.svc.sessions) {
-      status = `Day ${state.picks.length + 1} of ${state.svc.sessions}.`;
-    }
+    else if (complete()) status = "";
+    else if (!open && multi() && state.picks.length) {
+      status = `No free day for day ${state.picks.length + 1} this month. Try the next month, or remove the last day.`;
+    } else if (!open) status = "No free times left this month. Try the next one.";
+    else if (multi()) status = `Day ${state.picks.length + 1} of ${state.svc.sessions}.`;
     $("calStatus").textContent = status;
   }
 
@@ -237,7 +249,7 @@
     const box = $("times");
     box.innerHTML = "";
     const picked = state.picks.find((p) => p.date === date);
-    for (const time of state.avail[date] || []) {
+    for (const time of timesFor(date)) {
       const b = document.createElement("button");
       b.type = "button";
       b.className = "bk-time";
@@ -250,16 +262,13 @@
 
   function pickTime(time) {
     const date = state.date;
-    if (multi()) {
-      state.picks = state.picks.filter((p) => p.date !== date);
-      state.picks.push({ date, time });
-      state.picks.sort((a, b) => (a.date < b.date ? -1 : 1));
-    } else {
-      state.picks = [{ date, time }];
-    }
+    const existing = state.picks.find((p) => p.date === date);
+    if (existing) existing.time = time; // changing the time of a chosen day
+    else if (multi()) state.picks.push({ date, time }); // always after the last one
+    else state.picks = [{ date, time }];
     renderTimes();
     renderPicks();
-    renderCalendar();
+    loadMonth(); // fetches the next session's times if it differs in length
     updateDetails();
   }
 
@@ -267,19 +276,30 @@
     const box = $("picks");
     box.hidden = !multi() || !state.picks.length;
     box.innerHTML = "";
-    for (const p of state.picks) {
+    state.picks.forEach((p, i) => {
       const li = document.createElement("li");
-      li.innerHTML = `<span></span><button type="button">Remove</button>`;
+      li.innerHTML = `<span></span>`;
       li.querySelector("span").textContent = `${shortDate(p.date)}, ${p.time}`;
-      li.querySelector("button").addEventListener("click", () => {
-        state.picks = state.picks.filter((x) => x !== p);
-        renderPicks();
-        renderCalendar();
-        if (state.date) renderTimes();
-        updateDetails();
-      });
+      // Only the last day can be removed, so the days stay in order.
+      if (i === state.picks.length - 1) {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.textContent = "Remove";
+        b.addEventListener("click", () => {
+          state.picks.pop();
+          if (state.date === p.date) {
+            state.date = null;
+            $("timesWrap").hidden = true;
+          }
+          renderPicks();
+          loadMonth();
+          if (state.date) renderTimes();
+          updateDetails();
+        });
+        li.appendChild(b);
+      }
       box.appendChild(li);
-    }
+    });
   }
 
   // ---------- details and summary ----------
@@ -299,10 +319,9 @@
 
   function updateDetails() {
     const s = state.svc;
-    const complete = state.picks.length === s.sessions;
     const wasHidden = $("stepDetails").hidden;
-    $("stepDetails").hidden = !complete;
-    if (!complete) return;
+    $("stepDetails").hidden = !complete();
+    if (!complete()) return;
     const n = Number($("party").value);
     const p = priceFor(s, n);
     $("sumService").textContent = CARDS[s.id].title;
