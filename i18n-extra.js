@@ -82,7 +82,7 @@ window.NOOM_T_EXTRA.th = {
   'sj1.tag': 'ที่สตูดิโอ',
   'sj1.title': 'ระเบียง Noom,<br/><em>ละไม.</em>',
   'sj1.price': 'เริ่มต้น ฿2,500',
-  'sj1.per': 'สำหรับสองคน &middot; +฿500 ต่อคนเพิ่ม &middot; สูงสุดเจ็ดคน',
+  'sj1.per': 'สำหรับสองคน &middot; +฿500 ต่อคนเพิ่ม &middot; สูงสุดแปดคน',
   'sj1.desc': 'หนึ่งชั่วโมงของเสียงสดบนระเบียงกลางแจ้ง — พร้อมเสื่อ ชา และอากาศยามเย็น',
   'sj2.tag': 'เราไปหาคุณ',
   'sj2.title': 'ที่ที่<br/><em>คุณพัก.</em>',
@@ -95,7 +95,7 @@ window.NOOM_T_EXTRA.th = {
   'pillar1.body': '<strong style="font-weight:500;color:var(--ink)">คลาสทดลอง.</strong> หนึ่งเซสชันเพื่อทำความรู้จักเครื่องดนตรี<br/><br/><strong style="font-weight:500;color:var(--ink)">คอร์ส 8 คลาส.</strong> คลาสละ 90 นาที ในจังหวะของคุณ<br/><br/><strong style="font-weight:500;color:var(--ink)">คอร์สแฮนด์แพนสามวัน.</strong> สิบชั่วโมง — กลับไปพร้อมเพลงของคุณเองที่บันทึกไว้<br/><br/>ที่ระเบียงเปิดของ Noom Studio ในละไม หรือเราไปที่โรงแรม/วิลล่าของคุณ',
   'pillar1.cta': 'ดูคลาสและคอร์ส &nbsp;&rarr;',
 
-  'faq.a.pr2': 'คลาสแฮนด์แพน: คลาสทดลอง <strong>2,000 บาท</strong>; คอร์สแฮนด์แพนสามวัน <strong>10,000 บาท</strong>; คอร์ส 8 คลาส (คลาสละ 90 นาที) <strong>12,000 บาท</strong> คลาสกลุ่มเพิ่ม 1,000 บาทต่อผู้เล่นหนึ่งคน สูงสุดสามคน ซาวด์เจอร์นี่ส่วนตัวที่สตูดิโอ <strong>2,500 บาทสำหรับสองคน</strong> (+500 บาทต่อคนเพิ่ม สูงสุด 7 คน) ไปที่พักของคุณเริ่ม <strong>4,000 บาทสำหรับสองคน</strong> (+500 บาทต่อคน สูงสุด 10 คน) เซสชันเปิดวันอาทิตย์ <strong>600 บาทต่อคน</strong>',
+  'faq.a.pr2': 'คลาสแฮนด์แพน: คลาสทดลอง <strong>2,000 บาท</strong>; คอร์สแฮนด์แพนสามวัน <strong>10,000 บาท</strong>; คอร์ส 8 คลาส (คลาสละ 90 นาที) <strong>12,000 บาท</strong> คลาสกลุ่มเพิ่ม 1,000 บาทต่อผู้เล่นหนึ่งคน สูงสุดสามคน ซาวด์เจอร์นี่ส่วนตัวที่สตูดิโอ <strong>2,500 บาทสำหรับสองคน</strong> (+500 บาทต่อคนเพิ่ม สูงสุด 8 คน) ไปที่พักของคุณเริ่ม <strong>4,000 บาทสำหรับสองคน</strong> (+500 บาทต่อคน สูงสุด 10 คน) เซสชันเปิดวันอาทิตย์ <strong>600 บาทต่อคน</strong>',
 
   'common.msgBook': 'ทักเพื่อจอง &nbsp;&rarr;',
 
@@ -187,7 +187,7 @@ window.NOOM_T_EXTRA.de = {
   'sj1.tag': 'Im Studio',
   'sj1.title': 'Noom-Terrasse,<br/><em>Lamai.</em>',
   'sj1.price': 'ab ฿2.500',
-  'sj1.per': 'Für zwei &middot; +฿500 pro weiterem Gast &middot; bis zu sieben',
+  'sj1.per': 'Für zwei &middot; +฿500 pro weiterem Gast &middot; bis zu acht',
   'sj1.desc': 'Eine Stunde Live-Klang auf der Open-Air-Terrasse — Matten, Tee und Abendluft inklusive.',
   'sj2.tag': 'Wir kommen zu dir',
   'sj2.title': 'Bei dir<br/><em>vor Ort.</em>',
@@ -292,7 +292,7 @@ window.NOOM_T_EXTRA.fr = {
   'sj1.tag': 'Au studio',
   'sj1.title': 'Terrasse Noom,<br/><em>Lamai.</em>',
   'sj1.price': 'à partir de ฿2 500',
-  'sj1.per': 'Pour deux &middot; +฿500 par invité supplémentaire &middot; jusqu’à sept',
+  'sj1.per': 'Pour deux &middot; +฿500 par invité supplémentaire &middot; jusqu’à huit',
   'sj1.desc': 'Une heure de son live sur la terrasse en plein air — tapis, thé et air du soir compris.',
   'sj2.tag': 'On vient à toi',
   'sj2.title': 'Chez<br/><em>toi.</em>',
