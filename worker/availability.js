@@ -40,7 +40,8 @@ export function isDate(s) {
 
 // Weekly sessions in [fromDate, fromDate + days). Generated from recurrence rows, then
 // overlaid with occurrence rows already in the database (which carry status, capacity
-// and the calendar event id). Cancelled ones are returned too, with their status.
+// and the calendar event id), matched by id '<recurrence-id>-<YYYY-MM-DD>', so a row
+// can also move one session to another time. Cancelled ones are returned too.
 //
 // recurrences: rows joined with their service's duration_min and buffer_after_min.
 // dbOccurrences: occurrence rows joined with their service's buffer_after_min.
@@ -54,8 +55,9 @@ export function weeklyOccurrences(recurrences, dbOccurrences, fromDate, days) {
       if (r.weekday !== weekday) continue;
       const [h, m] = r.start_time.split(":").map(Number);
       const startMs = start + (h * 60 + m) * MIN_MS;
-      byKey.set(`${r.id}|${startMs}`, {
+      byKey.set(`${r.id}-${date}`, {
         id: `${r.id}-${date}`,
+        date,
         recurrence_id: r.id,
         service_id: r.service_id,
         startMs,
@@ -70,8 +72,9 @@ export function weeklyOccurrences(recurrences, dbOccurrences, fromDate, days) {
   }
   for (const o of dbOccurrences) {
     const startMs = Date.parse(o.starts_at_utc);
-    byKey.set(`${o.recurrence_id}|${startMs}`, {
+    byKey.set(o.id, {
       id: o.id,
+      date: localDate(startMs),
       recurrence_id: o.recurrence_id,
       service_id: o.service_id,
       startMs,

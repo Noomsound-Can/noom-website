@@ -1,5 +1,5 @@
 // /book/ page. Repo-only, never authored in Claude Design. Plain JS, no build step.
-// Spec: noom-booking/BOOKING-SPEC.md sections 6.2 and 9. The server re-checks
+// Spec: noom-booking/BOOKING-SPEC.md sections 6.1, 6.2 and 9. The server re-checks
 // everything; this file only helps the guest choose.
 (() => {
   const $ = (id) => document.getElementById(id);
@@ -11,6 +11,11 @@
 
   // Card copy lives here, prices come from the database.
   const CARDS = {
+    "terrace-weekly": {
+      title: "Sound Journey, Noom Terrace",
+      blurb: "Our weekly open session. Handpan, gong, crystal and Tibetan bowls, played live by two of us. Eight mats.",
+      meta: "Wednesday and Sunday · 17:30 · 75 min",
+    },
     "sound-journey-terrace": {
       title: "Private Sound Journey at Noom Terrace",
       blurb: "Our covered terrace in Lamai, for your group alone. Mats and tea included.",
@@ -43,6 +48,7 @@
     failed: false,
     date: null,
     picks: [], // [{date, time}], chosen in date order: pick n is session n
+    occ: {}, // weekly service only: date -> occurrence from /api/occurrences
   };
 
   // ---------- dates, all in Koh Samui time ----------
@@ -74,6 +80,11 @@
   const priceFor = (s, n) =>
     s.price_thb == null ? null : s.price_thb + Math.max(0, n - (s.price_base_guests || 1)) * (s.price_extra_thb || 0);
   const multi = () => state.svc && state.svc.sessions > 1;
+  const weekly = () => state.svc?.kind === "group";
+  const unit = (n) => {
+    const word = weekly() ? "mat" : state.svc.id.startsWith("handpan") ? "student" : "guest";
+    return `${n} ${word}${n === 1 ? "" : "s"}`;
+  };
   const complete = () => state.svc && state.picks.length === state.svc.sessions;
   // The session a day belongs to: its own if already picked, else the next one.
   const sessionFor = (date) => {
@@ -87,7 +98,7 @@
     try {
       const res = await fetch("/api/services");
       if (!res.ok) throw new Error(res.status);
-      state.services = (await res.json()).filter((s) => s.kind === "private" && CARDS[s.id]);
+      state.services = (await res.json()).filter((s) => (s.kind === "private" || s.kind === "group") && CARDS[s.id]);
     } catch {
       $("cards").innerHTML =
         `<p class="bk-quiet">Booking cannot load right now. Please <a href="https://wa.me/${WA}" target="_blank" rel="noopener">message us on WhatsApp</a>.</p>`;
@@ -126,12 +137,15 @@
     state.loaded = new Set();
     state.date = null;
     state.picks = [];
+    state.occ = {};
     state.month = monthOf(today());
     for (const b of $("cards").children) b.setAttribute("aria-checked", String(b.dataset.id === id));
 
-    $("whenLabel").textContent = multi()
-      ? `Choose ${state.svc.sessions} days in order, all within ${state.svc.session_window_days} days`
-      : "Choose a day and time";
+    $("whenLabel").textContent = weekly()
+      ? "Choose a Wednesday or Sunday"
+      : multi()
+        ? `Choose ${state.svc.sessions} days in order, all within ${state.svc.session_window_days} days`
+        : "Choose a day and time";
     setupDetails();
     $("stepWhen").hidden = false;
     $("stepDetails").hidden = true;
@@ -142,8 +156,42 @@
   }
 
   // ---------- availability ----------
+  // Weekly sessions: one request covers every month the calendar can show.
+  // Bookable ones become the day's single time, so the rest of the flow is shared.
+  async function loadSessions() {
+    renderCalendar();
+    if (state.loaded.has("occ")) return;
+    state.loading = true;
+    state.failed = false;
+    renderCalendar();
+    try {
+      const res = await fetch("/api/occurrences?weeks=13");
+      if (!res.ok) throw new Error(res.status);
+      const list = await res.json();
+      state.occ = {};
+      state.avail = { 1: {} };
+      for (const o of list) {
+        state.occ[o.date] = o;
+        if (o.bookable) state.avail[1][o.date] = [o.time];
+      }
+      state.loaded.add("occ");
+    } catch {
+      state.failed = true;
+    } finally {
+      state.loading = false;
+      renderCalendar();
+    }
+  }
+
+  // A weekly session that is full: its day stays clickable to show the waiting-list note.
+  const fullSession = (date) => {
+    const o = weekly() && state.occ[date];
+    return !!o && o.status === "open" && o.spots_left === 0 && date >= today();
+  };
+
   // Loads the shown month for the session being chosen next.
   async function loadMonth() {
+    if (weekly()) return loadSessions();
     const month = state.month;
     const session = Math.min(state.picks.length + 1, state.svc.sessions);
     const key = `${session}|${month}`;
@@ -210,13 +258,25 @@
       b.className = "bk-day";
       b.textContent = d;
       const ok = !state.loading && dayAllowed(date);
+      const full = !state.loading && fullSession(date);
       if (ok) {
         if (!state.picks.some((p) => p.date === date)) open++;
         b.classList.add("open");
         b.setAttribute("aria-label", `${longDate(date)}, free times`);
         b.addEventListener("click", () => selectDate(date));
+      } else if (full) {
+        b.classList.add("full");
+        b.setAttribute("aria-label", `${longDate(date)}, full`);
+        b.addEventListener("click", () => selectDate(date));
       } else {
         b.disabled = true;
+      }
+      // Weekly sessions show the live count right in the calendar.
+      const o = weekly() && !state.loading && state.occ[date];
+      if (o && date >= t) {
+        const small = document.createElement("small");
+        small.textContent = o.status !== "open" ? "Closed" : full ? "Full" : ok ? `${o.spots_left} left` : "";
+        if (small.textContent) b.appendChild(small);
       }
       if (state.picks.some((p) => p.date === date)) b.classList.add("picked");
       if (date === state.date) b.classList.add("sel");
@@ -230,7 +290,8 @@
     else if (complete()) status = "";
     else if (!open && multi() && state.picks.length) {
       status = `No free day for day ${state.picks.length + 1} this month. Try the next month, or remove the last day.`;
-    } else if (!open) status = "No free times left this month. Try the next one.";
+    } else if (!open && weekly()) status = "No sessions with free mats left this month. Try the next one.";
+    else if (!open) status = "No free times left this month. Try the next one.";
     else if (multi()) status = `Day ${state.picks.length + 1} of ${state.svc.sessions}.`;
     $("calStatus").textContent = status;
   }
@@ -258,6 +319,16 @@
       b.addEventListener("click", () => pickTime(time));
       box.appendChild(b);
     }
+    const info = $("timesInfo");
+    const o = weekly() && state.occ[date];
+    info.hidden = !o;
+    if (!o) return;
+    if (o.spots_left === 0) {
+      info.innerHTML =
+        `This session is full. <a href="https://wa.me/${WA}?text=${encodeURIComponent(`Hi Can, is there a waiting list for the Sound Journey on ${longDate(date)}?`)}" target="_blank" rel="noopener">Message us on WhatsApp</a> and we will tell you if a mat opens up.`;
+    } else {
+      info.textContent = `${o.venue} · ${o.time} to ${o.end_time} · ${o.taken} of ${o.capacity} mats taken, ${o.spots_left} left`;
+    }
   }
 
   function pickTime(time) {
@@ -266,6 +337,7 @@
     if (existing) existing.time = time; // changing the time of a chosen day
     else if (multi()) state.picks.push({ date, time }); // always after the last one
     else state.picks = [{ date, time }];
+    if (weekly()) setParty(1, Math.min(state.svc.max_guests, state.occ[date].spots_left), 1);
     renderTimes();
     renderPicks();
     loadMonth(); // fetches the next session's times if it differs in length
@@ -303,17 +375,28 @@
   }
 
   // ---------- details and summary ----------
+  function setParty(min, max, preferred) {
+    const sel = $("party");
+    const keep = Number(sel.value);
+    sel.innerHTML = "";
+    for (let n = min; n <= max; n++) sel.add(new Option(String(n), String(n)));
+    const want = keep >= min && keep <= max && sel.dataset.touched ? keep : preferred;
+    sel.value = String(Math.max(min, Math.min(max, want)));
+    sel.closest(".bk-field").hidden = min === max && !weekly();
+  }
+
   function setupDetails() {
     const s = state.svc;
-    const sel = $("party");
-    sel.innerHTML = "";
-    for (let n = s.min_guests; n <= s.max_guests; n++) sel.add(new Option(String(n), String(n)));
-    sel.value = String(Math.max(s.min_guests, Math.min(s.max_guests, s.price_base_guests || s.min_guests)));
-    sel.closest(".bk-field").hidden = s.min_guests === s.max_guests;
-    $("partyLabel").textContent = s.id.startsWith("handpan") ? "Students" : "Guests";
+    delete $("party").dataset.touched;
+    setParty(s.min_guests, s.max_guests, s.price_base_guests || s.min_guests);
+    $("partyLabel").textContent = weekly() ? "Mats" : s.id.startsWith("handpan") ? "Students" : "Guests";
     const loc = $("locationField");
     loc.hidden = s.id !== "sound-journey-villa";
     loc.querySelector("input").required = !loc.hidden;
+    $("sumRequest").textContent = weekly()
+      ? "Your mats are confirmed as soon as you book."
+      : "This is a request. We will message you on WhatsApp to confirm.";
+    $("submitBtn").textContent = weekly() ? "Book" : "Send request";
     clearErrors();
   }
 
@@ -328,7 +411,8 @@
     $("sumPrice").textContent = p == null ? "" : thb(p);
     $("sumWhen").textContent =
       state.picks.map((x) => `${longDate(x.date)}, ${x.time}`).join("\n") +
-      (s.min_guests === s.max_guests ? "" : `\n${n} ${n === 1 ? (s.id.startsWith("handpan") ? "student" : "guest") : (s.id.startsWith("handpan") ? "students" : "guests")}`);
+      (weekly() ? `\n${state.occ[state.picks[0].date].venue}` : "") +
+      (s.min_guests === s.max_guests && !weekly() ? "" : `\n${unit(n)}`);
     if (wasHidden) $("stepDetails").scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
@@ -370,12 +454,14 @@
       notes: f.notes.value,
       website: f.website.value,
     };
+    if (weekly()) body.occurrence = state.occ[state.picks[0].date].id;
     const btn = $("submitBtn");
+    const label = btn.textContent;
     btn.disabled = true;
     btn.textContent = "Sending…";
     let res, data;
     try {
-      res = await fetch("/api/book", {
+      res = await fetch(weekly() ? "/api/signup" : "/api/book", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify(body),
@@ -385,12 +471,26 @@
       res = { status: 0 };
     }
     btn.disabled = false;
-    btn.textContent = "Send request";
+    btn.textContent = label;
 
     if (res.status === 200) return done(body, data);
     if (res.status === 400 && data?.fields) return showFieldErrors(data.fields);
+    if (res.status === 409 && weekly() && data?.error === "not_enough") {
+      // Someone took mats meanwhile, but some are left: offer what remains.
+      const o = state.occ[state.picks[0].date];
+      o.spots_left = data.spots_left;
+      o.taken = o.capacity - data.spots_left;
+      setParty(1, Math.min(state.svc.max_guests, data.spots_left), data.spots_left);
+      renderTimes();
+      updateDetails();
+      $("formError").textContent = `Only ${data.spots_left} mat${data.spots_left === 1 ? "" : "s"} left now. Please choose again.`;
+      return;
+    }
     if (res.status === 409) {
-      $("formError").textContent = "Sorry, that time was just taken. Please choose another.";
+      const msg = weekly()
+        ? "Sorry, this session just filled up or closed. Please choose another day."
+        : "Sorry, that time was just taken. Please choose another.";
+      $("formError").textContent = msg;
       state.picks = [];
       state.date = null;
       $("timesWrap").hidden = true;
@@ -399,7 +499,7 @@
       setTimeout(() => {
         $("stepDetails").hidden = true;
         $("stepWhen").scrollIntoView({ behavior: "smooth", block: "start" });
-        $("calStatus").textContent = "That time was just taken. Please choose another.";
+        $("calStatus").textContent = msg;
       }, 1800);
       return;
     }
@@ -418,8 +518,13 @@
     const n = body.party_size;
     $("doneWhen").textContent =
       `${CARDS[state.svc.id].title}\n${data.slots.join("\n")}` +
-      (state.svc.min_guests === state.svc.max_guests ? "" : `\n${n} ${n === 1 ? "person" : "people"}`) +
+      (weekly() ? `\n${state.occ[state.picks[0].date].venue}` : "") +
+      (state.svc.min_guests === state.svc.max_guests && !weekly() ? "" : `\n${unit(n)}`) +
       (data.price_thb == null ? "" : `\n${thb(data.price_thb)}, paid on the day`);
+    $("doneLabel").textContent = weekly() ? "Booked" : "Request sent";
+    $("doneRequest").textContent = weekly()
+      ? "Your mats are booked. Please arrive ten minutes early."
+      : "This is a request. We will message you on WhatsApp to confirm.";
     $("doneWa").href = data.whatsapp_url;
     $("stepDone").hidden = false;
     $("book").scrollIntoView({ behavior: "smooth", block: "start" });
@@ -434,7 +539,10 @@
     state.month = addMonths(state.month, 1);
     loadMonth();
   });
-  $("party").addEventListener("change", updateDetails);
+  $("party").addEventListener("change", () => {
+    $("party").dataset.touched = "1";
+    updateDetails();
+  });
   $("stepDetails").addEventListener("submit", submit);
 
   // Guests abroad: say plainly that times are island time.

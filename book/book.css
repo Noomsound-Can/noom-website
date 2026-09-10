@@ -39,6 +39,15 @@
 .bk-day.picked{background:var(--sand);border-color:var(--sand);color:var(--ink)}
 .bk-day.sel{background:var(--ink);border-color:var(--ink);color:var(--cream)}
 .bk-day.today{text-decoration:underline;text-underline-offset:4px}
+.bk-day{flex-direction:column;gap:1px;line-height:1.1}
+.bk-day small{font-size:9px;letter-spacing:0.02em;color:var(--clay);text-decoration:none;white-space:nowrap}
+.bk-day.sel small{color:var(--cream)}
+.bk-day.full{cursor:pointer;color:var(--ink-mute);background:var(--cream-soft);border-color:var(--shell)}
+.bk-day.full small{color:var(--ink-mute)}
+.bk-day.full:focus-visible{outline:2px solid var(--clay);outline-offset:1px}
+.bk-info{font-family:var(--serif);font-size:17px;line-height:1.55;color:var(--ink-soft);margin:14px 0 0}
+.bk-info[hidden]{display:none}
+.bk-info a{color:var(--ink);border-bottom:1px solid var(--ink-faint);padding-bottom:2px}
 
 /* Times */
 .bk-times-wrap{margin:28px 0 0}

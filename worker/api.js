@@ -8,6 +8,7 @@ import {
   isDate,
   isoUtc,
   localDate,
+  localTime,
   weeklyOccurrences,
 } from "./availability.js";
 import {
@@ -19,10 +20,11 @@ import {
   slotLabel,
   thb,
   validateBooking,
+  validateSignup,
   whatsappLink,
 } from "./booking.js";
 import { PUBLIC_REPLY_TO, alertRecipients, sendEmail } from "./email.js";
-import { busyCalendars, createEvent, freeBusy } from "./gcal.js";
+import { busyCalendars, createEvent, deleteEvent, freeBusy, patchEvent } from "./gcal.js";
 
 const FREEBUSY_TTL_S = 60; // spec section 5, do not raise
 const MAX_DAYS = 62;
@@ -263,6 +265,246 @@ async function afterRequest(env, { ref, service, d, price, labels }) {
         `Noom Sound Studio\nLamai, Koh Samui\nhttps://www.noomsound.studio`,
     });
   }
+}
+
+// GET /api/occurrences?weeks=6 -> weekly sessions with live counts (spec 6.1).
+// [{ id, date, time, end_time, venue, capacity, taken, spots_left, status, bookable }]
+export async function occurrences(request, env) {
+  const url = new URL(request.url);
+  const weeks = clamp(parseInt(url.searchParams.get("weeks") || "6", 10) || 6, 1, 13);
+  const nowMs = Date.now();
+  const list = await sessionsWithCounts(env, localDate(nowMs), weeks * 7);
+  return json(list.map((o) => publicOccurrence(o, nowMs)));
+}
+
+// POST /api/signup, a seat at a weekly session, confirmed instantly (spec 6.1).
+// { occurrence: 'terrace-sun-2026-09-13', name, whatsapp, email?, party_size, notes? }
+// -> { ref, status, spots_left, whatsapp_url, price_thb, slots: ['Sun 13 Sep, 17:30'] }
+export async function signup(request, env, ctx) {
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    return json({ error: "bad_json" }, 400);
+  }
+  if (body.website) return json({ error: "rejected" }, 400); // honeypot
+
+  const id = String(body.occurrence || "");
+  const date = /-(\d{4}-\d{2}-\d{2})$/.exec(id)?.[1];
+  if (!date || !isDate(date)) return json({ error: "unknown_occurrence" }, 400);
+  const nowMs = Date.now();
+  const occ = (await sessionsWithCounts(env, date, 1)).find((o) => o.id === id);
+  if (!occ) return json({ error: "unknown_occurrence" }, 400);
+  if (!publicOccurrence(occ, nowMs).bookable) {
+    return json({ error: occ.capacity - occ.taken <= 0 ? "full" : "closed", spots_left: Math.max(0, occ.capacity - occ.taken) }, 409);
+  }
+  const service = await activeService(env, occ.service_id);
+  if (!service) return json({ error: "unknown_occurrence" }, 400);
+
+  const v = validateSignup(body, service, occ.capacity - occ.taken);
+  if (v.errors) return json({ error: "invalid", fields: v.errors }, 400);
+  const d = v.data;
+
+  const recent = await env.DB.prepare("SELECT count(*) AS n FROM booking WHERE created_at > ?")
+    .bind(isoUtc(nowMs - 3600 * 1000)).first();
+  if (recent.n >= MAX_BOOKINGS_PER_HOUR) return json({ error: "busy" }, 429);
+
+  const price = priceFor(service, d.party_size);
+  const startIso = isoUtc(occ.startMs);
+  const endIso = isoUtc(occ.endMs);
+  let ref;
+  for (let attempt = 0; attempt < 3 && !ref; attempt++) {
+    const candidate = makeRef();
+    try {
+      // One atomic batch. The occurrence row is created on first signup; the booking
+      // goes in only if the seats already taken plus this party still fit.
+      const res = await env.DB.batch([
+        env.DB.prepare(
+          `INSERT OR IGNORE INTO occurrence (id, service_id, recurrence_id, starts_at_utc, ends_at_utc, capacity, venue)
+           VALUES (?, ?, ?, ?, ?, ?, ?)`,
+        ).bind(occ.id, occ.service_id, occ.recurrence_id, startIso, endIso, occ.capacity, occ.venue),
+        env.DB.prepare(
+          `INSERT INTO booking (ref, service_id, occurrence_id, starts_at_utc, ends_at_utc, name, whatsapp,
+                                email, party_size, notes, price_thb, source, status)
+           SELECT ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'web', 'confirmed'
+            WHERE (SELECT status FROM occurrence WHERE id = ?) = 'open'
+              AND (SELECT COALESCE(SUM(party_size), 0) FROM booking
+                    WHERE occurrence_id = ? AND status = 'confirmed') + ?
+                  <= (SELECT capacity FROM occurrence WHERE id = ?)`,
+        ).bind(
+          candidate, occ.service_id, occ.id, startIso, endIso, d.name, d.whatsapp, d.email,
+          d.party_size, d.notes, price, occ.id, occ.id, d.party_size, occ.id,
+        ),
+      ]);
+      if (res[1].meta.changes !== 1) {
+        const left = await spotsLeft(env, occ.id);
+        return json({ error: left <= 0 ? "full" : "not_enough", spots_left: left }, 409);
+      }
+      ref = candidate;
+    } catch (err) {
+      if (!/UNIQUE/i.test(err.message)) throw err; // ref collision, try another
+    }
+  }
+  if (!ref) return json({ error: "try_again" }, 503);
+
+  const left = await spotsLeft(env, occ.id);
+  const label = slotLabel(occ.startMs);
+  const mats = `${d.party_size} mat${d.party_size > 1 ? "s" : ""}`;
+  const waText = `Hi Can, I booked ${mats} for the Sound Journey on ${label}. Reference ${ref}.`;
+  ctx.waitUntil(afterSignup(env, { ref, service, occ, d, price, label, mats, left }));
+
+  return json({
+    ref,
+    status: "confirmed",
+    spots_left: left,
+    whatsapp_url: whatsappLink(CAN_WHATSAPP, waText),
+    price_thb: price,
+    slots: [label],
+  });
+}
+
+async function afterSignup(env, { ref, service, occ, d, price, label, mats, left }) {
+  let calendarOk = true;
+  try {
+    await syncOccurrenceEvent(env, occ.id);
+  } catch (err) {
+    calendarOk = false;
+    console.log(`signup ${ref}: calendar sync failed: ${err.message}`);
+  }
+  const taken = occ.capacity - left;
+  await sendEmail(env, {
+    to: alertRecipients(env),
+    subject: `New signup ${ref}: ${label}, ${mats} (${taken}/${occ.capacity})`,
+    replyTo: d.email || undefined,
+    text: [
+      `Ref: ${ref}`,
+      `Session: ${service.name}, ${label} (Koh Samui time)`,
+      `Name: ${d.name}`,
+      `WhatsApp: +${d.whatsapp}  ${whatsappLink(d.whatsapp)}`,
+      d.email ? `Email: ${d.email}` : null,
+      `Mats: ${d.party_size}`,
+      `Price: ${thb(price)}, paid on the day`,
+      d.notes ? `Notes: ${d.notes}` : null,
+      "",
+      `Now ${taken} of ${occ.capacity} mats taken, ${left} left. Confirmed automatically.`,
+      calendarOk ? null : "The calendar event could not be updated, check Noom Bookings.",
+    ].filter((x) => x !== null).join("\n"),
+  });
+  if (d.email) {
+    await sendEmail(env, {
+      to: d.email,
+      subject: `Your mat is booked (${ref})`,
+      replyTo: PUBLIC_REPLY_TO,
+      text:
+        `Hello ${d.name},\n\n` +
+        `Your ${mats} ${d.party_size > 1 ? "are" : "is"} booked:\n\n` +
+        `${service.name}\n${label} (Koh Samui time)\n${occ.venue}\n` +
+        `${thb(price)}, paid on the day in cash, by bank transfer or Thai QR\n\n` +
+        `Please arrive ten minutes early. Your reference is ${ref}.\n\n` +
+        `Noom Sound Studio\nLamai, Koh Samui\nhttps://www.noomsound.studio`,
+    });
+  }
+}
+
+// One event per weekly session in Noom Bookings, titled with the live count and
+// listing every guest. Created on first signup, patched after that. Also used by
+// admin changes (step 7).
+export async function syncOccurrenceEvent(env, id) {
+  const occ = await env.DB.prepare("SELECT * FROM occurrence WHERE id = ?").bind(id).first();
+  if (!occ) return;
+  const { results: guests } = await env.DB.prepare(
+    `SELECT ref, name, whatsapp, party_size, source FROM booking
+      WHERE occurrence_id = ? AND status = 'confirmed' ORDER BY created_at`,
+  ).bind(id).all();
+  const taken = guests.reduce((n, g) => n + g.party_size, 0);
+  const event = {
+    summary: `${occ.status === "cancelled" ? "CANCELLED, " : ""}Sound Journey, Terrace (${taken}/${occ.capacity})`,
+    description:
+      guests.map((g) =>
+        `${g.party_size} · ${g.name}${g.whatsapp ? ` · +${g.whatsapp} ${whatsappLink(g.whatsapp)}` : ""} · ${g.source} · ${g.ref}`,
+      ).join("\n") || "No guests yet.",
+    location: occ.venue || undefined,
+    colorId: "10",
+    start: { dateTime: occ.starts_at_utc, timeZone: "Asia/Bangkok" },
+    end: { dateTime: occ.ends_at_utc, timeZone: "Asia/Bangkok" },
+  };
+  const cal = env.GCAL_BOOKINGS_ID;
+  if (occ.gcal_event_id) {
+    try {
+      await patchEvent(env, cal, occ.gcal_event_id, event);
+      return;
+    } catch (err) {
+      if (!/ (404|410):/.test(err.message)) throw err;
+      // Deleted by hand in the calendar: forget it and create a fresh one.
+      await env.DB.prepare("UPDATE occurrence SET gcal_event_id = NULL WHERE id = ? AND gcal_event_id = ?")
+        .bind(id, occ.gcal_event_id).run();
+    }
+  }
+  const ev = await createEvent(env, cal, event);
+  const res = await env.DB.prepare("UPDATE occurrence SET gcal_event_id = ? WHERE id = ? AND gcal_event_id IS NULL")
+    .bind(ev.id, id).run();
+  if (res.meta.changes === 0) {
+    // Another signup created the event at the same moment: keep theirs.
+    await deleteEvent(env, cal, ev.id);
+    const winner = await env.DB.prepare("SELECT gcal_event_id FROM occurrence WHERE id = ?").bind(id).first();
+    if (winner?.gcal_event_id) await patchEvent(env, cal, winner.gcal_event_id, event);
+  }
+}
+
+// Weekly sessions in range, with confirmed seats counted and the service lead time.
+async function sessionsWithCounts(env, from, days) {
+  const rangeStart = isoUtc(dayStartMs(from));
+  const rangeEnd = isoUtc(dayStartMs(addDays(from, days)));
+  const [recs, dbOcc, counts, svc] = await env.DB.batch([
+    env.DB.prepare(
+      `SELECT r.*, sv.duration_min, sv.buffer_after_min
+         FROM recurrence r JOIN service sv ON sv.id = r.service_id
+        WHERE r.active = 1 AND sv.active = 1`,
+    ),
+    env.DB.prepare(
+      `SELECT o.*, sv.buffer_after_min FROM occurrence o JOIN service sv ON sv.id = o.service_id
+        WHERE o.starts_at_utc >= ?1 AND o.starts_at_utc < ?2`,
+    ).bind(rangeStart, rangeEnd),
+    env.DB.prepare(
+      `SELECT occurrence_id, SUM(party_size) AS taken FROM booking
+        WHERE status = 'confirmed' AND occurrence_id IS NOT NULL
+          AND starts_at_utc >= ?1 AND starts_at_utc < ?2
+        GROUP BY occurrence_id`,
+    ).bind(rangeStart, rangeEnd),
+    env.DB.prepare("SELECT id, lead_time_h FROM service"),
+  ]);
+  const taken = new Map(counts.results.map((r) => [r.occurrence_id, r.taken]));
+  const lead = new Map(svc.results.map((s) => [s.id, s.lead_time_h]));
+  return weeklyOccurrences(recs.results, dbOcc.results, from, days).map((o) => ({
+    ...o,
+    taken: taken.get(o.id) || 0,
+    leadTimeH: lead.get(o.service_id) || 0,
+  }));
+}
+
+function publicOccurrence(o, nowMs) {
+  const left = Math.max(0, o.capacity - o.taken);
+  return {
+    id: o.id,
+    date: o.date,
+    time: localTime(o.startMs),
+    end_time: localTime(o.endMs),
+    venue: o.venue,
+    capacity: o.capacity,
+    taken: o.taken,
+    spots_left: left,
+    status: o.status,
+    bookable: o.status === "open" && left > 0 && o.startMs >= nowMs + o.leadTimeH * 3600 * 1000,
+  };
+}
+
+async function spotsLeft(env, id) {
+  const r = await env.DB.prepare(
+    `SELECT o.capacity - COALESCE((SELECT SUM(party_size) FROM booking
+                                    WHERE occurrence_id = o.id AND status = 'confirmed'), 0) AS spots
+       FROM occurrence o WHERE o.id = ?`,
+  ).bind(id).first();
+  return Math.max(0, r?.spots ?? 0);
 }
 
 // Free start times for one service session of durationMin. fresh = skip the 60 s

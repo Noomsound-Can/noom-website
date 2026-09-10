@@ -6,7 +6,7 @@
 // else back to the assets binding, which keeps 404s and redirects exactly as before.
 
 import { accessEmail } from "./access.js";
-import { availability, book, services } from "./api.js";
+import { availability, book, occurrences, services, signup } from "./api.js";
 
 export default {
   async fetch(request, env, ctx) {
@@ -25,6 +25,12 @@ export default {
       }
       if (url.pathname === "/api/book" && request.method === "POST") {
         return book(request, env, ctx);
+      }
+      if (url.pathname === "/api/occurrences" && request.method === "GET") {
+        return occurrences(request, env);
+      }
+      if (url.pathname === "/api/signup" && request.method === "POST") {
+        return signup(request, env, ctx);
       }
       if (url.pathname.startsWith("/api/admin/")) {
         if (!(await accessEmail(request))) {

@@ -57,7 +57,7 @@
 <div class="ph-inner">
 <p class="crumb"><a href="../">Noom Sound Studio</a> &nbsp;/&nbsp; Book</p>
 <h1>Book a <em>session</em></h1>
-<p class="ph-lede">Pick a free time. We confirm on WhatsApp, and you pay on the day.</p>
+<p class="ph-lede">Choose a session and a time. You pay on the day.</p>
 </div>
 </header>
 
@@ -68,8 +68,7 @@
 <div class="bk-cards" id="cards" role="radiogroup" aria-labelledby="hService">
 <p class="bk-quiet">Loading&hellip;</p>
 </div>
-<p class="bk-weekly">Wednesday and Sunday at 17:30 there is a weekly Sound Journey on the terrace, 600 THB a mat.
-<a href="https://wa.me/905468419181?text=Hi%20Can%2C%20I%20would%20like%20a%20mat%20for%20a%20Sound%20Journey.%20Which%20day%20has%20space%3F" target="_blank" rel="noopener">Message us for a mat</a></p>
+<p class="bk-weekly">Rather talk it through? <a href="https://wa.me/905468419181?text=Hi%20Can%2C%20I%20have%20a%20question%20about%20booking." target="_blank" rel="noopener">Message us on WhatsApp</a></p>
 </section>
 
 <section class="bk-step" id="stepWhen" hidden aria-labelledby="hWhen">
@@ -87,6 +86,7 @@
 <div class="bk-times-wrap" id="timesWrap" hidden>
 <p class="bk-date" id="dateLabel"></p>
 <div class="bk-times" id="times"></div>
+<p class="bk-info" id="timesInfo" hidden></p>
 <p class="bk-tz" id="tzNote">Times are Koh Samui time (GMT+7).</p>
 </div>
 <ol class="bk-picks" id="picks" hidden></ol>
@@ -131,7 +131,7 @@
 <div class="bk-summary">
 <div class="bk-sum-row"><span id="sumService"></span><span class="bk-price" id="sumPrice"></span></div>
 <p class="bk-sum-when" id="sumWhen"></p>
-<p class="bk-request">This is a request. We will message you on WhatsApp to confirm.</p>
+<p class="bk-request" id="sumRequest">This is a request. We will message you on WhatsApp to confirm.</p>
 <p class="bk-pay">Pay on the day, in cash, by bank transfer or Thai QR.</p>
 <button class="btn-ink" type="submit" id="submitBtn">Send request</button>
 <p class="bk-err bk-form-err" id="formError" role="alert"></p>
@@ -139,12 +139,12 @@
 </form>
 
 <section class="bk-step bk-done" id="stepDone" hidden aria-live="polite">
-<p class="grouplabel">Request sent</p>
+<p class="grouplabel" id="doneLabel">Request sent</p>
 <h2>Thank you, <em id="doneName"></em>.</h2>
 <p class="bk-ref-label">Your reference</p>
 <p class="bk-ref" id="doneRef"></p>
 <p class="bk-sum-when" id="doneWhen"></p>
-<p class="bk-request">This is a request. We will message you on WhatsApp to confirm.</p>
+<p class="bk-request" id="doneRequest">This is a request. We will message you on WhatsApp to confirm.</p>
 <a class="btn-ink bk-wa" id="doneWa" href="#" target="_blank" rel="noopener">Confirm on WhatsApp</a>
 <p class="reply">Tap to send us your reference. It opens WhatsApp with the message ready.</p>
 </section>

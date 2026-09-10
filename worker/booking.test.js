@@ -2,7 +2,7 @@
 
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { makeRef, priceFor, sessionDurations, slotLabel, validateBooking } from "./booking.js";
+import { makeRef, priceFor, sessionDurations, slotLabel, validateBooking, validateSignup } from "./booking.js";
 import { isoUtc } from "./availability.js";
 
 const svc = (o) => ({
@@ -89,6 +89,16 @@ test("demo lesson takes a third student at +1,000 (migration 0002)", () => {
   assert.equal(priceFor(demo3, 3), 4000);
   assert.equal(validateBooking({ ...ok, party_size: 3 }, demo3).errors, undefined);
   assert.ok(validateBooking({ ...ok, party_size: 4 }, demo3).errors.party_size);
+});
+
+test("weekly signup: party size capped by mats left", () => {
+  const weekly = { min_guests: 1, max_guests: 8 };
+  const s = { name: "Mia", whatsapp: "+7 912 345 67 89", party_size: 2 };
+  assert.equal(validateSignup(s, weekly, 8).data.party_size, 2);
+  assert.equal(validateSignup(s, weekly, 2).errors, undefined);
+  assert.equal(validateSignup({ ...s, party_size: 3 }, weekly, 2).errors.party_size, "Choose between 1 and 2.");
+  assert.equal(validateSignup({ ...s, party_size: 2 }, weekly, 1).errors.party_size, "Only 1 left.");
+  assert.ok(validateSignup({ ...s, whatsapp: "" }, weekly, 8).errors.whatsapp);
 });
 
 test("bad slot shapes are rejected", () => {

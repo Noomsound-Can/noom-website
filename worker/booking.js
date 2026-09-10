@@ -46,18 +46,15 @@ export function whatsappLink(digits, text) {
   return `https://wa.me/${digits}${text ? `?text=${encodeURIComponent(text)}` : ""}`;
 }
 
-// Validates a POST /api/book body against its service. Returns { errors } or { data }.
-// Checks shape only: whether the slots are actually free is checked by the caller.
-export function validateBooking(body, service) {
-  const errors = {};
-  const str = (v, max) => (typeof v === "string" ? v.trim().slice(0, max) : "");
+const str = (v, max) => (typeof v === "string" ? v.trim().slice(0, max) : "");
 
+// Name, WhatsApp, email, party size and notes, shared by bookings and signups.
+function validateGuest(body, minGuests, maxGuests, errors) {
   const name = str(body.name, 80);
   if (name.length < 2) errors.name = "Please enter your name.";
 
   // International format only, so wa.me links work: '+66 81 234 5678' or '0066...'.
-  const waRaw = str(body.whatsapp, 40);
-  const whatsapp = waRaw.replace(/[^\d]/g, "").replace(/^00/, "");
+  const whatsapp = str(body.whatsapp, 40).replace(/[^\d]/g, "").replace(/^00/, "");
   if (whatsapp.length < 8 || whatsapp.length > 15 || whatsapp.startsWith("0")) {
     errors.whatsapp = "Please enter your WhatsApp number with the country code, for example +66.";
   }
@@ -66,15 +63,32 @@ export function validateBooking(body, service) {
   if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errors.email = "Please check the email address.";
 
   const party = Number(body.party_size);
-  if (!Number.isInteger(party) || party < service.min_guests || party > service.max_guests) {
-    errors.party_size = `Choose between ${service.min_guests} and ${service.max_guests}.`;
+  if (!Number.isInteger(party) || party < minGuests || party > maxGuests) {
+    errors.party_size = minGuests === maxGuests ? `Only ${maxGuests} left.` : `Choose between ${minGuests} and ${maxGuests}.`;
   }
+  return { name, whatsapp, email: email || null, party_size: party, notes: str(body.notes, 1000) || null };
+}
+
+// POST /api/signup body, for a weekly session with `spotsLeft` mats free.
+export function validateSignup(body, service, spotsLeft) {
+  const errors = {};
+  const max = Math.max(1, Math.min(service.max_guests, spotsLeft));
+  const guest = validateGuest(body, service.min_guests, max, errors);
+  if (Object.keys(errors).length) return { errors };
+  return { data: guest };
+}
+
+// Validates a POST /api/book body against its service. Returns { errors } or { data }.
+// Checks shape only: whether the slots are actually free is checked by the caller.
+export function validateBooking(body, service) {
+  const errors = {};
+  const { name, whatsapp, email, party_size: party, notes } =
+    validateGuest(body, service.min_guests, service.max_guests, errors);
 
   const location = str(body.location, 160);
   if (service.id === "sound-journey-villa" && location.length < 2) {
     errors.location = "Please tell us the villa, hotel or area.";
   }
-  const notes = str(body.notes, 1000);
 
   const slots = Array.isArray(body.slots) ? body.slots : [];
   const clean = [];
@@ -111,6 +125,6 @@ export function validateBooking(body, service) {
 
   if (Object.keys(errors).length) return { errors };
   return {
-    data: { name, whatsapp, email: email || null, party_size: party, location: location || null, notes: notes || null, slots: clean },
+    data: { name, whatsapp, email, party_size: party, location: location || null, notes, slots: clean },
   };
 }

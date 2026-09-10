@@ -116,6 +116,17 @@ test("weekly session blocks private slots, a cancelled one frees them", () => {
   assert.equal(oneDay(demo, blocks({ occurrences: cancelled }), LONG_AGO, WED).at(-1), "17:30");
 });
 
+test("a database row moves one session to another time without duplicating it", () => {
+  const moved = weeklyOccurrences(recurrences, [{
+    id: "terrace-sun-2026-09-13", recurrence_id: "terrace-sun", service_id: "terrace-weekly",
+    starts_at_utc: "2026-09-13T11:00:00Z", ends_at_utc: "2026-09-13T13:00:00Z", // 18:00 to 20:00
+    capacity: 8, venue: "Noom Terrace, Lamai", status: "open", buffer_after_min: 30,
+  }], "2026-09-13", 1);
+  assert.equal(moved.length, 1);
+  assert.equal(isoUtc(moved[0].startMs), "2026-09-13T11:00:00Z");
+  assert.equal(moved[0].date, "2026-09-13");
+});
+
 test("a busy block across midnight blocks the end of one day and the start of the next", () => {
   const b = blocks({
     gcalBusy: [{ start: isoUtc(bkk(FRI, "19:00")), end: isoUtc(bkk("2026-09-12", "09:00")) }],
