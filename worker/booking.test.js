@@ -2,7 +2,7 @@
 
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { makeRef, priceFor, sessionDurations, slotLabel, validateBooking, validateSignup } from "./booking.js";
+import { makeRef, priceFor, sessionDurations, slotLabel, validateBooking, validateManual, validateSignup } from "./booking.js";
 import { isoUtc } from "./availability.js";
 
 const svc = (o) => ({
@@ -99,6 +99,17 @@ test("weekly signup: party size capped by mats left", () => {
   assert.equal(validateSignup({ ...s, party_size: 3 }, weekly, 2).errors.party_size, "Choose between 1 and 2.");
   assert.equal(validateSignup({ ...s, party_size: 2 }, weekly, 1).errors.party_size, "Only 1 left.");
   assert.ok(validateSignup({ ...s, whatsapp: "" }, weekly, 8).errors.whatsapp);
+});
+
+test("manual guest: WhatsApp optional, mats capped by the admin limit", () => {
+  const g = { name: "Daria (GYG)", party_size: 2 };
+  assert.deepEqual(validateManual(g, 10).data, { name: "Daria (GYG)", whatsapp: null, party_size: 2, notes: null });
+  assert.equal(validateManual({ ...g, whatsapp: "+66 81 234 5678", notes: " GetYourGuide " }, 10).data.whatsapp, "66812345678");
+  assert.equal(validateManual({ ...g, whatsapp: "+66 81 234 5678", notes: " GetYourGuide " }, 10).data.notes, "GetYourGuide");
+  assert.ok(validateManual({ ...g, whatsapp: "081 234 5678" }, 10).errors.whatsapp);
+  assert.equal(validateManual({ ...g, party_size: 3 }, 2).errors.party_size, "Choose between 1 and 2.");
+  assert.ok(validateManual(g, 0).errors.party_size);
+  assert.ok(validateManual({ ...g, name: "  " }, 10).errors.name);
 });
 
 test("bad slot shapes are rejected", () => {

@@ -6,9 +6,22 @@
 // else back to the assets binding, which keeps 404s and redirects exactly as before.
 
 import { accessEmail } from "./access.js";
+import { adminRoute, expireHolds } from "./admin.js";
 import { availability, book, occurrences, services, signup } from "./api.js";
 
+// Local dev has no Access JWT. `wrangler dev --var DEV_ADMIN_EMAIL:dev@local` lets
+// 127.0.0.1 through as that email. Never set DEV_ADMIN_EMAIL in production.
+function adminEmail(request, env) {
+  if (env.DEV_ADMIN_EMAIL && new URL(request.url).hostname === "127.0.0.1") return env.DEV_ADMIN_EMAIL;
+  return accessEmail(request);
+}
+
 export default {
+  // Hourly Cron (wrangler.jsonc triggers): decline holds nobody answered in 24 h.
+  async scheduled(event, env, ctx) {
+    ctx.waitUntil(expireHolds(env));
+  },
+
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
 
@@ -33,9 +46,9 @@ export default {
         return signup(request, env, ctx);
       }
       if (url.pathname.startsWith("/api/admin/")) {
-        if (!(await accessEmail(request))) {
-          return Response.json({ error: "forbidden" }, { status: 403 });
-        }
+        const email = await adminEmail(request, env);
+        if (!email) return Response.json({ error: "forbidden" }, { status: 403 });
+        return adminRoute(request, env, ctx, email);
       }
       return Response.json({ error: "not_found" }, { status: 404 });
     }

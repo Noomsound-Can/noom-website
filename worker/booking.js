@@ -78,6 +78,29 @@ export function validateSignup(body, service, spotsLeft) {
   return { data: guest };
 }
 
+// POST /api/admin/manual body: a GetYourGuide, WhatsApp or walk-in guest added by Can
+// or Melie. WhatsApp is optional (GetYourGuide often gives none); `maxMats` is how many
+// mats the admin may still hand out, which can go past the public capacity.
+export function validateManual(body, maxMats) {
+  const errors = {};
+  const name = str(body.name, 80);
+  if (!name) errors.name = "Enter a name.";
+
+  let whatsapp = str(body.whatsapp, 40).replace(/[^\d]/g, "").replace(/^00/, "");
+  if (whatsapp && (whatsapp.length < 8 || whatsapp.length > 15 || whatsapp.startsWith("0"))) {
+    errors.whatsapp = "Use the country code, for example +66, or leave it empty.";
+  }
+
+  const party = Number(body.party_size);
+  if (maxMats < 1) errors.party_size = "No mats left, even over capacity.";
+  else if (!Number.isInteger(party) || party < 1 || party > maxMats) {
+    errors.party_size = `Choose between 1 and ${maxMats}.`;
+  }
+
+  if (Object.keys(errors).length) return { errors };
+  return { data: { name, whatsapp: whatsapp || null, party_size: party, notes: str(body.notes, 300) || null } };
+}
+
 // Validates a POST /api/book body against its service. Returns { errors } or { data }.
 // Checks shape only: whether the slots are actually free is checked by the caller.
 export function validateBooking(body, service) {

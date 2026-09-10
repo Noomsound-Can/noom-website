@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Bookings | Noom admin</title>
+<!-- Repo-only page, never authored in Claude Design. Behind Cloudflare Access. -->
+<meta name="robots" content="noindex, nofollow" />
+<link rel="icon" href="/favicon.ico" sizes="32x32" />
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png" />
+<meta name="theme-color" content="#f5efe6" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<link rel="stylesheet" href="../colors_and_type.css" />
+<link rel="stylesheet" href="../page.css" />
+<link rel="stylesheet" href="admin.css" />
+</head>
+<body>
+<header class="ad-head">
+<a class="ad-brand" href="./"><span class="ad-noom">Noom</span><span class="ad-sub">Bookings</span></a>
+<button type="button" class="ad-refresh" id="refresh" aria-label="Refresh">Refresh</button>
+</header>
+
+<main class="ad" id="main">
+<div class="ad-notice" id="notice" role="status" aria-live="polite" hidden></div>
+
+<section class="ad-sec" id="waitingSec" hidden aria-labelledby="hWaiting">
+<h2 class="ad-h" id="hWaiting">Waiting for you</h2>
+<p class="ad-lede">Requests on hold. Message the guest, then confirm or decline.</p>
+<div id="waiting"></div>
+</section>
+
+<section class="ad-sec" aria-labelledby="hDays">
+<div class="ad-sec-head">
+<h2 class="ad-h" id="hDays">Next 30 days</h2>
+<label class="ad-toggle"><input type="checkbox" id="showAll" /> Show cancelled</label>
+</div>
+<div id="days"><p class="ad-quiet">Loading&hellip;</p></div>
+</section>
+
+<p class="ad-me" id="me"></p>
+</main>
+
+<script src="admin.js"></script>
+</body>
+</html>

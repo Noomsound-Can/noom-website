@@ -196,40 +196,60 @@ async function insertHold(env, ref, service, d, price, nowMs) {
   return res[0].meta.changes === 1;
 }
 
+// Where a private booking happens: the terrace, or the villa the guest typed.
+export function bookingWhere(service, b) {
+  return service.id === "sound-journey-terrace" ? TERRACE : b.location || "";
+}
+
+// Event body text for a private booking. b: booking fields (ref, name, whatsapp, email,
+// party_size, location, notes, price_thb, source); slots: [{ startMs, endMs }].
+export function bookingDetails(service, b, slots) {
+  const where = bookingWhere(service, b);
+  return [
+    `Ref: ${b.ref}`,
+    `Service: ${service.name}`,
+    `When: ${slots.map((s) => slotLabel(s.startMs)).join(" / ")} (Koh Samui time)`,
+    `Name: ${b.name}`,
+    `WhatsApp: +${b.whatsapp}  ${whatsappLink(b.whatsapp)}`,
+    b.email ? `Email: ${b.email}` : null,
+    `Guests: ${b.party_size}`,
+    where ? `Where: ${where}` : null,
+    `Price: ${b.price_thb == null ? "hidden" : thb(b.price_thb)}`,
+    b.notes ? `Notes: ${b.notes}` : null,
+    `Source: ${b.source}`,
+  ].filter(Boolean).join("\n");
+}
+
+// Noom Bookings event for slot i of a private booking: 'PENDING, ' and yellow while
+// held, plain and green once confirmed (admin, step 7).
+export function privateEvent(service, b, slots, i, pending) {
+  const n = slots.length;
+  const s = slots[i];
+  const where = bookingWhere(service, b);
+  return {
+    summary:
+      `${pending ? "PENDING, " : ""}${service.name}${n > 1 ? ` (${i + 1}/${n})` : ""}, ${b.name}` +
+      `${b.party_size > 1 ? ` (${b.party_size} guests)` : ""}`,
+    description: bookingDetails(service, b, slots),
+    location: where || undefined,
+    colorId: pending ? "5" : "10",
+    start: { dateTime: isoUtc(s.startMs), timeZone: "Asia/Bangkok" },
+    end: { dateTime: isoUtc(s.endMs), timeZone: "Asia/Bangkok" },
+  };
+}
+
 // After the guest has their answer: PENDING calendar events, then the alert email
 // (which says whether the calendar worked), then the guest's email if they gave one.
 async function afterRequest(env, { ref, service, d, price, labels }) {
   const n = d.slots.length;
-  const where = service.id === "sound-journey-terrace" ? TERRACE : d.location || "";
-  const waGuest = whatsappLink(d.whatsapp);
-  const details = [
-    `Ref: ${ref}`,
-    `Service: ${service.name}`,
-    `When: ${labels.join(" / ")} (Koh Samui time)`,
-    `Name: ${d.name}`,
-    `WhatsApp: +${d.whatsapp}  ${waGuest}`,
-    d.email ? `Email: ${d.email}` : null,
-    `Guests: ${d.party_size}`,
-    where ? `Where: ${where}` : null,
-    `Price: ${price == null ? "hidden" : thb(price)}`,
-    d.notes ? `Notes: ${d.notes}` : null,
-    `Source: web`,
-  ].filter(Boolean).join("\n");
+  const b = { ...d, ref, price_thb: price, source: "web" };
+  const details = bookingDetails(service, b, d.slots);
 
   let calendarOk = true;
   for (let i = 0; i < n; i++) {
     const s = d.slots[i];
     try {
-      const ev = await createEvent(env, env.GCAL_BOOKINGS_ID, {
-        summary:
-          `PENDING, ${service.name}${n > 1 ? ` (${i + 1}/${n})` : ""}, ${d.name}` +
-          `${d.party_size > 1 ? ` (${d.party_size} guests)` : ""}`,
-        description: details,
-        location: where || undefined,
-        colorId: "5", // yellow while pending
-        start: { dateTime: isoUtc(s.startMs), timeZone: "Asia/Bangkok" },
-        end: { dateTime: isoUtc(s.endMs), timeZone: "Asia/Bangkok" },
-      });
+      const ev = await createEvent(env, env.GCAL_BOOKINGS_ID, privateEvent(service, b, d.slots, i, true));
       await env.DB.prepare(
         "UPDATE booking_slot SET gcal_event_id = ? WHERE ref = ? AND starts_at_utc = ?",
       ).bind(ev.id, ref, isoUtc(s.startMs)).run();
@@ -408,23 +428,30 @@ async function afterSignup(env, { ref, service, occ, d, price, label, mats, left
 
 // One event per weekly session in Noom Bookings, titled with the live count and
 // listing every guest. Created on first signup, patched after that. Also used by
-// admin changes (step 7).
+// admin changes (step 7). A closed session keeps its event, marked CANCELLED and
+// set to "free" so Noom Bookings stops blocking that time for private bookings.
 export async function syncOccurrenceEvent(env, id) {
+  if (env.DEV_NO_CALENDAR === "1") return; // local `wrangler dev` only
   const occ = await env.DB.prepare("SELECT * FROM occurrence WHERE id = ?").bind(id).first();
   if (!occ) return;
   const { results: guests } = await env.DB.prepare(
-    `SELECT ref, name, whatsapp, party_size, source FROM booking
+    `SELECT ref, name, whatsapp, party_size, source, notes FROM booking
       WHERE occurrence_id = ? AND status = 'confirmed' ORDER BY created_at`,
   ).bind(id).all();
+  const closed = occ.status === "cancelled";
+  if (closed && !occ.gcal_event_id && !guests.length) return; // nothing worth showing
   const taken = guests.reduce((n, g) => n + g.party_size, 0);
   const event = {
-    summary: `${occ.status === "cancelled" ? "CANCELLED, " : ""}Sound Journey, Terrace (${taken}/${occ.capacity})`,
+    summary: `${closed ? "CANCELLED, " : ""}Sound Journey, Terrace (${taken}/${occ.capacity})`,
     description:
       guests.map((g) =>
-        `${g.party_size} · ${g.name}${g.whatsapp ? ` · +${g.whatsapp} ${whatsappLink(g.whatsapp)}` : ""} · ${g.source} · ${g.ref}`,
+        `${g.party_size} · ${g.name}${g.whatsapp ? ` · +${g.whatsapp} ${whatsappLink(g.whatsapp)}` : ""}` +
+        ` · ${g.source}${g.source === "manual" && g.notes ? ` (${g.notes})` : ""} · ${g.ref}`,
       ).join("\n") || "No guests yet.",
     location: occ.venue || undefined,
-    colorId: "10",
+    colorId: closed ? "8" : "10", // grey when closed
+    transparency: closed ? "transparent" : "opaque",
+    status: "confirmed", // Google event status: brings back an event deleted by hand
     start: { dateTime: occ.starts_at_utc, timeZone: "Asia/Bangkok" },
     end: { dateTime: occ.ends_at_utc, timeZone: "Asia/Bangkok" },
   };
@@ -452,7 +479,7 @@ export async function syncOccurrenceEvent(env, id) {
 }
 
 // Weekly sessions in range, with confirmed seats counted and the service lead time.
-async function sessionsWithCounts(env, from, days) {
+export async function sessionsWithCounts(env, from, days) {
   const rangeStart = isoUtc(dayStartMs(from));
   const rangeEnd = isoUtc(dayStartMs(addDays(from, days)));
   const [recs, dbOcc, counts, svc] = await env.DB.batch([
@@ -582,14 +609,14 @@ async function calendarBusy(env, ctx, origin, fromIso, toIso, fresh) {
   return busy;
 }
 
-function activeService(env, id) {
+export function activeService(env, id) {
   return env.DB.prepare("SELECT * FROM service WHERE id = ? AND active = 1").bind(String(id || "")).first();
 }
 
-function clamp(n, lo, hi) {
+export function clamp(n, lo, hi) {
   return Math.min(hi, Math.max(lo, n));
 }
 
-function json(body, status = 200) {
+export function json(body, status = 200) {
   return Response.json(body, { status, headers: { "cache-control": "no-store" } });
 }
