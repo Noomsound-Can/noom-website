@@ -44,7 +44,7 @@
     close: "Closed", reopen: "Reopened", expire: "Expired, no answer in 24 h,",
   };
   const lastLine = (l) =>
-    l ? `<p class="ad-last">${esc(ACTION_WORDS[l.action] || l.action)} by ${esc(who(l.email))}, ${esc(stamp(l.at))}</p>` : "";
+    l ? `<p class="nm-last">${esc(ACTION_WORDS[l.action] || l.action)} by ${esc(who(l.email))}, ${esc(stamp(l.at))}</p>` : "";
 
   // Pre-filled WhatsApp texts. Can or Melie can edit them before sending.
   const MSG = {
@@ -94,7 +94,7 @@
       render();
     } catch (err) {
       if (err instanceof AuthError) return loginNotice();
-      if (!state.data) $("days").innerHTML = `<p class="ad-quiet">Could not load the bookings (${esc(err.message)}). Tap Refresh.</p>`;
+      if (!state.data) $("days").innerHTML = `<p class="nm-quiet">Could not load the bookings (${esc(err.message)}). Tap Refresh.</p>`;
       else notice({ text: `Could not refresh (${err.message}). Showing the last list.`, warn: true });
     } finally {
       $("refresh").disabled = false;
@@ -127,12 +127,12 @@
       ? dates.map((date) => {
         const rel = date === d.today ? "Today, " : date === addDays(d.today, 1) ? "Tomorrow, " : "";
         const items = byDay.get(date).sort((a, b) => (a.sortKey < b.sortKey ? -1 : 1));
-        return `<section class="ad-day"><h3 class="ad-dayname"><b>${rel}</b>${esc(longDate(date))}</h3>${items.map((i) => i.html).join("")}</section>`;
+        return `<section class="nm-day"><h3 class="nm-dayname"><b>${rel}</b>${esc(longDate(date))}</h3>${items.map((i) => i.html).join("")}</section>`;
       }).join("")
-      : `<p class="ad-quiet">Nothing booked in the next ${d.days} days.</p>`;
+      : `<p class="nm-quiet">Nothing booked in the next ${d.days} days.</p>`;
 
     if (state.openForm) {
-      const input = document.querySelector(`form.ad-form[data-occ="${state.openForm}"] input[name="name"]`);
+      const input = document.querySelector(`form.nm-form[data-occ="${state.openForm}"] input[name="name"]`);
       if (input && document.activeElement?.tagName !== "INPUT") input.focus();
     }
   }
@@ -147,37 +147,37 @@
     let badge;
     if (b.status === "pending") {
       const h = Math.max(0, Math.round((Date.parse(b.hold_expires_at) - Date.now()) / 3600e3));
-      badge = `<span class="ad-badge pending">Pending &middot; ${h} h left</span>`;
-    } else if (b.status === "expired") badge = `<span class="ad-badge expired">Hold expired</span>`;
-    else badge = `<span class="ad-badge ${esc(b.status)}">${esc(b.status)}</span>`;
-    if (b.source === "partner") badge = `<span class="ad-badge partner">Partner</span> ${badge}`;
+      badge = `<span class="nm-badge pending">Pending &middot; ${h} h left</span>`;
+    } else if (b.status === "expired") badge = `<span class="nm-badge expired">Hold expired</span>`;
+    else badge = `<span class="nm-badge ${esc(b.status)}">${esc(b.status)}</span>`;
+    if (b.source === "partner") badge = `<span class="nm-badge partner">Partner</span> ${badge}`;
 
     const meta = [
       b.price_thb == null ? (b.partner ? `Invoiced to ${esc(b.partner)}` : null) : thb(b.price_thb),
       b.source,
-      `<span class="ad-ref">${esc(b.ref)}</span>`,
+      `<span class="nm-ref">${esc(b.ref)}</span>`,
       b.whatsapp ? `+${esc(b.whatsapp)}` : null,
       b.email ? esc(b.email) : null,
     ].filter(Boolean).join(" &middot; ");
 
     const actions = [];
-    if (b.whatsapp) actions.push(`<a class="ad-btn wa" href="${esc(wa(b.whatsapp))}" target="_blank" rel="noopener">WhatsApp</a>`);
+    if (b.whatsapp) actions.push(`<a class="nm-btn wa" href="${esc(wa(b.whatsapp))}" target="_blank" rel="noopener">WhatsApp</a>`);
     if (open) {
-      actions.push(`<button type="button" class="ad-btn ink" data-act="confirm" data-ref="${esc(b.ref)}">Confirm</button>`);
-      actions.push(`<button type="button" class="ad-btn danger" data-act="decline" data-ref="${esc(b.ref)}">Decline</button>`);
+      actions.push(`<button type="button" class="nm-btn ink" data-act="confirm" data-ref="${esc(b.ref)}">Confirm</button>`);
+      actions.push(`<button type="button" class="nm-btn danger" data-act="decline" data-ref="${esc(b.ref)}">Decline</button>`);
     } else if (b.status === "confirmed") {
-      actions.push(`<button type="button" class="ad-btn danger small" data-act="cancel" data-ref="${esc(b.ref)}">Cancel booking</button>`);
+      actions.push(`<button type="button" class="nm-btn danger small" data-act="cancel" data-ref="${esc(b.ref)}">Cancel booking</button>`);
     }
 
-    return `<article class="ad-item" data-status="${esc(b.status)}" data-source="${esc(b.source)}">
-      <div class="ad-row"><span class="ad-time">${time}</span><span>${badge}</span></div>
-      <p class="ad-title">${esc(b.service)}${parts > 1 && slot ? `<small>day ${b.slots.indexOf(slot) + 1} of ${parts}</small>` : ""}${parts > 1 && !slot ? `<small>${parts} days</small>` : ""}</p>
-      <p class="ad-who">${esc(b.name)} &middot; ${plural(b.party_size, unitWord(b))}</p>
-      ${where ? `<p class="ad-line">${esc(where)}</p>` : ""}
-      ${b.notes ? `<p class="ad-line ad-note">&ldquo;${esc(b.notes)}&rdquo;</p>` : ""}
-      <p class="ad-meta">${meta}</p>
+    return `<article class="nm-item" data-status="${esc(b.status)}" data-source="${esc(b.source)}">
+      <div class="nm-row"><span class="nm-time">${time}</span><span>${badge}</span></div>
+      <p class="nm-title">${esc(b.service)}${parts > 1 && slot ? `<small>day ${b.slots.indexOf(slot) + 1} of ${parts}</small>` : ""}${parts > 1 && !slot ? `<small>${parts} days</small>` : ""}</p>
+      <p class="nm-who">${esc(b.name)} &middot; ${plural(b.party_size, unitWord(b))}</p>
+      ${where ? `<p class="nm-line">${esc(where)}</p>` : ""}
+      ${b.notes ? `<p class="nm-line nm-note">&ldquo;${esc(b.notes)}&rdquo;</p>` : ""}
+      <p class="nm-meta">${meta}</p>
       ${lastLine(b.last_action)}
-      ${actions.length ? `<div class="ad-actions">${actions.join("")}</div>` : ""}
+      ${actions.length ? `<div class="nm-actions">${actions.join("")}</div>` : ""}
     </article>`;
   }
 
@@ -201,26 +201,26 @@
         return `<li class="${off ? "off" : ""}">
           <span class="n">${g.party_size}</span>
           <span class="g">${esc(g.name)}<small>${esc(from)} &middot; ${esc(g.ref)}${off ? ` &middot; ${esc(g.status)}` : ""}</small></span>
-          ${g.whatsapp ? `<a class="ad-wa-mini" href="${esc(wa(g.whatsapp, text))}" target="_blank" rel="noopener">${closed ? "Tell" : "Chat"}</a>` : ""}
-          ${off ? "" : `<button type="button" class="ad-x" data-act="cancel" data-ref="${esc(g.ref)}" aria-label="Cancel ${esc(g.name)}">&times;</button>`}
+          ${g.whatsapp ? `<a class="nm-wa-mini" href="${esc(wa(g.whatsapp, text))}" target="_blank" rel="noopener">${closed ? "Tell" : "Chat"}</a>` : ""}
+          ${off ? "" : `<button type="button" class="nm-x" data-act="cancel" data-ref="${esc(g.ref)}" aria-label="Cancel ${esc(g.name)}">&times;</button>`}
         </li>`;
       }).join("")
       : `<li><span class="none">No guests yet.</span></li>`;
 
     const actions = closed
-      ? `<button type="button" class="ad-btn" data-act="reopen" data-occ="${esc(o.id)}">Reopen session</button>`
-      : `<button type="button" class="ad-btn ink" data-act="add" data-occ="${esc(o.id)}"${state.openForm === o.id ? " hidden" : ""}>Add guest</button>
-         <button type="button" class="ad-btn danger small" data-act="close" data-occ="${esc(o.id)}">Close session</button>`;
+      ? `<button type="button" class="nm-btn" data-act="reopen" data-occ="${esc(o.id)}">Reopen session</button>`
+      : `<button type="button" class="nm-btn ink" data-act="add" data-occ="${esc(o.id)}"${state.openForm === o.id ? " hidden" : ""}>Add guest</button>
+         <button type="button" class="nm-btn danger small" data-act="close" data-occ="${esc(o.id)}">Close session</button>`;
 
-    return `<article class="ad-item ad-session" data-status="${esc(o.status)}">
-      <div class="ad-row"><span class="ad-time">${o.time}&ndash;${o.end_time}</span>
-        ${closed ? `<span class="ad-badge closed">Closed</span>` : `<span class="ad-count">${o.taken}/${o.capacity}<small>mats</small></span>`}</div>
-      <p class="ad-title">Sound Journey, Terrace</p>
-      ${closed ? `<p class="ad-line ad-note">${live.length ? "Guests below are not told automatically. Tap Tell to message them." : "Not shown on the website."}</p>` : `<div class="ad-mats" aria-hidden="true">${cells.join("")}</div>`}
-      ${over && !closed ? `<p class="ad-meta">${over} over the ${o.capacity} mats on the website</p>` : ""}
-      <ul class="ad-guests">${guests}</ul>
+    return `<article class="nm-item nm-session" data-status="${esc(o.status)}">
+      <div class="nm-row"><span class="nm-time">${o.time}&ndash;${o.end_time}</span>
+        ${closed ? `<span class="nm-badge closed">Closed</span>` : `<span class="nm-count">${o.taken}/${o.capacity}<small>mats</small></span>`}</div>
+      <p class="nm-title">Sound Journey, Terrace</p>
+      ${closed ? `<p class="nm-line nm-note">${live.length ? "Guests below are not told automatically. Tap Tell to message them." : "Not shown on the website."}</p>` : `<div class="nm-mats" aria-hidden="true">${cells.join("")}</div>`}
+      ${over && !closed ? `<p class="nm-meta">${over} over the ${o.capacity} mats on the website</p>` : ""}
+      <ul class="nm-guests">${guests}</ul>
       ${lastLine(o.last_action)}
-      <div class="ad-actions">${actions}</div>
+      <div class="nm-actions">${actions}</div>
       ${state.openForm === o.id && !closed ? manualForm(o) : ""}
     </article>`;
   }
@@ -231,17 +231,17 @@
       ? Array.from({ length: room }, (_, i) => i + 1).map((n) =>
         `<option value="${n}">${plural(n, "mat")}${o.taken + n > o.capacity ? ` (over ${o.capacity})` : ""}</option>`).join("")
       : `<option value="0">No mats left</option>`;
-    return `<form class="ad-form" data-occ="${esc(o.id)}" novalidate>
-      <label class="ad-field"><span>Name</span><input name="name" maxlength="80" autocomplete="off" required /></label>
-      <label class="ad-field"><span>Mats</span><select name="party_size">${options}</select></label>
-      <div class="ad-field"><span>From</span><div class="ad-chips">
+    return `<form class="nm-form" data-occ="${esc(o.id)}" novalidate>
+      <label class="nm-field"><span>Name</span><input name="name" maxlength="80" autocomplete="off" required /></label>
+      <label class="nm-field"><span>Mats</span><select name="party_size">${options}</select></label>
+      <div class="nm-field"><span>From</span><div class="nm-chips">
         ${SOURCES.map((s, i) => `<label><input type="radio" name="from" value="${s}"${i === 0 ? " checked" : ""} /><span>${s}</span></label>`).join("")}
       </div></div>
-      <label class="ad-field"><span>WhatsApp <i>(optional)</i></span><input name="whatsapp" type="tel" inputmode="tel" maxlength="40" placeholder="+66 81 234 5678" autocomplete="off" /></label>
-      <em class="ad-err" role="alert"></em>
-      <div class="ad-actions">
-        <button type="submit" class="ad-btn ink"${room > 0 ? "" : " disabled"}>Add to session</button>
-        <button type="button" class="ad-btn" data-act="closeform">Cancel</button>
+      <label class="nm-field"><span>WhatsApp <i>(optional)</i></span><input name="whatsapp" type="tel" inputmode="tel" maxlength="40" placeholder="+66 81 234 5678" autocomplete="off" /></label>
+      <em class="nm-err" role="alert"></em>
+      <div class="nm-actions">
+        <button type="submit" class="nm-btn ink"${room > 0 ? "" : " disabled"}>Add to session</button>
+        <button type="button" class="nm-btn" data-act="closeform">Cancel</button>
       </div>
     </form>`;
   }
@@ -249,13 +249,13 @@
   // ---------- notice ----------
   function notice({ text, sub, warn, links = [], buttons = [] }) {
     const n = $("notice");
-    n.className = `ad-notice${warn ? " warn" : ""}`;
+    n.className = `nm-notice${warn ? " warn" : ""}`;
     n.innerHTML =
-      `<button type="button" class="ad-x ad-close" data-act="dismiss" aria-label="Close">&times;</button>` +
+      `<button type="button" class="nm-x nm-close" data-act="dismiss" aria-label="Close">&times;</button>` +
       `<p>${esc(text)}</p>${sub ? `<p>${esc(sub)}</p>` : ""}` +
       (links.length || buttons.length
-        ? `<div class="ad-actions">${links.map((l) =>
-          `<a class="ad-btn wa" href="${esc(l.href)}" target="_blank" rel="noopener">${esc(l.label)}</a>`).join("")}${buttons.join("")}</div>`
+        ? `<div class="nm-actions">${links.map((l) =>
+          `<a class="nm-btn wa" href="${esc(l.href)}" target="_blank" rel="noopener">${esc(l.label)}</a>`).join("")}${buttons.join("")}</div>`
         : "");
     n.hidden = false;
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -271,7 +271,7 @@
       text: "Your login has run out.",
       sub: "Reload the page to sign in again with the email code.",
       warn: true,
-      buttons: [`<button type="button" class="ad-btn" data-act="reload">Reload</button>`],
+      buttons: [`<button type="button" class="nm-btn" data-act="reload">Reload</button>`],
     });
   }
 
@@ -351,7 +351,7 @@
   async function manualSubmit(form) {
     const id = form.dataset.occ;
     const o = state.data.sessions.find((x) => x.id === id);
-    const err = form.querySelector(".ad-err");
+    const err = form.querySelector(".nm-err");
     const f = form.elements;
     const body = {
       occurrence: id,
@@ -422,7 +422,7 @@
   });
 
   $("main").addEventListener("submit", (e) => {
-    const form = e.target.closest("form.ad-form");
+    const form = e.target.closest("form.nm-form");
     if (!form) return;
     e.preventDefault();
     manualSubmit(form);
