@@ -4,7 +4,8 @@
 (() => {
   const $ = (id) => document.getElementById(id);
   const WA = "905468419181";
-  const MONTHS_AHEAD = 2; // current month plus two
+  const MONTHS_AHEAD = 4; // current month plus four
+  const WEEKS_AHEAD = 22; // weekly sessions to fetch, covers MONTHS_AHEAD from any day
   const MONTHS = ["January", "February", "March", "April", "May", "June", "July",
     "August", "September", "October", "November", "December"];
   const WEEKDAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -212,7 +213,7 @@
     state.failed = false;
     renderCalendar();
     try {
-      const res = await fetch("/api/occurrences?weeks=13");
+      const res = await fetch(`/api/occurrences?weeks=${WEEKS_AHEAD}`);
       if (!res.ok) throw new Error(res.status);
       const list = await res.json();
       state.occ = {};

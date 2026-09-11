@@ -427,7 +427,7 @@
           "name": "How do I book, and how far ahead?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Message us on WhatsApp or Instagram and we usually reply within a few hours. A day or two ahead is normally enough, though there are only eight mats. Give us a week for high season, the full moon session and private evenings."
+            "text": "Pick a session and a time at noomsound.studio/book/. A mat at the Wednesday or Sunday session is yours as soon as you book. Private sessions and lessons are a request, and we confirm them on WhatsApp within a few hours. For the full moon session, message us. A day or two ahead is normally enough, though there are only eight mats. Give us a week for high season, the full moon session and private evenings."
           }
         },
         {
@@ -580,9 +580,12 @@
 <p class="loc" data-i18n="wo.l3">Location announced each month &middot; 75 min &middot; &#3647;600</p>
 </div>
 <div class="times"><span class="t">18:00</span><span class="t12">6:00 pm</span></div>
-<p class="dates" data-i18n="wo.dates">Monthly &middot; 26 Sept &middot; 26 Oct &middot; 24 Nov &middot; 24 Dec</p>
-<!-- EDIT EACH MONTH: full moon location -->
-<p class="wo-moonline" data-i18n="sched.moon">26 September. Location announced soon.</p>
+<!-- Full moon dates: each span drops off the day after its data-until date, and the
+line goes when none is left. Keep the dates in step with the translations (wo.dates),
+/schedule/ and FULL_MOONS in worker/dated.js. -->
+<p class="dates" data-i18n="wo.dates" data-until-list>Monthly &middot; <span data-until="2026-09-26">26 Sept</span><span data-until="2026-10-26">26 Oct</span><span data-until="2026-11-24">24 Nov</span><span data-until="2026-12-24">24 Dec</span></p>
+<!-- EDIT EACH MONTH: full moon location, and data-until to that full moon's date (the line hides after it) -->
+<p class="wo-moonline" data-i18n="sched.moon" data-until="2026-09-26">26 September. Location announced soon.</p>
 </li>
 </ul>
 <p class="wo-where reveal" data-i18n="sched.where">Five minutes from Lamai beach, in the forest above the sea.</p>
@@ -932,7 +935,7 @@
 </details>
 <details>
 <summary><span data-i18n="faq.q.book">How do I book, and how far ahead?</span><span class="plus" aria-hidden="true"></span></summary>
-<div class="answer" data-i18n="faq.a.book">Message us on WhatsApp or Instagram and we usually reply within a few hours. A day or two ahead is normally enough, though there are only eight mats. Give us a week for high season, the full moon session and private evenings.</div>
+<div class="answer" data-i18n="faq.a.book">Pick a session and a time on our <a href="book/">booking page</a>. A mat at the Wednesday or Sunday session is yours as soon as you book. Private sessions and lessons are a request, and we confirm them on WhatsApp within a few hours. For the full moon session, <a href="https://wa.me/905468419181?text=Hi%20Can%2C%20I%20would%20like%20to%20join%20the%20full%20moon%20session." target="_blank" rel="noopener">message us</a>. A day or two ahead is normally enough, though there are only eight mats. Give us a week for high season, the full moon session and private evenings.</div>
 </details>
 <details>
 <summary><span data-i18n="faq.q.leave">Can I leave in the middle?</span><span class="plus" aria-hidden="true"></span></summary>
@@ -1095,6 +1098,17 @@ if (bookPanel && bookFrame && bookX) {
   window.addEventListener('keydown', e => { if (e.key === 'Escape') closeBook(false); });
   window.addEventListener('popstate', () => closeBook(true));
 }
+
+// Past dates drop off: data-until="YYYY-MM-DD" goes the day after (Koh Samui time), and
+// a data-until-list with no date left goes too. The Worker does this before sending the
+// page; this repeats it after i18n.js swaps in translated text with the full list.
+const dropPastDates = () => {
+  const today = new Date(Date.now() + 7 * 3600e3).toISOString().slice(0, 10);
+  document.querySelectorAll('[data-until]').forEach(el => { if (el.dataset.until < today) el.remove(); });
+  document.querySelectorAll('[data-until-list]').forEach(el => { if (!el.querySelector('[data-until]')) el.remove(); });
+};
+dropPastDates();
+new MutationObserver(dropPastDates).observe(document.body, { childList: true, subtree: true });
 
 const io = new IntersectionObserver((entries) => {
   entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });

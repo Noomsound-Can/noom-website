@@ -8,7 +8,9 @@
   },
   "assets": {
     "directory": ".",
-    "binding": "ASSETS"
+    "binding": "ASSETS",
+    // The Worker serves these two itself, with past dates taken out (worker/dated.js).
+    "run_worker_first": ["/", "/schedule/"]
   },
   "d1_databases": [
     {

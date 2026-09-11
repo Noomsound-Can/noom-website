@@ -366,7 +366,7 @@ async function afterRequest(env, { ref, service, d, price, labels, partner = nul
 // [{ id, date, time, end_time, venue, capacity, taken, spots_left, status, bookable }]
 export async function occurrences(request, env) {
   const url = new URL(request.url);
-  const weeks = clamp(parseInt(url.searchParams.get("weeks") || "6", 10) || 6, 1, 13);
+  const weeks = clamp(parseInt(url.searchParams.get("weeks") || "6", 10) || 6, 1, 22); // /book/ asks for 22
   const nowMs = Date.now();
   const list = await sessionsWithCounts(env, localDate(nowMs), weeks * 7);
   return json(list.map((o) => publicOccurrence(o, nowMs)));

@@ -4,10 +4,13 @@
 // Static files are served by the assets layer before this code runs. The Worker
 // only sees requests that match no file, so it owns /api/* and hands everything
 // else back to the assets binding, which keeps 404s and redirects exactly as before.
+// The exception is / and /schedule/ (assets.run_worker_first in wrangler.jsonc):
+// the Worker serves those files itself with past dates taken out (dated.js).
 
 import { accessEmail } from "./access.js";
 import { adminRoute, expireHolds } from "./admin.js";
 import { availability, book, occurrences, partnerInfo, services, signup } from "./api.js";
+import { DATED_PAGES, datedPage } from "./dated.js";
 import { dailyDigest } from "./digest.js";
 
 const DIGEST_CRON = "0 1 * * *";
@@ -61,6 +64,7 @@ export default {
       return Response.json({ error: "not_found" }, { status: 404 });
     }
 
+    if (request.method === "GET" && DATED_PAGES.has(url.pathname)) return datedPage(request, env);
     return env.ASSETS.fetch(request);
   },
 };
