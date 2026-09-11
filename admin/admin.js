@@ -292,6 +292,7 @@
             ${p.active ? `<button type="button" class="nm-btn ink small" data-act="copy" data-link="${esc(partnerLink(p.slug))}">Copy link</button>
             <a class="nm-btn small" href="${esc(partnerMail(p))}">Email link</a>` : ""}
             <button type="button" class="nm-btn ${p.active ? "danger" : ""} small" data-act="${p.active ? "poff" : "pon"}" data-slug="${esc(p.slug)}">${p.active ? "Switch off" : "Switch on"}</button>
+            <button type="button" class="nm-btn danger small" data-act="pdel" data-slug="${esc(p.slug)}">Delete</button>
           </div>
         </article>`).join("")
       : `<p class="nm-quiet">No partners yet. Add the first one below.</p>`;
@@ -314,6 +315,17 @@
       await api(`/api/admin/partner/${encodeURIComponent(slug)}`, { action: act === "poff" ? "off" : "on" });
       notice({ text: `${p.name}: link switched ${act === "poff" ? "off" : "on"}.`, scroll: false });
     }, "Could not change the link");
+  }
+
+  async function partnerDelete(slug, btn) {
+    const p = state.partners.find((x) => x.slug === slug);
+    if (!p) return;
+    if (!window.confirm(`Delete ${p.name}? Their link stops working for good and they leave this list. ` +
+      `Bookings already made stay in the calendar and the lists above. This cannot be undone.`)) return;
+    await run(btn, async () => {
+      await api(`/api/admin/partner/${encodeURIComponent(slug)}`, { action: "delete" });
+      notice({ text: `${p.name} deleted.`, scroll: false });
+    }, "Could not delete the partner");
   }
 
   async function partnerSubmit(form) {
@@ -525,6 +537,7 @@
     else if (act === "mats") matsAction(el.dataset.ref, Number(el.dataset.n), el);
     else if (act === "copy") copyLink(el.dataset.link);
     else if (act === "poff" || act === "pon") partnerToggle(el.dataset.slug, act, el);
+    else if (act === "pdel") partnerDelete(el.dataset.slug, el);
     else if (act === "close" || act === "reopen") occurrenceAction(el.dataset.occ, act, el);
     else if (act === "add") {
       state.openForm = el.dataset.occ;

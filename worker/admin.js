@@ -324,11 +324,12 @@ async function adminOccurrence(body, env, email, id) {
 // ---------- partners (step 8) ----------
 
 // GET /api/admin/partners -> [{ slug, name, email, active, created_at, bookings }]
+// Deleted partners are left out.
 async function adminPartners(env) {
   const { results } = await env.DB.prepare(
     `SELECT p.slug, p.name, p.email, p.active, p.created_at,
             (SELECT count(*) FROM booking b WHERE b.partner_slug = p.slug AND b.status = 'confirmed') AS bookings
-       FROM partner p ORDER BY p.active DESC, p.name`,
+       FROM partner p WHERE p.deleted_at IS NULL ORDER BY p.active DESC, p.name`,
   ).all();
   return json(results);
 }
@@ -357,15 +358,35 @@ async function adminAddPartner(body, env, email) {
   return json({ error: "try_again" }, 503);
 }
 
-// POST /api/admin/partner/:slug { action: 'off' | 'on' }. An 'off' link stops taking
-// bookings at once; bookings already made stay.
+// POST /api/admin/partner/:slug { action: 'off' | 'on' | 'delete' }. An 'off' link
+// stops taking bookings at once; bookings already made stay.
 async function adminPartnerAction(body, env, email, slug) {
+  if (body.action === "delete") return deletePartner(env, email, slug);
   if (!["off", "on"].includes(body.action)) return json({ error: "bad_action" }, 400);
-  const res = await env.DB.prepare("UPDATE partner SET active = ? WHERE slug = ?")
+  const res = await env.DB.prepare("UPDATE partner SET active = ? WHERE slug = ? AND deleted_at IS NULL")
     .bind(body.action === "on" ? 1 : 0, slug).run();
   if (res.meta.changes !== 1) return json({ error: "not_found" }, 404);
   await log(env, email, `partner_${body.action}`, slug, null);
   return json({ ok: true, slug, active: body.action === "on" });
+}
+
+// Delete: the link dies for good. With no bookings at all the row goes; with
+// bookings it stays hidden (deleted_at) so they still say who to invoice.
+// -> { ok, slug, kept } where kept = bookings that stay in the list.
+async function deletePartner(env, email, slug) {
+  const p = await env.DB.prepare(
+    `SELECT p.name, (SELECT count(*) FROM booking b WHERE b.partner_slug = p.slug) AS n
+       FROM partner p WHERE p.slug = ? AND p.deleted_at IS NULL`,
+  ).bind(slug).first();
+  if (!p) return json({ error: "not_found" }, 404);
+  if (p.n === 0) {
+    await env.DB.prepare("DELETE FROM partner WHERE slug = ?").bind(slug).run();
+  } else {
+    await env.DB.prepare("UPDATE partner SET active = 0, deleted_at = ? WHERE slug = ?")
+      .bind(isoUtc(Date.now()), slug).run();
+  }
+  await log(env, email, "partner_delete", slug, p.n === 0 ? p.name : `${p.name}, ${p.n} bookings kept`);
+  return json({ ok: true, slug, kept: p.n });
 }
 
 // Hourly Cron: a hold nobody confirmed or declined within 24 h is declined, its
