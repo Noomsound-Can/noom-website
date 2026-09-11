@@ -9,6 +9,7 @@ import {
   isoUtc,
   localDate,
   localTime,
+  openExtras,
   weeklyOccurrences,
 } from "./availability.js";
 import {
@@ -363,7 +364,7 @@ async function afterRequest(env, { ref, service, d, price, labels, partner = nul
 }
 
 // GET /api/occurrences?weeks=6 -> weekly sessions with live counts (spec 6.1).
-// [{ id, date, time, end_time, venue, capacity, taken, spots_left, status, bookable }]
+// [{ id, date, time, end_time, venue, capacity, taken, spots_left, status, extra, min_to_run, bookable }]
 export async function occurrences(request, env) {
   const url = new URL(request.url);
   const weeks = clamp(parseInt(url.searchParams.get("weeks") || "6", 10) || 6, 1, 22); // /book/ asks for 22
@@ -374,7 +375,9 @@ export async function occurrences(request, env) {
 
 // POST /api/signup, a seat at a weekly session, confirmed instantly (spec 6.1).
 // { occurrence: 'terrace-sun-2026-09-13', name, whatsapp, email?, party_size, notes? }
-// -> { ref, status, spots_left, whatsapp_url, price_thb, slots: ['Sun 13 Sep, 17:30'] }
+// -> { ref, status, spots_left, whatsapp_url, price_thb, slots: ['Sun 13 Sep, 17:30'], waiting }
+// waiting: the session has a min_to_run (the Sunday 16:00) not reached yet, so the
+// guest is on the list and Can confirms on WhatsApp once it is.
 export async function signup(request, env, ctx) {
   let body;
   try {
@@ -445,8 +448,11 @@ export async function signup(request, env, ctx) {
   const left = await spotsLeft(env, occ.id);
   const label = slotLabel(occ.startMs);
   const mats = `${d.party_size} mat${d.party_size > 1 ? "s" : ""}`;
-  const waText = `Hi Can, I booked ${mats} for the ${sessionName(service)} on ${label}. Reference ${ref}.`;
-  ctx.waitUntil(afterSignup(env, { ref, service, occ, d, price, label, mats, left }));
+  const waiting = !!occ.min_to_run && occ.capacity - left < occ.min_to_run;
+  const waText = waiting
+    ? `Hi Can, I joined the list for the ${sessionName(service)} on ${label} with ${mats}. Reference ${ref}.`
+    : `Hi Can, I booked ${mats} for the ${sessionName(service)} on ${label}. Reference ${ref}.`;
+  ctx.waitUntil(afterSignup(env, { ref, service, occ, d, price, label, mats, left, waiting }));
 
   return json({
     ref,
@@ -455,10 +461,11 @@ export async function signup(request, env, ctx) {
     whatsapp_url: whatsappLink(CAN_WHATSAPP, waText),
     price_thb: price,
     slots: [label],
+    waiting,
   });
 }
 
-async function afterSignup(env, { ref, service, occ, d, price, label, mats, left }) {
+async function afterSignup(env, { ref, service, occ, d, price, label, mats, left, waiting }) {
   let calendarOk = true;
   try {
     await syncOccurrenceEvent(env, occ.id);
@@ -467,9 +474,18 @@ async function afterSignup(env, { ref, service, occ, d, price, label, mats, left
     console.log(`signup ${ref}: calendar sync failed: ${err.message}`);
   }
   const taken = occ.capacity - left;
+  const min = occ.min_to_run;
+  const reached = !!min && taken >= min && taken - d.party_size < min; // this signup crossed it
+  const time = localTime(occ.startMs);
+  let extraLine = null;
+  if (waiting) extraLine = `Extra ${time} session: ${taken} of the ${min} mats it needs. The guest was told you confirm on WhatsApp once it has ${min}.`;
+  else if (reached) extraLine = `The extra ${time} session now has ${min} mats: message its guests on WhatsApp that it is on (Chat buttons in https://www.noomsound.studio/admin/).`;
+  else if (min) extraLine = `Extra ${time} session, already over the ${min} mats it needs. The guest was told it is booked.`;
   await sendEmail(env, {
     to: alertRecipients(env),
-    subject: `New signup ${ref}: ${label}, ${mats} (${taken}/${occ.capacity})`,
+    subject: reached
+      ? `${time} is on: ${taken} mats. Message the guests (${ref})`
+      : `New signup ${ref}: ${label}, ${mats} (${taken}/${occ.capacity})${waiting ? `, ${min} needed to run` : ""}`,
     replyTo: d.email || undefined,
     text: [
       `Ref: ${ref}`,
@@ -481,11 +497,26 @@ async function afterSignup(env, { ref, service, occ, d, price, label, mats, left
       `Price: ${thb(price)}, paid on the day`,
       d.notes ? `Notes: ${d.notes}` : null,
       "",
-      `Now ${taken} of ${occ.capacity} mats taken, ${left} left. Confirmed automatically.`,
+      `Now ${taken} of ${occ.capacity} mats taken, ${left} left. ${waiting ? "Saved on the list." : "Confirmed automatically."}`,
+      extraLine,
       calendarOk ? null : "The calendar event could not be updated, check Noom Bookings.",
     ].filter((x) => x !== null).join("\n"),
   });
-  if (d.email) {
+  if (d.email && waiting) {
+    await sendEmail(env, {
+      to: d.email,
+      subject: `You are on the list (${ref})`,
+      replyTo: PUBLIC_REPLY_TO,
+      text:
+        `Hello ${d.name},\n\n` +
+        `You are on the list with ${mats} for:\n\n` +
+        `${service.name}\n${label} (Koh Samui time)\n${occ.venue}\n` +
+        `${thb(price)}, paid on the day in cash, by bank transfer or Thai QR\n\n` +
+        `This extra session runs once ${min} mats are booked. We will message you on WhatsApp ` +
+        `to confirm. Your reference is ${ref}.\n\n` +
+        `Noom Sound Studio\nLamai, Koh Samui\nhttps://www.noomsound.studio`,
+    });
+  } else if (d.email) {
     await sendEmail(env, {
       to: d.email,
       subject: `Your mat is booked (${ref})`,
@@ -557,10 +588,29 @@ export async function syncOccurrenceEvent(env, id) {
 }
 
 // Weekly sessions in range, with confirmed seats counted and the service lead time.
+// Extra sessions (the Sunday 16:00) only once they are open, see openExtras().
 export async function sessionsWithCounts(env, from, days) {
+  return (await sessionData(env, from, days, Date.now())).sessions;
+}
+
+// Live booking slots: confirmed, or pending with the 24 h hold still running. Range
+// starts a day early so a buffer spilling into the range is caught.
+function liveHolds(env, nowMs, rangeStartMs, rangeEndMs) {
+  return env.DB.prepare(
+    `SELECT s.starts_at_utc, s.ends_at_utc, sv.buffer_after_min
+       FROM booking_slot s
+       JOIN booking b ON b.ref = s.ref
+       JOIN service sv ON sv.id = b.service_id
+      WHERE (b.status = 'confirmed' OR (b.status = 'pending' AND b.hold_expires_at > ?1))
+        AND s.starts_at_utc < ?3 AND s.ends_at_utc > ?2`,
+  ).bind(isoUtc(nowMs), isoUtc(rangeStartMs - DAY_MS), isoUtc(rangeEndMs));
+}
+
+// { sessions, holds }: sessionsWithCounts plus the live booking slots it read.
+async function sessionData(env, from, days, nowMs) {
   const rangeStart = isoUtc(dayStartMs(from));
   const rangeEnd = isoUtc(dayStartMs(addDays(from, days)));
-  const [recs, dbOcc, counts, svc] = await env.DB.batch([
+  const [recs, dbOcc, counts, svc, holds] = await env.DB.batch([
     env.DB.prepare(
       `SELECT r.*, sv.duration_min, sv.buffer_after_min
          FROM recurrence r JOIN service sv ON sv.id = r.service_id
@@ -577,14 +627,16 @@ export async function sessionsWithCounts(env, from, days) {
         GROUP BY occurrence_id`,
     ).bind(rangeStart, rangeEnd),
     env.DB.prepare("SELECT id, lead_time_h FROM service"),
+    liveHolds(env, nowMs, dayStartMs(from), dayStartMs(addDays(from, days))),
   ]);
   const taken = new Map(counts.results.map((r) => [r.occurrence_id, r.taken]));
   const lead = new Map(svc.results.map((s) => [s.id, s.lead_time_h]));
-  return weeklyOccurrences(recs.results, dbOcc.results, from, days).map((o) => ({
+  const all = weeklyOccurrences(recs.results, dbOcc.results, from, days).map((o) => ({
     ...o,
     taken: taken.get(o.id) || 0,
     leadTimeH: lead.get(o.service_id) || 0,
   }));
+  return { sessions: openExtras(all, holds.results), holds: holds.results };
 }
 
 function publicOccurrence(o, nowMs) {
@@ -600,6 +652,8 @@ function publicOccurrence(o, nowMs) {
     taken: o.taken,
     spots_left: left,
     status: o.status,
+    extra: !!o.overflow_of, // the Sunday 16:00, shown only while 17:30 is full
+    min_to_run: o.min_to_run || null, // mats before Can confirms it runs (the 16:00: 4)
     bookable: o.status === "open" && left > 0 && o.startMs >= nowMs + o.leadTimeH * 3600 * 1000,
   };
 }
@@ -619,31 +673,8 @@ async function serviceSlots(env, ctx, origin, service, from, days, nowMs, fresh,
   const rangeStart = dayStartMs(from);
   const rangeEnd = dayStartMs(addDays(from, days));
   const busy = await calendarBusy(env, ctx, origin, isoUtc(rangeStart), isoUtc(rangeEnd), fresh);
-
-  const [holds, recurrences, dbOccurrences] = await env.DB.batch([
-    // Live booking slots: confirmed, or pending with the 24 h hold still running.
-    // Range starts a day early so a buffer spilling into the range is caught.
-    env.DB.prepare(
-      `SELECT s.starts_at_utc, s.ends_at_utc, sv.buffer_after_min
-         FROM booking_slot s
-         JOIN booking b ON b.ref = s.ref
-         JOIN service sv ON sv.id = b.service_id
-        WHERE (b.status = 'confirmed' OR (b.status = 'pending' AND b.hold_expires_at > ?1))
-          AND s.starts_at_utc < ?3 AND s.ends_at_utc > ?2`,
-    ).bind(isoUtc(nowMs), isoUtc(rangeStart - DAY_MS), isoUtc(rangeEnd)),
-    env.DB.prepare(
-      `SELECT r.*, sv.duration_min, sv.buffer_after_min
-         FROM recurrence r JOIN service sv ON sv.id = r.service_id
-        WHERE r.active = 1 AND sv.active = 1`,
-    ),
-    env.DB.prepare(
-      `SELECT o.*, sv.buffer_after_min
-         FROM occurrence o JOIN service sv ON sv.id = o.service_id
-        WHERE o.starts_at_utc >= ?1 AND o.starts_at_utc < ?2`,
-    ).bind(isoUtc(rangeStart), isoUtc(rangeEnd)),
-  ]);
-
-  const occurrences = weeklyOccurrences(recurrences.results, dbOccurrences.results, from, days);
+  // A Sunday 16:00 extra blocks private time only once it is open.
+  const { sessions: occurrences, holds } = await sessionData(env, from, days, nowMs);
   return freeSlots({
     durationMin,
     bufferMin: service.buffer_after_min,
@@ -651,7 +682,7 @@ async function serviceSlots(env, ctx, origin, service, from, days, nowMs, fresh,
     fromDate: from,
     days,
     nowMs,
-    blocks: blocks({ gcalBusy: busy, holds: holds.results, occurrences }),
+    blocks: blocks({ gcalBusy: busy, holds, occurrences }),
   });
 }
 

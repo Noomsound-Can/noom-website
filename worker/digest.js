@@ -41,7 +41,12 @@ function dayItems(data, date) {
     items.push({
       time: s.time,
       head: `${s.time} to ${s.end_time}, ${s.name}, ${s.taken} of ${s.capacity} mats` +
-        (s.status === "open" ? "" : ` (${s.status})`),
+        (s.status === "open" ? "" : ` (${s.status})`) +
+        (s.min_to_run && s.status === "open"
+          ? s.taken < s.min_to_run
+            ? `, extra session, runs at ${s.min_to_run} mats (guests wait for your WhatsApp)`
+            : `, extra session, ${s.min_to_run} reached`
+          : ""),
       lines: lines.length ? lines : ["No one signed up yet."],
       summary: `${s.title.split(",")[0]} ${s.taken}/${s.capacity}`,
       kind: "group",

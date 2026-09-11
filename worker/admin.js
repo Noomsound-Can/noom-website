@@ -160,6 +160,8 @@ export async function adminData(env, days, nowMs = Date.now()) {
       capacity: o.capacity,
       taken: o.taken,
       status: o.status,
+      extra: !!o.overflow_of,
+      min_to_run: o.min_to_run || null,
       started: o.startMs <= nowMs,
       last_action: occLog.get(o.id) || null,
       guests: guestsByOcc.get(o.id) || [],

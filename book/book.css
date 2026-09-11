@@ -52,6 +52,20 @@
 .bk-day.full{cursor:pointer;color:var(--ink-mute);background:var(--cream-soft);border-color:var(--shell)}
 .bk-day.full small{color:var(--ink-mute)}
 .bk-day.full:focus-visible{outline:2px solid var(--clay);outline-offset:1px}
+.bk-day.extra{border-color:var(--clay)}
+.bk-day.extra.sel{border-color:var(--ink)}
+
+/* Extra Sunday 16:00, shown while 17:30 is full: a line on the card, a frame above the calendar */
+.bk-card .bk-cnote{font-family:var(--serif);font-size:15px;line-height:1.45;color:var(--ink);background:var(--cream-soft);border-left:3px solid var(--clay);padding:8px 10px}
+.bk-extras{display:grid;gap:12px;margin:0 0 20px;max-width:760px}
+.bk-extras[hidden]{display:none}
+.bk-extra{padding:18px 20px 20px;background:var(--paper);border:1px solid var(--shell);border-left:4px solid var(--clay)}
+.bk-extra-head{font-family:var(--serif);font-size:clamp(20px,2vw,24px);line-height:1.2;color:var(--ink);margin:0 0 6px}
+.bk-extra-text{font-family:var(--serif);font-size:16.5px;line-height:1.55;color:var(--ink-soft);margin:0 0 14px}
+.bk button.bk-extra-btn{all:unset;box-sizing:border-box;cursor:pointer;display:inline-block;background:var(--ink);color:var(--cream);padding:12px 22px;font-family:var(--sans);font-size:11px;font-weight:500;letter-spacing:0.2em;text-transform:uppercase;transition:background 300ms}
+.bk button.bk-extra-btn:hover{background:#000}
+.bk button.bk-extra-btn:focus-visible{outline:2px solid var(--clay);outline-offset:3px}
+
 .bk-info{font-family:var(--serif);font-size:17px;line-height:1.55;color:var(--ink-soft);margin:14px 0 0}
 .bk-info[hidden]{display:none}
 .bk-info a{color:var(--ink);border-bottom:1px solid var(--ink-faint);padding-bottom:2px}

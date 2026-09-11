@@ -58,7 +58,7 @@
     failed: false,
     date: null,
     picks: [], // [{date, time}], chosen in date order: pick n is session n
-    occ: {}, // weekly service only: date -> occurrence from /api/occurrences
+    occ: {}, // weekly service only: date -> [occurrences from /api/occurrences], by time
     partner: null, // { slug, name, service } on a partner link (?partner=<slug>, step 8)
   };
   const PARTNER_SLUG = new URLSearchParams(location.search).get("partner");
@@ -104,6 +104,12 @@
     return i >= 0 ? i + 1 : state.picks.length + 1;
   };
   const timesFor = (date) => (state.avail[sessionFor(date)] || {})[date] || [];
+  // Weekly sessions on a day (a full Sunday can add an extra 16:00 before the 17:30).
+  const occsOn = (date) => (weekly() && state.occ[date]) || [];
+  const occAt = (date, time) => occsOn(date).find((o) => o.time === time);
+  const pickedOcc = () => occAt(state.picks[0].date, state.picks[0].time);
+  // The extra 16:00 runs once min_to_run mats are booked; until then guests join a list.
+  const waitingFor = (o) => !!o && !!o.min_to_run && o.taken < o.min_to_run;
 
   // The name shown for what is being booked: the card title, or on a partner link the
   // session name the partner typed.
@@ -125,8 +131,85 @@
       return;
     }
     renderCards();
+    noteCards();
     const wanted = new URLSearchParams(location.search).get("service");
     if (wanted && state.services.some((s) => s.id === wanted)) chooseService(wanted, false);
+  }
+
+  // ---------- extra sessions (the Sunday 16:00 when 17:30 is full) ----------
+  // One /api/occurrences request shared by the card note and the calendar. Dropped
+  // after a failure, and by reloadAvailability when times have to be read again.
+  let occFetch = null;
+  function fetchOccurrences() {
+    if (!occFetch) {
+      occFetch = fetch(`/api/occurrences?weeks=${WEEKS_AHEAD}`).then((res) => {
+        if (!res.ok) throw new Error(res.status);
+        return res.json();
+      });
+      occFetch.catch(() => { occFetch = null; });
+    }
+    return occFetch;
+  }
+
+  // Bookable extra sessions whose main session that day is full: [{ o, main }].
+  function fullDayExtras(list, serviceId) {
+    return list
+      .filter((o) => o.extra && o.bookable && o.service_id === serviceId)
+      .map((o) => ({ o, main: list.find((m) => !m.extra && m.date === o.date && m.service_id === serviceId) }))
+      .filter(({ main }) => main && main.status === "open" && main.spots_left === 0);
+  }
+
+  const dayWord = (date) => {
+    const n = daySpan(today(), date);
+    return n === 0 ? "Today" : n < 7 ? `This ${WEEKDAYS[utc(date).getUTCDay()]}` : longDate(date);
+  };
+
+  // A line on the service card, so the 16:00 is seen before anything is chosen.
+  async function noteCards() {
+    let list;
+    try {
+      list = await fetchOccurrences();
+    } catch {
+      return;
+    }
+    for (const b of $("cards").children) {
+      const x = fullDayExtras(list, b.dataset.id)[0];
+      if (!x || b.querySelector(".bk-cnote")) continue;
+      const note = document.createElement("span");
+      note.className = "bk-cnote";
+      note.textContent = waitingFor(x.o)
+        ? `${dayWord(x.o.date)} ${x.main.time} is full. Join the list for an extra session at ${x.o.time}.`
+        : `${dayWord(x.o.date)} ${x.main.time} is full. Extra session at ${x.o.time}.`;
+      b.querySelector(".bk-cprice").before(note);
+    }
+  }
+
+  // The framed note above the calendar, with a button straight to the 16:00.
+  function renderExtraNote() {
+    const box = $("extraNote");
+    const extras = weekly() && !state.loading ? fullDayExtras(Object.values(state.occ).flat(), state.svc.id) : [];
+    box.hidden = !extras.length;
+    box.innerHTML = "";
+    for (const { o, main } of extras) {
+      const wait = waitingFor(o);
+      const div = document.createElement("div");
+      div.className = "bk-extra";
+      div.innerHTML = `<p class="bk-extra-head"></p><p class="bk-extra-text"></p><button type="button" class="bk-extra-btn"></button>`;
+      div.querySelector(".bk-extra-head").textContent = `${dayWord(o.date)}, ${main.time} is full`;
+      div.querySelector(".bk-extra-text").textContent = wait
+        ? `We open an extra session at ${o.time}, until ${o.end_time}, once ${o.min_to_run} mats are booked. ` +
+          `Join the list and we will confirm on WhatsApp.${o.taken ? ` ${o.taken} of ${o.min_to_run} so far.` : ""}`
+        : `Join us at ${o.time} instead, until ${o.end_time}, on the same terrace. ` +
+          `${o.spots_left} mat${o.spots_left === 1 ? "" : "s"} left.`;
+      const btn = div.querySelector("button");
+      btn.textContent = wait ? `Join the ${o.time} list` : `Book ${o.time}`;
+      btn.addEventListener("click", () => {
+        state.month = monthOf(o.date);
+        selectDate(o.date);
+        pickTime(o.time);
+      });
+      box.appendChild(div);
+    }
   }
 
   // Partner link: no cards, one 60 minute service, confirmed at once, no price.
@@ -198,14 +281,15 @@
     $("stepDetails").hidden = true;
     $("timesWrap").hidden = true;
     renderPicks();
+    renderExtraNote();
     loadMonth();
     if (scroll) $("stepWhen").scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
   // ---------- availability ----------
   // Group sessions (terrace, Mulajoy): one request covers every month the calendar can
-  // show. Only the chosen service's dates count; bookable ones become the day's single
-  // time, so the rest of the flow is shared.
+  // show. Only the chosen service's dates count; bookable ones become the day's times
+  // (usually one, two on a Sunday with the extra 16:00), so the rest of the flow is shared.
   async function loadSessions() {
     renderCalendar();
     if (state.loaded.has("occ")) return;
@@ -213,15 +297,13 @@
     state.failed = false;
     renderCalendar();
     try {
-      const res = await fetch(`/api/occurrences?weeks=${WEEKS_AHEAD}`);
-      if (!res.ok) throw new Error(res.status);
-      const list = await res.json();
+      const list = await fetchOccurrences();
       state.occ = {};
       state.avail = { 1: {} };
-      for (const o of list) {
+      for (const o of list) { // sorted by start time
         if (o.service_id !== state.svc.id) continue;
-        state.occ[o.date] = o;
-        if (o.bookable) state.avail[1][o.date] = [o.time];
+        (state.occ[o.date] ||= []).push(o);
+        if (o.bookable) (state.avail[1][o.date] ||= []).push(o.time);
       }
       state.loaded.add("occ");
       // Monthly sessions: open on the first month that has a bookable date.
@@ -232,13 +314,16 @@
     } finally {
       state.loading = false;
       renderCalendar();
+      renderExtraNote();
     }
   }
 
-  // A weekly session that is full: its day stays clickable to show the waiting-list note.
+  // A day whose weekly session is full and nothing else that day can be booked: it stays
+  // clickable to show the waiting-list note.
   const fullSession = (date) => {
-    const o = weekly() && state.occ[date];
-    return !!o && o.status === "open" && o.spots_left === 0 && date >= today();
+    const occs = occsOn(date);
+    return date >= today() && occs.some((o) => o.status === "open" && o.spots_left === 0) &&
+      !occs.some((o) => o.bookable);
   };
 
   // Loads the shown month for the session being chosen next.
@@ -272,6 +357,7 @@
   }
 
   function reloadAvailability() {
+    occFetch = null;
     state.avail = {};
     state.loaded = new Set();
     loadMonth();
@@ -323,12 +409,19 @@
       } else {
         b.disabled = true;
       }
-      // Weekly sessions show the live count right in the calendar.
-      const o = weekly() && !state.loading && state.occ[date];
-      if (o && date >= t) {
+      // Weekly sessions show the live count right in the calendar; a day where only the
+      // extra 16:00 is left shows its time instead.
+      const occs = !state.loading && date >= t ? occsOn(date) : [];
+      if (occs.length) {
+        const open = occs.filter((o) => o.bookable);
         const small = document.createElement("small");
-        small.textContent = o.status !== "open" ? "Closed" : full ? "Full" : ok ? `${o.spots_left} left` : "";
+        small.textContent = occs.every((o) => o.status !== "open") ? "Closed"
+          : full ? "Full"
+          : !ok ? ""
+          : open.every((o) => o.extra) ? open[0].time
+          : `${open.reduce((n, o) => n + o.spots_left, 0)} left`;
         if (small.textContent) b.appendChild(small);
+        if (ok && open.every((o) => o.extra)) b.classList.add("extra");
       }
       if (state.picks.some((p) => p.date === date)) b.classList.add("picked");
       if (date === state.date) b.classList.add("sel");
@@ -372,15 +465,22 @@
       box.appendChild(b);
     }
     const info = $("timesInfo");
-    const o = weekly() && state.occ[date];
-    info.hidden = !o;
-    if (!o) return;
-    if (o.spots_left === 0) {
+    const occs = occsOn(date);
+    const open = occs.filter((x) => x.bookable);
+    info.hidden = !occs.length;
+    if (!occs.length) return;
+    if (!open.length) {
       info.innerHTML =
         `This session is full. <a href="https://wa.me/${WA}?text=${encodeURIComponent(`Hi Can, is there a waiting list for the ${CARDS[state.svc.id].short} on ${longDate(date)}?`)}" target="_blank" rel="noopener">Message us on WhatsApp</a> and we will tell you if a mat opens up.`;
-    } else {
-      info.textContent = `${o.venue} · ${o.time} to ${o.end_time} · ${o.taken} of ${o.capacity} mats taken, ${o.spots_left} left`;
+      return;
     }
+    const o = (picked && occAt(date, picked.time)) || open[0];
+    const main = o.extra && occs.find((x) => !x.extra && x.status === "open" && x.spots_left === 0);
+    const line = `${o.venue} · ${o.time} to ${o.end_time} · ${o.taken} of ${o.capacity} mats taken, ${o.spots_left} left`;
+    info.textContent = !main ? line
+      : waitingFor(o)
+        ? `${main.time} is full. The extra ${o.time} runs once ${o.min_to_run} mats are booked: join the list and we will confirm on WhatsApp. ${line}`
+        : `${main.time} is full, so we opened an extra session at ${o.time}. ${line}`;
   }
 
   function pickTime(time) {
@@ -389,7 +489,7 @@
     if (existing) existing.time = time; // changing the time of a chosen day
     else if (multi()) state.picks.push({ date, time }); // always after the last one
     else state.picks = [{ date, time }];
-    if (weekly()) setParty(1, Math.min(state.svc.max_guests, state.occ[date].spots_left), 1);
+    if (weekly()) setParty(1, Math.min(state.svc.max_guests, occAt(date, time).spots_left), 1);
     renderTimes();
     renderPicks();
     loadMonth(); // fetches the next session's times if it differs in length
@@ -476,8 +576,15 @@
     $("sumPrice").textContent = p == null ? "" : thb(p);
     $("sumWhen").textContent =
       state.picks.map((x) => `${longDate(x.date)}, ${x.time}`).join("\n") +
-      (weekly() ? `\n${state.occ[state.picks[0].date].venue}` : "") +
+      (weekly() ? `\n${pickedOcc().venue}` : "") +
       (s.min_guests === s.max_guests && !weekly() ? "" : `\n${unit(n)}`);
+    if (weekly()) {
+      const o = pickedOcc();
+      $("sumRequest").textContent = waitingFor(o)
+        ? `You join the list. The ${o.time} runs once ${o.min_to_run} mats are booked, and we confirm on WhatsApp.`
+        : "Your mats are confirmed as soon as you book.";
+      $("submitBtn").textContent = waitingFor(o) ? "Join the list" : "Book";
+    }
     if (wasHidden) $("stepDetails").scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
@@ -519,7 +626,7 @@
       notes: f.notes.value,
       website: f.website.value,
     };
-    if (weekly()) body.occurrence = state.occ[state.picks[0].date].id;
+    if (weekly()) body.occurrence = pickedOcc().id;
     if (state.partner) {
       body.partner = state.partner.slug;
       body.service_label = f.service_label.value;
@@ -546,7 +653,7 @@
     if (res.status === 400 && data?.fields) return showFieldErrors(data.fields);
     if (res.status === 409 && weekly() && data?.error === "not_enough") {
       // Someone took mats meanwhile, but some are left: offer what remains.
-      const o = state.occ[state.picks[0].date];
+      const o = pickedOcc();
       o.spots_left = data.spots_left;
       o.taken = o.capacity - data.spots_left;
       setParty(1, Math.min(state.svc.max_guests, data.spots_left), data.spots_left);
@@ -587,15 +694,17 @@
     const n = body.party_size;
     $("doneWhen").textContent =
       `${svcTitle()}\n${data.slots.join("\n")}` +
-      (weekly() ? `\n${state.occ[state.picks[0].date].venue}` : "") +
+      (weekly() ? `\n${pickedOcc().venue}` : "") +
       (state.svc.min_guests === state.svc.max_guests && !weekly() ? "" : `\n${unit(n)}`) +
       (data.price_thb == null ? "" : `\n${thb(data.price_thb)}, paid on the day`);
-    $("doneLabel").textContent = weekly() || state.partner ? "Booked" : "Request sent";
+    $("doneLabel").textContent = data.waiting ? "On the list" : weekly() || state.partner ? "Booked" : "Request sent";
     $("doneRequest").textContent = state.partner
       ? `Confirmed and invoiced to ${state.partner.name}. A confirmation email is on its way to you.`
-      : weekly()
-        ? "Your mats are booked. Please arrive ten minutes early."
-        : "This is a request. We will message you on WhatsApp to confirm.";
+      : data.waiting
+        ? `This extra session runs once ${pickedOcc().min_to_run} mats are booked. We will message you on WhatsApp to confirm.`
+        : weekly()
+          ? "Your mats are booked. Please arrive ten minutes early."
+          : "This is a request. We will message you on WhatsApp to confirm.";
     $("doneWa").href = data.whatsapp_url;
     $("stepDone").hidden = false;
     $("book").scrollIntoView({ behavior: "smooth", block: "start" });

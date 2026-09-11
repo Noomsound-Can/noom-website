@@ -233,6 +233,10 @@
       <div class="nm-row"><span class="nm-time">${o.time}&ndash;${o.end_time}</span>
         ${closed ? `<span class="nm-badge closed">Closed</span>` : `<span class="nm-count">${o.taken}/${o.capacity}<small>mats</small></span>`}</div>
       <p class="nm-title">${esc(o.title)}</p>
+      ${o.extra && !closed ? `<p class="nm-meta">Extra session, opened because the main session filled up</p>` : ""}
+      ${o.min_to_run && !closed ? `<p class="nm-line nm-note">${o.taken < o.min_to_run
+        ? `Runs at ${o.min_to_run} mats: ${o.taken} so far. Guests are told you confirm on WhatsApp.`
+        : `${o.min_to_run} mats reached. Message the guests on WhatsApp that it is on.`}</p>` : ""}
       ${closed ? `<p class="nm-line nm-note">${live.length ? "Guests below are not told automatically. Tap Tell to message them." : "Not shown on the website."}</p>` : `<div class="nm-mats" aria-hidden="true">${cells.join("")}</div>`}
       ${over && !closed ? `<p class="nm-meta">${over} over the ${o.capacity} mats on the website</p>` : ""}
       <ul class="nm-guests">${guests}</ul>

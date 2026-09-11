@@ -46,9 +46,13 @@ export function isDate(s) {
 // recurrences: rows joined with their service's duration_min and buffer_after_min.
 //   week_of_month (migration 0004): NULL = every week, 1 = only the first of that
 //   weekday in the month (Mulajoy, first Thursday), 2 = the second, and so on.
+//   overflow_of (migration 0007): the recurrence this one is the extra session for.
+//   min_to_run (migration 0007): mats needed before Can confirms it runs, NULL = none.
 // dbOccurrences: occurrence rows joined with their service's buffer_after_min.
 export function weeklyOccurrences(recurrences, dbOccurrences, fromDate, days) {
   const byKey = new Map();
+  const recById = new Map(recurrences.map((r) => [r.id, r]));
+  const extraFields = (r) => ({ overflow_of: r?.overflow_of || null, min_to_run: r?.min_to_run || null });
   for (let i = 0; i < days; i++) {
     const date = addDays(fromDate, i);
     const start = dayStartMs(date);
@@ -63,6 +67,7 @@ export function weeklyOccurrences(recurrences, dbOccurrences, fromDate, days) {
         id: `${r.id}-${date}`,
         date,
         recurrence_id: r.id,
+        ...extraFields(r),
         service_id: r.service_id,
         startMs,
         endMs: startMs + r.duration_min * MIN_MS,
@@ -80,6 +85,7 @@ export function weeklyOccurrences(recurrences, dbOccurrences, fromDate, days) {
       id: o.id,
       date: localDate(startMs),
       recurrence_id: o.recurrence_id,
+      ...extraFields(recById.get(o.recurrence_id)),
       service_id: o.service_id,
       startMs,
       endMs: Date.parse(o.ends_at_utc),
@@ -91,6 +97,25 @@ export function weeklyOccurrences(recurrences, dbOccurrences, fromDate, days) {
     });
   }
   return [...byKey.values()].sort((a, b) => a.startMs - b.startMs);
+}
+
+// Drops extra sessions (overflow_of set) that are not open. An extra opens when the
+// session it backs up is open and full on that day (manual guests count too) and no
+// private or partner booking holds its time. Once it has guests it stays, whatever
+// happens to the main session later, so nobody's booking disappears.
+//   occurrences: weeklyOccurrences output, each with `taken` (confirmed seats)
+//   holds:       live booking slots, as in blocks()
+export function openExtras(occurrences, holds = []) {
+  const main = new Map();
+  for (const o of occurrences) if (!o.overflow_of) main.set(`${o.recurrence_id}|${o.date}`, o);
+  const busy = blocks({ holds });
+  return occurrences.filter((o) => {
+    if (!o.overflow_of || o.taken > 0) return true;
+    const m = main.get(`${o.overflow_of}|${o.date}`);
+    if (!m || m.status !== "open" || m.taken < m.capacity) return false;
+    const e = o.endMs + (o.bufferMin || 0) * MIN_MS;
+    return !busy.some(([bs, be]) => bs < e && be > o.startMs);
+  });
 }
 
 // Everything that takes time away, as [startMs, endMs) pairs. Buffers of existing

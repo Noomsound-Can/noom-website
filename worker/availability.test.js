@@ -11,6 +11,7 @@ import {
   isDate,
   isoUtc,
   localDate,
+  openExtras,
   weeklyOccurrences,
 } from "./availability.js";
 
@@ -141,6 +142,65 @@ test("a database row moves one session to another time without duplicating it", 
   assert.equal(moved.length, 1);
   assert.equal(isoUtc(moved[0].startMs), "2026-09-13T11:00:00Z");
   assert.equal(moved[0].date, "2026-09-13");
+});
+
+// Migration 0007: the Sunday 16:00 extra, shown only while the 17:30 is full.
+const SUN = "2026-09-13";
+const extra = { id: "terrace-sun-extra", service_id: "terrace-weekly", weekday: 0, start_time: "16:00",
+  capacity: 8, venue: "Noom Terrace, Lamai", duration_min: 75, buffer_after_min: 30,
+  overflow_of: "terrace-sun", min_to_run: 4 };
+const sunday = (takenMain, takenExtra = 0, mainStatus = "open") =>
+  weeklyOccurrences([...recurrences, extra], [], SUN, 1).map((o) => ({
+    ...o,
+    status: o.overflow_of ? "open" : mainStatus,
+    taken: o.overflow_of ? takenExtra : takenMain,
+  }));
+
+test("extra Sunday 16:00: generated with its main session, 16:00 to 17:15", () => {
+  const occ = weeklyOccurrences([...recurrences, extra], [], SUN, 1);
+  assert.deepEqual(occ.map((o) => o.id), ["terrace-sun-extra-2026-09-13", "terrace-sun-2026-09-13"]);
+  assert.equal(occ[0].overflow_of, "terrace-sun");
+  assert.equal(occ[0].min_to_run, 4);
+  assert.equal(occ[1].overflow_of, null);
+  assert.equal(isoUtc(occ[0].startMs), "2026-09-13T09:00:00Z");
+  assert.equal(isoUtc(occ[0].endMs), "2026-09-13T10:15:00Z");
+  // A stored row of the extra keeps knowing it is one.
+  const stored = weeklyOccurrences([...recurrences, extra], [{
+    id: "terrace-sun-extra-2026-09-13", recurrence_id: "terrace-sun-extra", service_id: "terrace-weekly",
+    starts_at_utc: "2026-09-13T09:00:00Z", ends_at_utc: "2026-09-13T10:15:00Z",
+    capacity: 8, venue: "Noom Terrace, Lamai", status: "open", buffer_after_min: 30,
+  }], SUN, 1);
+  assert.equal(stored[0].overflow_of, "terrace-sun");
+  assert.equal(stored[0].min_to_run, 4);
+});
+
+test("extra Sunday 16:00 opens only when 17:30 is full", () => {
+  const ids = (list) => list.map((o) => o.id);
+  assert.deepEqual(ids(openExtras(sunday(7))), ["terrace-sun-2026-09-13"]);
+  assert.deepEqual(ids(openExtras(sunday(8))), ["terrace-sun-extra-2026-09-13", "terrace-sun-2026-09-13"]);
+  assert.equal(openExtras(sunday(10)).length, 2); // admin seated 2 over
+  assert.equal(openExtras(sunday(8, 0, "cancelled")).length, 1); // 17:30 closed: no extra
+  // Once it has guests it stays, even if 17:30 frees up again.
+  assert.equal(openExtras(sunday(6, 2)).length, 2);
+  // Wednesday and other sessions are untouched.
+  assert.equal(openExtras(weeklyOccurrences(recurrences, [], FRI, 14).map((o) => ({ ...o, taken: 0 }))).length, 4);
+});
+
+test("extra Sunday 16:00 stays shut if a private booking holds its time", () => {
+  const hold = (from, to, buffer) => ({
+    starts_at_utc: isoUtc(bkk(SUN, from)), ends_at_utc: isoUtc(bkk(SUN, to)), buffer_after_min: buffer,
+  });
+  assert.equal(openExtras(sunday(8), [hold("14:00", "15:30", 30)]).length, 2); // ends 16:00, touches
+  assert.equal(openExtras(sunday(8), [hold("14:00", "15:30", 90)]).length, 1); // villa buffer to 17:00
+  assert.equal(openExtras(sunday(8), [hold("10:00", "11:30", 90)]).length, 2);
+});
+
+test("an open extra blocks private slots, an unopened one does not", () => {
+  const privateOn = (occ) => oneDay(terrace, blocks({ occurrences: openExtras(occ) }), LONG_AGO, SUN);
+  assert.ok(privateOn(sunday(7)).includes("15:30")); // 15:30 + 120 = 17:30, touches the 17:30
+  assert.ok(!privateOn(sunday(8)).includes("15:30"));
+  assert.ok(!privateOn(sunday(8)).includes("14:30")); // 14:30 + 120 = 16:30, into the 16:00
+  assert.ok(privateOn(sunday(8)).includes("14:00")); // ends 16:00, touches
 });
 
 test("a busy block across midnight blocks the end of one day and the start of the next", () => {
