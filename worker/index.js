@@ -8,6 +8,9 @@
 import { accessEmail } from "./access.js";
 import { adminRoute, expireHolds } from "./admin.js";
 import { availability, book, occurrences, partnerInfo, services, signup } from "./api.js";
+import { dailyDigest } from "./digest.js";
+
+const DIGEST_CRON = "0 1 * * *";
 
 // Local dev has no Access JWT. `wrangler dev --var DEV_ADMIN_EMAIL:dev@local` lets
 // 127.0.0.1 through as that email. Never set DEV_ADMIN_EMAIL in production.
@@ -17,9 +20,11 @@ function adminEmail(request, env) {
 }
 
 export default {
-  // Hourly Cron (wrangler.jsonc triggers): decline holds nobody answered in 24 h.
+  // Crons (wrangler.jsonc triggers): hourly, decline holds nobody answered in 24 h;
+  // 01:00 UTC (08:00 Koh Samui), the daily digest email.
   async scheduled(event, env, ctx) {
-    ctx.waitUntil(expireHolds(env));
+    if (event.cron === DIGEST_CRON) ctx.waitUntil(dailyDigest(env));
+    else ctx.waitUntil(expireHolds(env));
   },
 
   async fetch(request, env, ctx) {

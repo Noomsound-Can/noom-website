@@ -67,7 +67,11 @@ export async function adminRoute(request, env, ctx, email) {
 // Dates and times are Koh Samui time.
 async function adminBookings(url, env, email) {
   const days = clamp(parseInt(url.searchParams.get("days") || "30", 10) || 30, 1, MAX_DAYS);
-  const nowMs = Date.now();
+  return json({ me: email, ...(await adminData(env, days)) });
+}
+
+// The admin list for `days` days from today, also read by the daily digest.
+export async function adminData(env, days, nowMs = Date.now()) {
   const today = localDate(nowMs);
   const from = isoUtc(dayStartMs(today));
   const to = isoUtc(dayStartMs(addDays(today, days)));
@@ -126,8 +130,7 @@ async function adminBookings(url, env, email) {
   }
   const occLog = new Map(logs.results.map((r) => [r.target, parseJson(r.last_action)]));
 
-  return json({
-    me: email,
+  return {
     today,
     days,
     bookings: bookings.results
@@ -161,7 +164,7 @@ async function adminBookings(url, env, email) {
       last_action: occLog.get(o.id) || null,
       guests: guestsByOcc.get(o.id) || [],
     })),
-  });
+  };
 }
 
 // POST /api/admin/booking/:ref { action: 'confirm' | 'decline' | 'cancel' }
