@@ -506,6 +506,7 @@
 <li role="option" data-lang="he" title="עברית">HE</li>
 </ul>
 </div>
+<a class="nav-book" href="book/" data-i18n="nav.book">Book</a>
 <button class="nav-toggle" id="navToggle" aria-label="Menu" aria-expanded="false" aria-controls="navLinks">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
 <line class="l1" x1="3" y1="6" x2="21" y2="6"></line>
@@ -515,6 +516,15 @@
 </button>
 </nav>
 <div class="nav-scrim" id="navScrim"></div>
+
+<!-- Booking panel: every /book/ link on this page opens /book/ here, over the page
+     (Can, 2026-09-11: the nav never leaves the homepage). Without JS the links just open /book/. -->
+<div class="booking-panel" id="bookPanel" hidden role="dialog" aria-modal="true" aria-label="Book a session">
+<div class="booking-panel-box">
+<button type="button" class="booking-panel-x" id="bookPanelX" aria-label="Close">&times;</button>
+<iframe id="bookPanelFrame" title="Book a session"></iframe>
+</div>
+</div>
 
 <!-- ============ HERO: TWO DOORS ============ -->
 <header class="hero" id="top" data-screen-label="Hero">
@@ -650,7 +660,7 @@
 <p class="price-big" data-i18n="sj1.price">from &#3647;2,500</p>
 <p class="per" data-i18n="sj1.per">For two &middot; +&#3647;500 per extra guest &middot; up to eight</p>
 <p class="desc" data-i18n="sj1.desc2">An hour of live sound on the open-air terrace. Mats, tea and the evening air included.</p>
-<a class="cta" href="https://wa.me/905468419181?text=Hi%20Can%2C%20I%20would%20like%20a%20private%20sound%20journey%20on%20the%20terrace.%20My%20dates%20are%3A" target="_blank" rel="noopener" data-i18n="common.msgBook">Message to book &nbsp;&rarr;</a>
+<a class="cta" href="book/?service=sound-journey-terrace" data-i18n="common.bookTime">Book a time &nbsp;&rarr;</a>
 <p class="reply" data-i18n="common.reply">We usually reply within a few hours.</p>
 </article>
 <article class="pkg reveal" data-delay="1">
@@ -659,7 +669,7 @@
 <p class="price-big" data-i18n="sj2.price">from &#3647;4,000</p>
 <p class="per" data-i18n="sj2.per">For two &middot; +&#3647;500 per guest &middot; up to ten</p>
 <p class="desc" data-i18n="sj2.desc2">Your villa, hotel or retreat. We bring the instruments and set the room.</p>
-<a class="cta" href="https://wa.me/905468419181?text=Hi%20Can%2C%20I%20would%20like%20a%20sound%20journey%20at%20my%20villa.%20My%20dates%20are%3A" target="_blank" rel="noopener" data-i18n="common.msgBook">Message to book &nbsp;&rarr;</a>
+<a class="cta" href="book/?service=sound-journey-villa" data-i18n="common.bookTime">Book a time &nbsp;&rarr;</a>
 <p class="reply" data-i18n="common.reply">We usually reply within a few hours.</p>
 </article>
 </div>
@@ -688,7 +698,7 @@
 <p class="per" data-i18n="p1.per">One session</p>
 <p class="desc" data-i18n="p1.desc2">Meet the instrument. Feel how it plays, sound your first notes, and find out if handpan is for you. No commitment, no experience needed.</p>
 <p class="desc" style="margin-top:0.9em" data-i18n="p1.credit">Continue with the 3-Day Handpan Journey and <strong style="font-weight:500;color:var(--ink)">half the demo lesson cost</strong> is deducted from the Journey price.</p>
-<a class="cta" href="https://wa.me/905468419181?text=Hi%20Can%2C%20I%20would%20like%20to%20try%20a%20handpan%20lesson.%20When%20are%20you%20free%3F" target="_blank" rel="noopener" data-i18n="common.msgBook">Message to book &nbsp;&rarr;</a>
+<a class="cta" href="book/?service=handpan-demo" data-i18n="common.bookTime">Book a time &nbsp;&rarr;</a>
 <p class="reply" data-i18n="common.reply">We usually reply within a few hours.</p>
 </article>
 <article class="pkg signature reveal" data-delay="1">
@@ -697,7 +707,7 @@
 <p class="price-big">&#3647;10,000</p>
 <p class="per" data-i18n="p2.per">10 hours &middot; three days &middot; certificate</p>
 <p class="desc" data-i18n="p2.desc2">The complete course, from first notes to your own recorded piece, with a handpan to practice on during your stay and video lessons to keep going after. Full detail below.</p>
-<a class="cta" href="https://wa.me/905468419181?text=Hi%20Can%2C%20I%20would%20like%20to%20know%20more%20about%20the%203-Day%20Handpan%20Journey." target="_blank" rel="noopener" data-i18n="common.msgBook">Message to book &nbsp;&rarr;</a>
+<a class="cta" href="book/?service=handpan-journey" data-i18n="common.bookTime">Book a time &nbsp;&rarr;</a>
 <p class="reply" data-i18n="common.reply">We usually reply within a few hours.</p>
 </article>
 <article class="pkg reveal" data-delay="2">
@@ -730,7 +740,7 @@
 <li><span class="n">06</span><span data-i18n="jrn.i6">A certificate to take home</span></li>
 </ul>
 <div class="jrn-cta">
-<a class="btn-ink" href="https://wa.me/905468419181?text=Hi%20Can%2C%20I%20would%20like%20to%20know%20more%20about%20the%203-Day%20Handpan%20Journey." target="_blank" rel="noopener" data-i18n="jrn.cta">Message to book</a>
+<a class="btn-ink" href="book/?service=handpan-journey" data-i18n="jrn.book">Book a time</a>
 <span class="jrn-note" data-i18n="jrn.note">We&rsquo;ll find dates that fit your stay.</span>
 </div>
 <p class="reply" data-i18n="common.reply">We usually reply within a few hours.</p>
@@ -1012,6 +1022,78 @@ if (navToggle && navLinks && navScrim) {
   navScrim.addEventListener('click', closeMenu);
   navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMenu));
   window.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu(); });
+}
+
+// Above phone width, if the links, language and Book button do not fit on one row
+// (long languages, tablets), use the phone menu instead of letting the nav spill.
+if (navLinks) {
+  const navLogo = nav.querySelector('a');
+  const fitNav = () => {
+    navLinks.style.transition = 'none'; // switching layouts must not slide the menu panel
+    nav.classList.remove('nav-compact');
+    if (window.innerWidth > 720) {
+      // The free space sits left of the links (margin-left:auto): after the logo in
+      // LTR, before the language button in RTL.
+      const links = navLinks.getBoundingClientRect();
+      const leftNeighbour = getComputedStyle(nav).direction === 'rtl' ? nav.querySelector('.lang') : navLogo;
+      const gap = links.left - (leftNeighbour ? leftNeighbour.getBoundingClientRect().right : 0);
+      if (nav.scrollWidth > nav.clientWidth + 1 || gap < 24) nav.classList.add('nav-compact');
+      else if (nav.classList.contains('menu-open')) navScrim.click(); // menu open, full row again
+    }
+    void navLinks.offsetWidth;
+    navLinks.style.transition = '';
+  };
+  let fitTimer = 0;
+  const queueFit = () => { clearTimeout(fitTimer); fitTimer = setTimeout(fitNav, 30); };
+  window.addEventListener('resize', queueFit);
+  new MutationObserver(queueFit).observe(navLinks, { childList: true, subtree: true, characterData: true });
+  new MutationObserver(queueFit).observe(document.documentElement, { attributes: true, attributeFilter: ['dir', 'lang'] });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(queueFit);
+  fitNav();
+}
+
+// Booking panel: /book/ links open /book/ in an iframe over the page. The back
+// button closes it. Reopening the same link keeps what the guest already filled in.
+const bookPanel = document.getElementById('bookPanel');
+const bookFrame = document.getElementById('bookPanelFrame');
+const bookX = document.getElementById('bookPanelX');
+if (bookPanel && bookFrame && bookX) {
+  let bookReturn = null;
+  const openBook = (href) => {
+    // Load in place: a second src change would add a history entry and Back would
+    // step the iframe instead of closing the panel.
+    if (bookFrame.dataset.src !== href) {
+      if (bookFrame.dataset.src) bookFrame.contentWindow.location.replace(href);
+      else bookFrame.src = href;
+      bookFrame.dataset.src = href;
+    }
+    bookReturn = document.activeElement;
+    bookPanel.hidden = false;
+    document.documentElement.classList.add('booking-open');
+    requestAnimationFrame(() => bookPanel.classList.add('show'));
+    bookX.focus();
+    history.pushState({ noomBook: 1 }, '');
+  };
+  const closeBook = (fromHistory) => {
+    if (bookPanel.hidden) return;
+    bookPanel.classList.remove('show');
+    bookPanel.hidden = true;
+    document.documentElement.classList.remove('booking-open');
+    if (bookReturn && bookReturn.focus) bookReturn.focus();
+    if (!fromHistory && history.state && history.state.noomBook) history.back();
+  };
+  document.addEventListener('click', e => {
+    const a = e.target.closest('a[href]');
+    if (!a || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || a.target === '_blank') return;
+    const u = new URL(a.href, location.href);
+    if (u.origin !== location.origin || !u.pathname.startsWith('/book/')) return;
+    e.preventDefault();
+    openBook(u.href);
+  });
+  bookX.addEventListener('click', () => closeBook(false));
+  bookPanel.addEventListener('click', e => { if (e.target === bookPanel) closeBook(false); });
+  window.addEventListener('keydown', e => { if (e.key === 'Escape') closeBook(false); });
+  window.addEventListener('popstate', () => closeBook(true));
 }
 
 const io = new IntersectionObserver((entries) => {

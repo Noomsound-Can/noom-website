@@ -812,6 +812,20 @@ Object.keys(NOOM_V45).forEach(function (lang) {
   NOOM_V4[lang] = Object.assign(NOOM_V4[lang] || {}, NOOM_V45[lang]);
 });
 
+// Booking step 9 (2026-09-11): nav Book button, and the private and lesson cards
+// open /book/ instead of WhatsApp.
+const NOOM_V46 = {
+ th: { 'nav.book': 'จอง', 'common.bookTime': 'เลือกเวลาจอง &nbsp;&rarr;', 'jrn.book': 'เลือกเวลาจอง' },
+ de: { 'nav.book': 'Buchen', 'common.bookTime': 'Termin buchen &nbsp;&rarr;', 'jrn.book': 'Termin buchen' },
+ fr: { 'nav.book': 'Réserver', 'common.bookTime': 'Réserver un créneau &nbsp;&rarr;', 'jrn.book': 'Réserver un créneau' },
+ ru: { 'nav.book': 'Записаться', 'common.bookTime': 'Выбрать время &nbsp;&rarr;', 'jrn.book': 'Выбрать время' },
+ tr: { 'nav.book': 'Rezervasyon', 'common.bookTime': 'Randevu alın &nbsp;&rarr;', 'jrn.book': 'Randevu alın' },
+ he: { 'nav.book': 'הזמנה', 'common.bookTime': 'לבחור מועד &nbsp;&larr;', 'jrn.book': 'לבחור מועד' }
+};
+Object.keys(NOOM_V46).forEach(function (lang) {
+  NOOM_V4[lang] = Object.assign(NOOM_V4[lang] || {}, NOOM_V46[lang]);
+});
+
 Object.keys(NOOM_V4).forEach(function (lang) {
   window.NOOM_T_EXTRA[lang] = Object.assign(window.NOOM_T_EXTRA[lang] || {}, NOOM_V4[lang]);
 });

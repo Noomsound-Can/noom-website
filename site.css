@@ -47,6 +47,33 @@ a:hover{color:var(--clay)}
 .nav-toggle.open .l3{transform:translateY(-6px) rotate(-45deg)}
 .nav-scrim{position:fixed;inset:0;background:rgba(42,38,34,0.35);opacity:0;pointer-events:none;transition:opacity 320ms var(--ease-slow);z-index:45}
 .nav-scrim.show{opacity:1;pointer-events:auto}
+/* Nav Book button and the booking panel it opens (repo, 2026-09-11) */
+.nav>.nav-book{flex:0 0 auto;margin-left:clamp(14px,2vw,26px);padding:9px 16px;border:1px solid currentColor;font-family:var(--sans);font-size:clamp(10px,1vw,12px);font-weight:500;letter-spacing:0.14em;text-transform:uppercase;white-space:nowrap;color:var(--ink);transition:background 300ms var(--ease-slow),color 300ms}
+.nav:not(.scrolled)>.nav-book:hover{background:rgba(244,236,223,0.16)}
+.nav.scrolled>.nav-book{background:var(--ink);border-color:var(--ink);color:var(--cream)}
+.nav.scrolled>.nav-book:hover{background:#000}
+.nav>.nav-book:focus-visible{outline:2px solid var(--clay);outline-offset:3px}
+/* Nav too long for one row (tablets, Russian or French with the Book button): the
+   phone menu at any width. index.html sets .nav-compact by measuring. */
+.nav.nav-compact{gap:14px}
+.nav.nav-compact.scrolled{backdrop-filter:none;-webkit-backdrop-filter:none;background:rgba(244,236,223,0.97)}
+.nav.nav-compact>.lang{margin-left:auto}
+.nav.nav-compact>.nav-book{margin-left:0}
+.nav.nav-compact .nav-toggle{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;flex:0 0 auto;margin-left:0}
+.nav.nav-compact .nav-toggle svg{width:22px;height:22px}
+.nav.nav-compact .links{position:fixed;top:0;right:0;bottom:0;width:min(78vw,320px);margin:0;background:var(--cream);flex-direction:column;align-items:stretch;justify-content:flex-start;gap:0;padding:90px 30px 40px;overflow-y:auto;transform:translateX(100%);transition:transform 420ms var(--ease-slow);box-shadow:-18px 0 48px -24px rgba(42,38,34,0.3);font-size:13px;letter-spacing:0.1em;z-index:46}
+.nav.nav-compact.menu-open .links{transform:translateX(0)}
+.nav.nav-compact .links a{color:var(--ink) !important;text-shadow:none !important;padding:15px 0;width:100%;border-bottom:1px solid var(--ink-faint);display:block !important}
+.nav.nav-compact .links>a::after{display:none}
+html.booking-open{overflow:hidden}
+.booking-panel{position:fixed;inset:0;z-index:80;display:flex;align-items:center;justify-content:center;padding:3vh 3vw;background:rgba(42,38,34,0.5);opacity:0;transition:opacity 280ms var(--ease-slow)}
+.booking-panel[hidden]{display:none}
+.booking-panel.show{opacity:1}
+.booking-panel-box{position:relative;width:min(780px,100%);height:min(94vh,1000px);background:var(--cream);box-shadow:0 30px 80px -30px rgba(42,38,34,0.55);overflow:hidden}
+.booking-panel-box iframe{display:block;width:100%;height:100%;border:0;background:var(--cream)}
+.booking-panel-x{position:absolute;top:10px;right:24px;z-index:1;width:44px;height:44px;display:inline-flex;align-items:center;justify-content:center;background:var(--cream);border:1px solid var(--ink-faint);border-radius:50%;color:var(--ink);font-size:24px;line-height:1;cursor:pointer}
+.booking-panel-x:hover{border-color:var(--ink)}
+.booking-panel-x:focus-visible{outline:2px solid var(--clay);outline-offset:2px}
 .lang-menu li[aria-selected="true"]::before{content:"·";position:absolute;left:8px;top:50%;transform:translateY(-50%);color:var(--ink);font-size:14px;line-height:1}
 
 /* Hero with two doors */
@@ -312,7 +339,13 @@ a.btn-quiet:hover{background:var(--ink);color:var(--cream)}
 .nav.menu-open .links{transform:translateX(0)}
 .nav .links a{color:var(--ink) !important;text-shadow:none !important;padding:15px 0;width:100%;border-bottom:1px solid var(--ink-faint);display:block !important}
 .nav .links>a::after{display:none}
+.nav>.nav-book{margin-left:0;padding:7px 12px;font-size:10px;letter-spacing:0.12em}
+.nav>.nav-book+.nav-toggle{margin-left:0}
+.booking-panel{padding:0}
+.booking-panel-box{width:100%;height:100%;box-shadow:none}
+.booking-panel-x{right:12px}
 }
+@media (prefers-reduced-motion:reduce){.booking-panel{transition:none}}
 @media (prefers-reduced-motion:reduce){
 html{scroll-behavior:auto}
 .reveal{opacity:1;transform:none;filter:none;transition:none}
