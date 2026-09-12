@@ -76,6 +76,9 @@
 .bk-date{font-family:var(--serif);font-size:20px;color:var(--ink);margin:0 0 12px}
 .bk-times{display:grid;grid-template-columns:repeat(auto-fill,minmax(86px,1fr));gap:8px;max-width:620px}
 .bk-time{all:unset;box-sizing:border-box;cursor:pointer;text-align:center;padding:12px 0;font-family:var(--sans);font-size:14px;letter-spacing:0.04em;color:var(--ink);background:var(--paper);border:1px solid var(--shell)}
+.bk-time{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;line-height:1.2}
+.bk-time small{font-size:10px;letter-spacing:0.02em;color:var(--clay);white-space:nowrap}
+.bk-time[aria-pressed="true"] small{color:var(--cream)}
 .bk-time:hover{border-color:var(--ink)}
 .bk-time:focus-visible{outline:2px solid var(--clay);outline-offset:1px}
 .bk-time[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--cream)}

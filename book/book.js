@@ -409,21 +409,19 @@
       } else {
         b.disabled = true;
       }
-      // Weekly sessions show the live count right in the calendar. The count is the main
-      // session's own mats, never the main plus the extra 16:00 added together (that read
-      // as a wrong number next to the admin page). A day where only the extra is left
-      // shows its time instead.
+      // Weekly sessions show the live count right in the calendar: all the mats free that
+      // day, across both sessions when the extra 16:00 is open. Which session they sit in
+      // is on the time buttons. A day where only the extra is left shows its time instead.
       const occs = !state.loading && date >= t ? occsOn(date) : [];
       if (occs.length) {
         const open = occs.filter((o) => o.bookable);
-        const mains = open.filter((o) => !o.extra);
-        const onlyExtra = open.length > 0 && mains.length === 0;
+        const onlyExtra = open.length > 0 && open.every((o) => o.extra);
         const small = document.createElement("small");
         small.textContent = occs.every((o) => o.status !== "open") ? "Closed"
           : full ? "Full"
           : !ok ? ""
           : onlyExtra ? open[0].time
-          : `${mains.reduce((n, o) => n + o.spots_left, 0)} left`;
+          : `${open.reduce((n, o) => n + o.spots_left, 0)} left`;
         if (small.textContent) b.appendChild(small);
         if (ok && onlyExtra) b.classList.add("extra");
       }
@@ -464,6 +462,15 @@
       b.type = "button";
       b.className = "bk-time";
       b.textContent = time;
+      // Weekly sessions carry their own count on the button, so a day with both the
+      // 16:00 and the 17:30 shows where its free mats actually are.
+      const o = weekly() ? occAt(date, time) : null;
+      if (o) {
+        const small = document.createElement("small");
+        small.textContent = `${o.spots_left} left`;
+        b.appendChild(small);
+        b.setAttribute("aria-label", `${time}, ${o.spots_left} mat${o.spots_left === 1 ? "" : "s"} left`);
+      }
       b.setAttribute("aria-pressed", String(picked?.time === time));
       b.addEventListener("click", () => pickTime(time));
       box.appendChild(b);
