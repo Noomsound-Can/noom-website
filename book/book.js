@@ -98,10 +98,13 @@
     return `${n} ${word}${n === 1 ? "" : "s"}`;
   };
   const complete = () => state.svc && state.picks.length === state.svc.sessions;
-  // The session a day belongs to: its own if already picked, else the next one.
+  // The session a day belongs to: its own if already picked, else the next one. Clamped
+  // to the last session, the same way loadMonth() picks the one to fetch: a service with
+  // one session has only avail[1], so without the clamp every other day looked timeless
+  // (and so unclickable) the moment a time was picked.
   const sessionFor = (date) => {
     const i = state.picks.findIndex((p) => p.date === date);
-    return i >= 0 ? i + 1 : state.picks.length + 1;
+    return i >= 0 ? i + 1 : Math.min(state.picks.length + 1, state.svc?.sessions || 1);
   };
   const timesFor = (date) => (state.avail[sessionFor(date)] || {})[date] || [];
   // Weekly sessions on a day (a full Sunday can add an extra 16:00 before the 17:30).
