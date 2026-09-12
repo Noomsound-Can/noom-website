@@ -409,19 +409,23 @@
       } else {
         b.disabled = true;
       }
-      // Weekly sessions show the live count right in the calendar; a day where only the
-      // extra 16:00 is left shows its time instead.
+      // Weekly sessions show the live count right in the calendar. The count is the main
+      // session's own mats, never the main plus the extra 16:00 added together (that read
+      // as a wrong number next to the admin page). A day where only the extra is left
+      // shows its time instead.
       const occs = !state.loading && date >= t ? occsOn(date) : [];
       if (occs.length) {
         const open = occs.filter((o) => o.bookable);
+        const mains = open.filter((o) => !o.extra);
+        const onlyExtra = open.length > 0 && mains.length === 0;
         const small = document.createElement("small");
         small.textContent = occs.every((o) => o.status !== "open") ? "Closed"
           : full ? "Full"
           : !ok ? ""
-          : open.every((o) => o.extra) ? open[0].time
-          : `${open.reduce((n, o) => n + o.spots_left, 0)} left`;
+          : onlyExtra ? open[0].time
+          : `${mains.reduce((n, o) => n + o.spots_left, 0)} left`;
         if (small.textContent) b.appendChild(small);
-        if (ok && open.every((o) => o.extra)) b.classList.add("extra");
+        if (ok && onlyExtra) b.classList.add("extra");
       }
       if (state.picks.some((p) => p.date === date)) b.classList.add("picked");
       if (date === state.date) b.classList.add("sel");
