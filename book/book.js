@@ -397,7 +397,10 @@
       const b = document.createElement("button");
       b.type = "button";
       b.className = "bk-day";
-      b.textContent = d;
+      const num = document.createElement("span");
+      num.className = "bk-n";
+      num.textContent = d;
+      b.appendChild(num);
       const ok = !state.loading && dayAllowed(date);
       const full = !state.loading && fullSession(date);
       if (ok) {

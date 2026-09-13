@@ -45,7 +45,7 @@
 .bk-day.open:focus-visible{outline:2px solid var(--clay);outline-offset:1px}
 .bk-day.picked{background:var(--sand);border-color:var(--sand);color:var(--ink)}
 .bk-day.sel{background:var(--ink);border-color:var(--ink);color:var(--cream)}
-.bk-day.today{text-decoration:underline;text-underline-offset:4px}
+.bk-day.today .bk-n{text-decoration:underline;text-underline-offset:3px}
 .bk-day{flex-direction:column;gap:1px;line-height:1.1}
 .bk-day small{font-size:9px;letter-spacing:0.02em;color:var(--clay);text-decoration:none;white-space:nowrap}
 .bk-day.sel small{color:var(--cream)}
