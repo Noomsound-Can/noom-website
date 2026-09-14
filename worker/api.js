@@ -27,6 +27,7 @@ import {
 } from "./booking.js";
 import { PUBLIC_REPLY_TO, alertRecipients, sendEmail } from "./email.js";
 import { busyCalendars, createEvent, deleteEvent, freeBusy, patchEvent } from "./gcal.js";
+import { writeBooking } from "./sheets.js";
 
 const FREEBUSY_TTL_S = 60; // spec section 5, do not raise
 const MAX_DAYS = 62;
@@ -473,6 +474,15 @@ async function afterSignup(env, { ref, service, occ, d, price, label, mats, left
     calendarOk = false;
     console.log(`signup ${ref}: calendar sync failed: ${err.message}`);
   }
+  // The booking sheet fills itself: first free row of this session's block.
+  await writeBooking(env, {
+    startMs: occ.startMs,
+    name: d.name,
+    party_size: d.party_size,
+    notes: d.notes,
+    source: "web",
+  });
+
   const taken = occ.capacity - left;
   const min = occ.min_to_run;
   const reached = !!min && taken >= min && taken - d.party_size < min; // this signup crossed it

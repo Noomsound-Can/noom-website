@@ -9,8 +9,9 @@ const API = "https://www.googleapis.com/calendar/v3";
 const SCOPE = "https://www.googleapis.com/auth/calendar";
 const TOKEN_TTL_MS = 50 * 60 * 1000;
 
-// Per-isolate cache. An isolate that is recycled simply fetches a fresh token.
-let cachedToken = null; // { value, expiresAt }
+// Per-isolate cache, one entry per scope. An isolate that is recycled simply
+// fetches a fresh token.
+const cachedTokens = new Map(); // scope -> { value, expiresAt }
 let cachedKey = null; // { pem, key }
 
 // Calendars read for busy times. Melie's is skipped until her ID is set.
@@ -91,13 +92,20 @@ async function gcalFetch(env, path, init, okStatuses = []) {
 }
 
 async function accessToken(env) {
-  if (cachedToken && cachedToken.expiresAt > Date.now()) return cachedToken.value;
+  return googleToken(env, SCOPE);
+}
+
+// A service account token for any Google scope. worker/sheets.js uses the same
+// key with the spreadsheets scope.
+export async function googleToken(env, scope) {
+  const hit = cachedTokens.get(scope);
+  if (hit && hit.expiresAt > Date.now()) return hit.value;
 
   const now = Math.floor(Date.now() / 1000);
   const header = b64urlJson({ alg: "RS256", typ: "JWT" });
   const claims = b64urlJson({
     iss: env.GCAL_SA_EMAIL,
-    scope: SCOPE,
+    scope,
     aud: TOKEN_URL,
     iat: now,
     exp: now + 3600,
@@ -121,7 +129,7 @@ async function accessToken(env) {
   });
   if (!res.ok) throw new Error(`gcal token ${res.status}: ${(await res.text()).slice(0, 300)}`);
   const { access_token } = await res.json();
-  cachedToken = { value: access_token, expiresAt: Date.now() + TOKEN_TTL_MS };
+  cachedTokens.set(scope, { value: access_token, expiresAt: Date.now() + TOKEN_TTL_MS });
   return access_token;
 }
 

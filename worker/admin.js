@@ -15,6 +15,7 @@ import {
 } from "./booking.js";
 import { PUBLIC_REPLY_TO, alertRecipients, sendEmail } from "./email.js";
 import { createEvent, deleteEvent, patchEvent } from "./gcal.js";
+import { writeBooking } from "./sheets.js";
 import {
   bookingWhere,
   clamp,
@@ -49,7 +50,7 @@ export async function adminRoute(request, env, ctx, email) {
     return json({ error: "bad_json" }, 400);
   }
 
-  if (path === "/api/admin/manual") return adminManual(body, env, email);
+  if (path === "/api/admin/manual") return adminManual(body, env, ctx, email);
   if (path === "/api/admin/partners") return adminAddPartner(body, env, email);
   let m = /^\/api\/admin\/partner\/([a-z0-9-]{1,60})$/.exec(path);
   if (m) return adminPartnerAction(body, env, email, m[1]);
@@ -261,7 +262,7 @@ async function adminMats(body, env, email, b, service) {
 // POST /api/admin/manual { occurrence, name, party_size, whatsapp?, notes? }
 // A GetYourGuide, WhatsApp or walk-in guest on a weekly session, source 'manual'.
 // Same atomic guard as /api/signup, but up to capacity + MANUAL_OVER.
-async function adminManual(body, env, email) {
+async function adminManual(body, env, ctx, email) {
   const occ = await findOccurrence(env, body.occurrence);
   if (!occ) return json({ error: "unknown_occurrence" }, 400);
   if (occ.status !== "open") return json({ error: "closed" }, 409);
@@ -299,6 +300,15 @@ async function adminManual(body, env, email) {
   if (!ref) return json({ error: "try_again" }, 503);
 
   await log(env, email, "manual", ref, `${occ.id}, ${d.party_size} mat${d.party_size > 1 ? "s" : ""}, ${d.name}`);
+  // Booking sheet: the source chip Can picked travels in notes, so the sheet shows
+  // GetYourGuide, WhatsApp or Walk-in rather than "manual".
+  ctx.waitUntil(writeBooking(env, {
+    startMs: occ.startMs,
+    name: d.name,
+    party_size: d.party_size,
+    notes: d.notes,
+    source: "manual",
+  }));
   const calendar = await calendarStep(env, `manual ${ref}`, () => syncOccurrenceEvent(env, occ.id));
   return json({ ok: true, ref, occurrence: occ.id, taken: occ.taken + d.party_size, capacity: occ.capacity, calendar });
 }

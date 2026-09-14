@@ -11,6 +11,7 @@ import { accessEmail } from "./access.js";
 import { adminRoute, expireHolds } from "./admin.js";
 import { availability, book, occurrences, partnerInfo, services, signup } from "./api.js";
 import { DATED_PAGES, datedPage } from "./dated.js";
+import { gygIntake } from "./intake.js";
 import { dailyDigest } from "./digest.js";
 
 const DIGEST_CRON = "0 1 * * *";
@@ -55,6 +56,11 @@ export default {
       }
       if (url.pathname === "/api/signup" && request.method === "POST") {
         return signup(request, env, ctx);
+      }
+      // GetYourGuide emails, posted by the Apps Script. Guarded by its own token,
+      // never by the Access JWT, because no person is signed in.
+      if (url.pathname === "/api/intake/gyg" && request.method === "POST") {
+        return gygIntake(request, env, ctx);
       }
       if (url.pathname.startsWith("/api/admin/")) {
         const email = await adminEmail(request, env);
