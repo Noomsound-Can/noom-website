@@ -42,9 +42,9 @@
       meta: "1 to 3 students",
     },
     "handpan-journey": {
-      title: "3-Day Handpan Journey",
-      blurb: "Our signature course. Three sessions on three days within one week, a handpan to practise on during your stay, and a certificate.",
-      meta: "1 person · three days",
+      title: "Ten-Hour Handpan Course",
+      blurb: "One to one. Three sessions, ten hours, on any days within two weeks. The handpan stays with you for the whole course.",
+      meta: "1 person · three sessions",
     },
   };
 
