@@ -63,9 +63,7 @@ th: {
 
   'wa.eyebrow': 'เราคือใคร',
   'wa.title': 'สองคน<br/><em>หนึ่งระเบียง.</em>',
-  'wa.p1': 'Noom Sound Studio คือ Can และ Melie — Can เล่นและสอนแฮนด์แพน Melie ดูแล House of Holistic เราจัดเซสชันร่วมกันบนระเบียงที่เราอยู่และทำงาน เหนือทะเลในละไม',
-  'wa.p2': 'Can สอนนักเรียนมาแล้วมากกว่าห้าสิบคน และรับใหม่สามถึงสี่คนต่อเดือน เราได้รับเชิญไปเล่นที่ Kamalaya, Anantara Lawana, 5 Elements, W และ Conrad และมีที่ในโปรแกรมเวลเนสของ Kamalaya',
-  'wa.p3': 'เราเล่นและสอนจากหลักการทำงานของเสียงจริง ๆ โน้ตไหนเข้ากัน ทำไมชามยังก้องต่อหลังปล่อยมือ ห้องเปลี่ยนสิ่งที่คุณได้ยินอย่างไร ไม่มีอะไรต้องเป็นเรื่องลึกลับเพื่อจะสัมผัสใจคุณ',
+  'wa.p1': 'Noom Sound Studio คือ Can และ Melie — Can เล่นและสอนแฮนด์แพน Melie ดูแล House of Holistic เราจัดเซสชันร่วมกันบนระเบียงที่เราอยู่และทำงาน เหนือทะเลในละไม',  'wa.p3': 'เราเล่นและสอนจากหลักการทำงานของเสียงจริง ๆ โน้ตไหนเข้ากัน ทำไมชามยังก้องต่อหลังปล่อยมือ ห้องเปลี่ยนสิ่งที่คุณได้ยินอย่างไร ไม่มีอะไรต้องเป็นเรื่องลึกลับเพื่อจะสัมผัสใจคุณ',
   'wa.p4': 'ไม่ต้องมีประสบการณ์ และไม่ต้องทำอะไรเลย มาอย่างที่คุณเป็น นอนลง แล้วให้เราเล่นให้',
   'wa.legal': 'Noom Studio Co., Ltd. จดทะเบียนที่เกาะสมุย',
   'wa.ig': 'ดูเซสชันจริงได้ทาง Instagram',
@@ -172,9 +170,7 @@ de: {
 
   'wa.eyebrow': 'Wer wir sind',
   'wa.title': 'Zwei Menschen,<br/><em>eine Terrasse.</em>',
-  'wa.p1': 'Noom Sound Studio sind Can und Melie. Can spielt Handpan und unterrichtet sie. Melie führt House of Holistic. Wir halten die Sessions gemeinsam, auf der Terrasse, auf der wir leben und arbeiten, über dem Meer in Lamai.',
-  'wa.p2': 'Can hat mehr als fünfzig Schüler unterrichtet und nimmt drei oder vier neue pro Monat an. Wir werden zu Kamalaya, Anantara Lawana, 5 Elements, W und Conrad eingeladen und haben einen Platz im Wellnessprogramm von Kamalaya.',
-  'wa.p3': 'Wir spielen und unterrichten davon ausgehend, wie Klang tatsächlich funktioniert. Welche Töne gut zusammenpassen, warum eine Schale weiterklingt, nachdem man sie loslässt, wie ein Raum verändert, was du hörst. Nichts hier muss ein Geheimnis sein, um dich zu berühren.',
+  'wa.p1': 'Noom Sound Studio sind Can und Melie. Can spielt Handpan und unterrichtet sie. Melie führt House of Holistic. Wir halten die Sessions gemeinsam, auf der Terrasse, auf der wir leben und arbeiten, über dem Meer in Lamai.',  'wa.p3': 'Wir spielen und unterrichten davon ausgehend, wie Klang tatsächlich funktioniert. Welche Töne gut zusammenpassen, warum eine Schale weiterklingt, nachdem man sie loslässt, wie ein Raum verändert, was du hörst. Nichts hier muss ein Geheimnis sein, um dich zu berühren.',
   'wa.p4': 'Du brauchst keine Erfahrung und musst nichts tun. Komm, wie du bist, leg dich hin und lass uns spielen.',
   'wa.legal': 'Noom Studio Co., Ltd. Registriert auf Koh Samui.',
   'wa.ig': 'Sieh die Sessions, während sie passieren, auf Instagram.',
@@ -281,9 +277,7 @@ fr: {
 
   'wa.eyebrow': 'Qui nous sommes',
   'wa.title': 'Deux personnes,<br/><em>une terrasse.</em>',
-  'wa.p1': 'Noom Sound Studio, c\u2019est Can et Melie. Can joue du handpan et l\u2019enseigne. Melie dirige House of Holistic. Nous tenons les séances ensemble, sur la terrasse où nous vivons et travaillons, au-dessus de la mer à Lamai.',
-  'wa.p2': 'Can a enseigné à plus de cinquante élèves et en accueille trois ou quatre nouveaux chaque mois. Nous sommes invités à jouer à Kamalaya, Anantara Lawana, 5 Elements, W et Conrad, et nous avons une place dans le programme bien-être de Kamalaya.',
-  'wa.p3': 'Nous jouons et enseignons à partir du fonctionnement réel du son. Quelles notes vont bien ensemble, pourquoi un bol continue de sonner après qu\u2019on le lâche, comment une pièce change ce que vous entendez. Rien ici n\u2019a besoin d\u2019être un mystère pour vous toucher.',
+  'wa.p1': 'Noom Sound Studio, c\u2019est Can et Melie. Can joue du handpan et l\u2019enseigne. Melie dirige House of Holistic. Nous tenons les séances ensemble, sur la terrasse où nous vivons et travaillons, au-dessus de la mer à Lamai.',  'wa.p3': 'Nous jouons et enseignons à partir du fonctionnement réel du son. Quelles notes vont bien ensemble, pourquoi un bol continue de sonner après qu\u2019on le lâche, comment une pièce change ce que vous entendez. Rien ici n\u2019a besoin d\u2019être un mystère pour vous toucher.',
   'wa.p4': 'Vous n\u2019avez besoin d\u2019aucune expérience et vous n\u2019avez rien à faire. Venez comme vous êtes, allongez-vous, et laissez-nous jouer.',
   'wa.legal': 'Noom Studio Co., Ltd. Enregistrée à Koh Samui.',
   'wa.ig': 'Voyez les séances telles qu\u2019elles se passent, sur Instagram.',
@@ -390,9 +384,7 @@ ru: {
 
   'wa.eyebrow': 'Кто мы',
   'wa.title': 'Два человека,<br/><em>одна терраса.</em>',
-  'wa.p1': 'Noom Sound Studio — это Can и Melie. Can играет на хэндпане и учит ему. Melie ведёт House of Holistic. Мы проводим сессии вместе, на террасе, где живём и работаем, над морем в Ламае.',
-  'wa.p2': 'Can обучил более пятидесяти учеников и берёт три-четыре новых каждый месяц. Нас приглашают играть в Kamalaya, Anantara Lawana, 5 Elements, W и Conrad, и у нас есть место в велнес-программе Kamalaya.',
-  'wa.p3': 'Мы играем и учим, исходя из того, как звук работает на самом деле. Какие ноты хорошо сочетаются, почему чаша продолжает звучать, когда её отпустили, как помещение меняет то, что вы слышите. Ничему здесь не нужно быть тайной, чтобы вас тронуть.',
+  'wa.p1': 'Noom Sound Studio — это Can и Melie. Can играет на хэндпане и учит ему. Melie ведёт House of Holistic. Мы проводим сессии вместе, на террасе, где живём и работаем, над морем в Ламае.',  'wa.p3': 'Мы играем и учим, исходя из того, как звук работает на самом деле. Какие ноты хорошо сочетаются, почему чаша продолжает звучать, когда её отпустили, как помещение меняет то, что вы слышите. Ничему здесь не нужно быть тайной, чтобы вас тронуть.',
   'wa.p4': 'Опыт не нужен, и делать ничего не надо. Приходите как есть, ложитесь, и позвольте нам играть.',
   'wa.legal': 'Noom Studio Co., Ltd. Зарегистрировано на Ко Самуи.',
   'wa.ig': 'Смотрите сессии как они есть, в Instagram.',
@@ -500,7 +492,7 @@ tr: {
   'wa.eyebrow': 'Biz kimiz',
   'wa.title': 'İki kişi,<br/><em>bir teras.</em>',
   'wa.p1': 'Noom Sound Studio, Can ve Melie\u2019dir. Can handpan çalar ve öğretir. Melie, House of Holistic\u2019i yürütür. Seansları birlikte, yaşadığımız ve çalıştığımız terasta, Lamai\u2019de denizin üstünde tutuyoruz.',
-  'wa.p2': 'Can elliden fazla öğrenciye ders verdi ve her ay üç dört yeni öğrenci alıyor. Kamalaya, Anantara Lawana, 5 Elements, W ve Conrad\u2019a çalmaya davet ediliyoruz ve Kamalaya wellness programında yerimiz var.',
+  'wa.p2': 'Kamalaya, Anantara Lawana, 5 Elements, W ve Conrad\u2019a çalmaya davet ediliyoruz ve Kamalaya wellness programında yerimiz var.',
   'wa.p3': 'Sesin gerçekte nasıl çalıştığından yola çıkarak çalıyor ve öğretiyoruz. Hangi notalar iyi oturur, bir kâse bıraktıktan sonra neden çınlamaya devam eder, bir oda duyduğunu nasıl değiştirir. Buradaki hiçbir şeyin seni etkilemek için gizem olması gerekmiyor.',
   'wa.p4': 'Deneyime ihtiyacın yok ve yapman gereken bir şey yok. Olduğun gibi gel, uzan, biz çalalım.',
   'wa.legal': 'Noom Studio Co., Ltd. Koh Samui\u2019de kayıtlı.',
@@ -608,9 +600,7 @@ he: {
 
   'wa.eyebrow': 'מי אנחנו',
   'wa.title': 'שני אנשים,<br/><em>מרפסת אחת.</em>',
-  'wa.p1': 'Noom Sound Studio הם Can ו־Melie. Can מנגן בהנדפן ומלמד אותו. Melie מנהלת את House of Holistic. אנחנו מקיימים את המפגשים יחד, במרפסת שבה אנחנו חיים ועובדים, מעל הים בלאמאי.',
-  'wa.p2': 'Can לימד יותר מחמישים תלמידים ומקבל שלושה או ארבעה חדשים בכל חודש. אנחנו מוזמנים לנגן ב־Kamalaya, Anantara Lawana, 5 Elements, W ו־Conrad, ויש לנו מקום בתוכנית הבריאות של Kamalaya.',
-  'wa.p3': 'אנחנו מנגנים ומלמדים מתוך האופן שבו צליל עובד באמת. אילו צלילים מסתדרים יחד, למה קערה ממשיכה לצלול אחרי שמשחררים אותה, איך חדר משנה את מה שאתם שומעים. שום דבר כאן לא צריך להיות תעלומה כדי לגעת בכם.',
+  'wa.p1': 'Noom Sound Studio הם Can ו־Melie. Can מנגן בהנדפן ומלמד אותו. Melie מנהלת את House of Holistic. אנחנו מקיימים את המפגשים יחד, במרפסת שבה אנחנו חיים ועובדים, מעל הים בלאמאי.',  'wa.p3': 'אנחנו מנגנים ומלמדים מתוך האופן שבו צליל עובד באמת. אילו צלילים מסתדרים יחד, למה קערה ממשיכה לצלול אחרי שמשחררים אותה, איך חדר משנה את מה שאתם שומעים. שום דבר כאן לא צריך להיות תעלומה כדי לגעת בכם.',
   'wa.p4': 'אין צורך בניסיון ואין מה לעשות. בואו כמו שאתם, שכבו, ותנו לנו לנגן.',
   'wa.legal': 'Noom Studio Co., Ltd. רשומה בקוֹ סָמוּי.',
   'wa.ig': 'לראות את המפגשים כשהם קורים, באינסטגרם.',
@@ -706,29 +696,17 @@ Object.keys(NOOM_V41).forEach(function (lang) {
 
 /* v4.2 — Who we are: both teachers, play-or-listen closing line */
 const NOOM_V42 = {
- "th": {
-  "wa.p2b": "Can สอนแฮนด์แพน จังหวะ และทฤษฎีดนตรี สอนนักเรียนมาแล้วมากกว่าห้าสิบคน และรับใหม่สามถึงสี่คนต่อเดือน Melie สอนซาวด์เธอราพีให้นักเรียนของเธอเองมากกว่าห้าสิบคน และเป็นครูโยคะและผู้ฝึกโยคะ เราได้รับเชิญไปเล่นที่ Kamalaya, Anantara Lawana, 5 Elements, W และ Conrad และมีที่ในโปรแกรมเวลเนสของ Kamalaya",
-  "wa.p4b": "ไม่ต้องมีประสบการณ์ มาเล่นกับเรา หรือมาฟังเฉย ๆ โดยไม่ต้องทำอะไรเลย อย่างไรก็ได้ มาอย่างที่คุณเป็น"
+ "th": {  "wa.p4b": "ไม่ต้องมีประสบการณ์ มาเล่นกับเรา หรือมาฟังเฉย ๆ โดยไม่ต้องทำอะไรเลย อย่างไรก็ได้ มาอย่างที่คุณเป็น"
  },
- "de": {
-  "wa.p2b": "Can unterrichtet Handpan, Rhythmus und Musiktheorie, hat mehr als fünfzig Schüler unterrichtet und nimmt drei oder vier neue pro Monat an. Melie unterrichtet Klangtherapie und hat selbst mehr als fünfzig Schüler, außerdem ist sie Yogalehrerin und praktiziert selbst. Wir werden zu Kamalaya, Anantara Lawana, 5 Elements, W und Conrad eingeladen und haben einen Platz im Wellnessprogramm von Kamalaya.",
-  "wa.p4b": "Du brauchst keine Erfahrung. Komm und spiel mit uns, oder komm und hör einfach zu und tu gar nichts. So oder so: Komm, wie du bist."
+ "de": {  "wa.p4b": "Du brauchst keine Erfahrung. Komm und spiel mit uns, oder komm und hör einfach zu und tu gar nichts. So oder so: Komm, wie du bist."
  },
- "fr": {
-  "wa.p2b": "Can enseigne le handpan, le rythme et la théorie musicale, a formé plus de cinquante élèves et en accueille trois ou quatre nouveaux chaque mois. Melie enseigne la thérapie sonore à plus de cinquante élèves à elle, et elle est professeure de yoga et pratiquante. Nous sommes invités à jouer à Kamalaya, Anantara Lawana, 5 Elements, W et Conrad, et nous avons une place dans le programme bien-être de Kamalaya.",
-  "wa.p4b": "Aucune expérience requise. Venez jouer avec nous, ou venez écouter et ne rien faire du tout. Dans les deux cas, venez comme vous êtes."
+ "fr": {  "wa.p4b": "Aucune expérience requise. Venez jouer avec nous, ou venez écouter et ne rien faire du tout. Dans les deux cas, venez comme vous êtes."
  },
- "ru": {
-  "wa.p2b": "Can преподаёт хэндпан, ритм и теорию музыки, обучил более пятидесяти учеников и берёт три-четыре новых каждый месяц. Melie преподаёт звуковую терапию более чем пятидесяти своим ученикам и является преподавателем и практиком йоги. Нас приглашают играть в Kamalaya, Anantara Lawana, 5 Elements, W и Conrad, и у нас есть место в велнес-программе Kamalaya.",
-  "wa.p4b": "Опыт не нужен. Приходите играть с нами или приходите слушать и не делать ничего вовсе. В любом случае приходите как есть."
+ "ru": {  "wa.p4b": "Опыт не нужен. Приходите играть с нами или приходите слушать и не делать ничего вовсе. В любом случае приходите как есть."
  },
- "tr": {
-  "wa.p2b": "Can handpan, ritim ve müzik teorisi öğretiyor; elliden fazla öğrenciye ders verdi ve her ay üç dört yeni öğrenci alıyor. Melie ses terapisi öğretiyor, kendi elliden fazla öğrencisi var, ayrıca yoga eğitmeni ve uygulayıcısı. Kamalaya, Anantara Lawana, 5 Elements, W ve Conrad’a çalmaya davet ediliyoruz ve Kamalaya wellness programında yerimiz var.",
-  "wa.p4b": "Deneyime ihtiyacın yok. Gel bizimle çal, ya da gel sadece dinle ve hiçbir şey yapma. Her iki durumda da olduğun gibi gel."
+ "tr": {  "wa.p4b": "Deneyime ihtiyacın yok. Gel bizimle çal, ya da gel sadece dinle ve hiçbir şey yapma. Her iki durumda da olduğun gibi gel."
  },
- "he": {
-  "wa.p2b": "Can מלמד הנדפן, קצב ותורת המוזיקה, לימד יותר מחמישים תלמידים ומקבל שלושה או ארבעה חדשים בכל חודש. Melie מלמדת תרפיה בצליל ליותר מחמישים תלמידים משלה, והיא מורה ומתרגלת יוגה. אנחנו מוזמנים לנגן ב־Kamalaya, Anantara Lawana, 5 Elements, W ו־Conrad, ויש לנו מקום בתוכנית הבריאות של Kamalaya.",
-  "wa.p4b": "אין צורך בניסיון. בואו לנגן איתנו, או בואו להקשיב ולא לעשות דבר. כך או כך, בואו כמו שאתם."
+ "he": {  "wa.p4b": "אין צורך בניסיון. בואו לנגן איתנו, או בואו להקשיב ולא לעשות דבר. כך או כך, בואו כמו שאתם."
  }
 };
 Object.keys(NOOM_V42).forEach(function (lang) {
@@ -760,56 +738,49 @@ Object.keys(NOOM_V43).forEach(function (lang) {
   NOOM_V4[lang] = Object.assign(NOOM_V4[lang] || {}, NOOM_V43[lang]);
 });
 
-/* v4.4 — Melie credentials (Tok Sen, sound practitioner), "we play regularly at venues such as" */
-const NOOM_V44 = {
+/* Who we are rewritten as a story (Sep 2026): the terrace, how Melie found sound therapy,
+   the soft grounding style. No session or student counts. First translations of
+   wa.p2can and wa.p2melie. Keep the <a href="about/"> anchor in every language. */
+const NOOM_WA_STORY = {
  "th": {
-  "wa.p2c": "Can สอนแฮนด์แพน จังหวะ และทฤษฎีดนตรี สอนนักเรียนมาแล้วมากกว่าห้าสิบคน และรับใหม่สามถึงสี่คนต่อเดือน Melie สอนซาวด์เธอราพีให้นักเรียนมาแล้วมากกว่าห้าสิบคน และยังคงทำงานในฐานะครูโยคะ ผู้เชี่ยวชาญตอกเส้น และนักบำบัดด้วยเสียง เราเล่นเป็นประจำในสถานที่อย่าง Kamalaya, Anantara Lawana, 5 Elements, W และ Conrad และมีที่ในโปรแกรมเวลเนสของ Kamalaya"
+  "wa.p1b": "Noom Sound Studio คือ Can และ Melie กับระเบียงกลางป่าเหนือหาดละไม ที่มองเห็นเพียงสีฟ้าของทะเลและสีเขียวของต้นไม้",
+  "wa.p2can": "ปี 2016 ที่ตุรกี Can ซื้อแฮนด์แพนตัวแรกของเขา เขาเข้าร่วมโปรเจกต์ชื่อ Music Medicine และเล่นดนตรีด้นสดร่วมกับนักดนตรีข้างถนน แล้วชีวิตจริงก็ดึงเขากลับไป เพื่อความอยู่รอด เขากลับไปทำงานธุรกิจ และแฮนด์แพนต้องรอ แต่เขาไม่เคยทิ้งความฝัน เขามาเมืองไทยเพื่อใช้ชีวิตเป็นนักดนตรีและครู และบนเกาะสมุย เขาได้พบระเบียงแห่งนี้ ขอบฟ้าที่ทอดยาวเหนือทะเล ป่ารายล้อมทุกด้าน มีเพียงสีฟ้าและสีเขียว แล้วเขาก็อยู่ต่อ ในคอร์สอบรมการบำบัดด้วยเสียงบนเกาะ เขาได้พบ Melie และการได้เห็นเธอเปิดสตูดิโอของตัวเองทำให้เขากล้าเดินตามเส้นทางเดียวกัน เขาปิดธุรกิจและทุ่มเวลาทั้งหมดให้กับศาสตร์นี้",
+  "wa.p2melie": "Melie ทำงานอยู่ที่โรงแรมตอนที่เธอเข้าเรียนการบำบัดด้วยเสียง และการเรียนครั้งนั้นเปลี่ยนเส้นทางชีวิตของเธอ เธอหลงรักศาสตร์นี้ ได้เป็นผู้ช่วยในหลักสูตรอบรมของ Shantika Academy แล้วจึงเปิดสตูดิโอของตัวเอง House of Holistic by Melie เธอเล่นฆ้อง ขันคริสตัล และขันทิเบต และเป็นครูโยคะหลักสูตร 200 ชั่วโมง",
+  "wa.p2both": "เซสชันของเรานุ่มนวลโดยตั้งใจ ไม่มีกลองที่ดังกระหึ่ม ไม่มีเสียงฆ้องดังที่ทำให้สะดุ้ง เสียงจะเบาและช่วยให้ใจสงบนิ่ง เพื่อให้โลกที่วุ่นวายถอยห่างออกไปสักหนึ่งชั่วโมง และคุณได้พัก นี่คือสิ่งที่เราทั้งคู่รัก และเป็นเหตุผลที่ Kamalaya, Anantara Lawana, W, Conrad, Absolute Sanctuary, Samujana, Vikasa, 5 Elements และ Samaya Wellness เชิญเราไปเล่น <a href=\"about/\">อ่านเพิ่มเติมเกี่ยวกับเรา</a>"
  },
  "de": {
-  "wa.p2c": "Can unterrichtet Handpan, Rhythmus und Musiktheorie, hat mehr als fünfzig Schüler unterrichtet und nimmt drei oder vier neue pro Monat an. Melie hat mehr als fünfzig Schüler in Klangtherapie unterrichtet und führt ihre Arbeit als Yogalehrerin, Tok-Sen-Meisterin und Klangpraktikerin fort. Wir spielen regelmäßig an Orten wie Kamalaya, Anantara Lawana, 5 Elements, W und Conrad und haben einen Platz im Wellnessprogramm von Kamalaya."
+  "wa.p1b": "Noom Sound Studio sind Can und Melie, und eine Terrasse im Wald über Lamai, wo man nur das Blau des Meeres und das Grün der Bäume sieht.",
+  "wa.p2can": "2016 kaufte Can in der Türkei seine erste Handpan. Er schloss sich einem Projekt namens Music Medicine an und spielte improvisierte Sessions mit Straßenmusikern. Dann holte ihn das Leben zurück. Um zu überleben, kehrte er ins Geschäftsleben zurück, und die Handpan musste warten. Den Traum gab er nie auf. Er kam nach Thailand, um als Musiker und Lehrer zu leben, und auf Samui fand er die Terrasse: ein klarer Horizont über dem Meer, Wald ringsum, nichts als Blau und Grün. Er blieb. Bei einer Ausbildung in Klangtherapie auf der Insel lernte er Melie kennen. Zu sehen, wie sie ihr eigenes Studio eröffnete, gab ihm den Mut, denselben Weg zu gehen: Er schloss sein Geschäft und schenkte dieser Praxis seine ganze Zeit.",
+  "wa.p2melie": "Melie arbeitete in einem Hotel, als sie eine Ausbildung in Klangtherapie machte, und diese gab ihrem Leben eine neue Richtung. Sie verliebte sich in die Praxis, assistierte bei den Ausbildungen der Shantika Academy und eröffnete dann ihr eigenes Studio, House of Holistic by Melie. Sie spielt Gong, Kristall- und Tibetische Klangschalen und ist Yogalehrerin mit 200-Stunden-Ausbildung.",
+  "wa.p2both": "Unsere Sessions sind bewusst sanft. Keine hämmernden Trommeln, keine lauten Gongs, die dich aufschrecken. Der Klang bleibt leise und erdend, damit die hektische Welt für eine Stunde verschwindet und du ruhen kannst. Das lieben wir beide, und deshalb haben uns Kamalaya, Anantara Lawana, W, Conrad, Absolute Sanctuary, Samujana, Vikasa, 5 Elements und Samaya Wellness eingeladen, bei ihnen zu spielen. <a href=\"about/\">Mehr über uns</a>."
  },
  "fr": {
-  "wa.p2c": "Can enseigne le handpan, le rythme et la théorie musicale, a formé plus de cinquante élèves et en accueille trois ou quatre nouveaux chaque mois. Melie a enseigné la thérapie sonore à plus de cinquante élèves et poursuit sa pratique comme professeure de yoga, maîtresse de Tok Sen et praticienne du son. Nous jouons régulièrement dans des lieux comme Kamalaya, Anantara Lawana, 5 Elements, W et Conrad, et nous avons une place dans le programme bien-être de Kamalaya."
+  "wa.p1b": "Noom Sound Studio, c’est Can et Melie, et une terrasse dans la forêt au-dessus de Lamai, où l’on ne voit que le bleu de la mer et le vert des arbres.",
+  "wa.p2can": "En 2016, en Turquie, Can achète son premier handpan. Il rejoint un projet appelé Music Medicine et joue des sessions improvisées avec des musiciens de rue. Puis la vie le rattrape. Pour survivre, il retourne à une carrière commerciale, et le handpan attend. Il n’abandonne jamais son rêve. Il part en Thaïlande pour vivre comme musicien et professeur, et à Samui il trouve la terrasse : un horizon dégagé sur la mer, la forêt tout autour, rien que du bleu et du vert. Il reste. Lors d’une formation en thérapie sonore sur l’île, il rencontre Melie. La voir ouvrir son propre studio lui donne le courage de suivre le même chemin : il ferme son entreprise pour consacrer tout son temps à cette pratique.",
+  "wa.p2melie": "Melie travaillait dans un hôtel lorsqu’elle a suivi une formation en thérapie sonore, et sa vie a pris un autre chemin. Elle est tombée amoureuse de cette pratique, a assisté les formations de la Shantika Academy, puis a ouvert son propre studio, House of Holistic by Melie. Elle joue du gong, des bols de cristal et des bols tibétains, et elle est professeure de yoga certifiée 200 heures.",
+  "wa.p2both": "Nos séances sont douces, par choix. Pas de tambours qui martèlent, pas de gongs assourdissants qui vous font sursauter. Le son reste bas et enraciné, pour que le monde agité s’éloigne le temps d’une heure et que vous puissiez vous reposer. C’est ce que nous aimons tous les deux, et c’est pourquoi Kamalaya, Anantara Lawana, W, Conrad, Absolute Sanctuary, Samujana, Vikasa, 5 Elements et Samaya Wellness nous ont invités à jouer. <a href=\"about/\">En savoir plus sur nous</a>."
  },
  "ru": {
-  "wa.p2c": "Can преподаёт хэндпан, ритм и теорию музыки, обучил более пятидесяти учеников и берёт три-четыре новых каждый месяц. Melie обучила звуковой терапии более пятидесяти учеников и продолжает практику как преподаватель йоги, мастер ток-сен и звуковой практик. Мы регулярно играем на таких площадках, как Kamalaya, Anantara Lawana, 5 Elements, W и Conrad, и у нас есть место в велнес-программе Kamalaya."
+  "wa.p1b": "Noom Sound Studio: Can, Melie и терраса в лесу над Ламаем, где вокруг только синее море и зелень деревьев.",
+  "wa.p2can": "В 2016 году в Турции Can купил свой первый хэндпан. Он присоединился к проекту Music Medicine и играл импровизации вместе с уличными музыкантами. Потом жизнь взяла своё. Чтобы выжить, он вернулся в бизнес, и хэндпан ждал. Но от мечты он не отказался. Он приехал в Таиланд, чтобы жить как музыкант и преподаватель, и на Самуи нашёл эту террасу: чистый горизонт над морем, лес вокруг, только синее и зелёное. И остался. На обучении звуковой терапии на острове он встретил Melie. Глядя, как она открывает собственную студию, он решился пойти тем же путём: закрыл свой бизнес и посвятил этой практике всё своё время.",
+  "wa.p2melie": "Melie работала в отеле, когда прошла обучение звуковой терапии, и это изменило её жизнь. Она влюбилась в эту практику, ассистировала на обучениях в Shantika Academy, а затем открыла собственную студию House of Holistic by Melie. Она играет на гонге, кристаллических и тибетских чашах и преподаёт йогу (сертификат на 200 часов).",
+  "wa.p2both": "Наши сессии мягкие, и это наш выбор. Никаких громких барабанов и оглушающих гонгов. Звук остаётся тихим и заземляющим, чтобы на один час суетный мир отступил и вы могли отдохнуть. Это то, что мы оба любим, и поэтому Kamalaya, Anantara Lawana, W, Conrad, Absolute Sanctuary, Samujana, Vikasa, 5 Elements и Samaya Wellness приглашали нас играть. <a href=\"about/\">Подробнее о нас</a>."
  },
  "tr": {
-  "wa.p2c": "Can handpan, ritim ve müzik teorisi öğretiyor; elliden fazla öğrenciye ders verdi ve her ay üç dört yeni öğrenci alıyor. Melie elliden fazla öğrenciye ses terapisi öğretti ve yoga eğitmeni, Tok Sen ustası ve ses uygulayıcısı olarak çalışmasını sürdürüyor. Kamalaya, Anantara Lawana, 5 Elements, W ve Conrad gibi mekânlarda düzenli olarak çalıyoruz ve Kamalaya wellness programında yerimiz var."
+  "wa.p1b": "Noom Sound Studio, Can ve Melie’dir; bir de Lamai’nin üstünde, ormanın içinde, yalnızca denizin mavisini ve ağaçların yeşilini gördüğünüz bir teras.",
+  "wa.p2can": "2016’da, Türkiye’de, Can ilk handpanini aldı. Music Medicine adlı bir projeye katıldı ve sokak müzisyenleriyle doğaçlama seanslarda çaldı. Sonra hayat onu geri çekti. Ayakta kalmak için ticari hayata döndü, handpan bekledi. Ama hayalinden hiç vazgeçmedi. Müzisyen ve öğretmen olarak yaşama hayalinin peşinden Tayland’a geldi ve Samui’de terası buldu: denizin üzerinde açık bir ufuk, her yanda orman, mavi ve yeşilden başka hiçbir şey. Ve kaldı. Adada katıldığı bir ses terapisi eğitiminde Melie ile tanıştı. Onun kendi stüdyosunu açtığını görmek, aynı yola çıkması için ona cesaret verdi: işini kapattı ve tüm zamanını bu pratiğe verdi.",
+  "wa.p2melie": "Melie bir otelde çalışırken ses terapisi eğitimi aldı ve bu eğitim hayatının yönünü değiştirdi. Bu pratiğe âşık oldu, Shantika Academy’deki eğitimlerde asistanlık yaptı ve ardından kendi stüdyosu House of Holistic by Melie’yi açtı. Gong, kristal ve Tibet çanakları çalıyor; 200 saatlik yoga eğitmeni.",
+  "wa.p2both": "Seanslarımız bilerek yumuşak. Gümbürdeyen davullar, insanı irkilten yüksek gonglar yok. Ses alçak ve topraklayıcı kalıyor; böylece bir saatliğine koşturan dünya uzaklaşıyor ve dinlenebiliyorsunuz. İkimizin de tutkusu bu, Kamalaya, Anantara Lawana, W, Conrad, Absolute Sanctuary, Samujana, Vikasa, 5 Elements ve Samaya Wellness de bizi bu yüzden çalmaya davet etti. <a href=\"about/\">Hakkımızda daha fazlası</a>."
  },
  "he": {
-  "wa.p2c": "Can מלמד הנדפן, קצב ותורת המוזיקה, לימד יותר מחמישים תלמידים ומקבל שלושה או ארבעה חדשים בכל חודש. Melie לימדה תרפיה בצליל יותר מחמישים תלמידים וממשיכה בעבודתה כמורת יוגה, מאסטרית טוק סן ומטפלת בצליל. אנחנו מנגנים באופן קבוע במקומות כמו Kamalaya, Anantara Lawana, 5 Elements, W ו־Conrad, ויש לנו מקום בתוכנית הבריאות של Kamalaya."
+  "wa.p1b": "Noom Sound Studio הם Can ו־Melie, ומרפסת ביער מעל לאמאי, שממנה רואים רק את הכחול של הים ואת הירוק של העצים.",
+  "wa.p2can": "ב־2016, בטורקיה, Can קנה את ההנדפן הראשון שלו. הוא הצטרף לפרויקט בשם Music Medicine וניגן סשנים מאולתרים עם מוזיקאי רחוב. ואז החיים משכו אותו בחזרה. כדי לשרוד הוא חזר לעולם העסקים, וההנדפן חיכה. הוא מעולם לא ויתר על החלום. הוא הגיע לתאילנד כדי לחיות כמוזיקאי וכמורה, ובסמוי מצא את המרפסת: אופק צלול מעל הים, יער מכל עבר, רק כחול וירוק. והוא נשאר. בהכשרה לתרפיה בצליל על האי הוא פגש את Melie. לראות אותה פותחת סטודיו משלה נתן לו את האומץ ללכת באותה דרך: הוא סגר את העסק שלו והקדיש לתרגול הזה את כל זמנו.",
+  "wa.p2melie": "Melie עבדה במלון כשעשתה הכשרה בתרפיה בצליל, וההכשרה שינתה את מסלול חייה. היא התאהבה בתרגול, סייעה בהכשרות של Shantika Academy, ואז פתחה סטודיו משלה, House of Holistic by Melie. היא מנגנת בגונג, בקערות קריסטל ובקערות טיבטיות, והיא מורה ליוגה בהכשרה של 200 שעות.",
+  "wa.p2both": "המפגשים שלנו רכים, מתוך בחירה. בלי תופים רועמים ובלי גונגים חזקים שמקפיצים אתכם. הצליל נשאר שקט ומקרקע, כך שלשעה אחת העולם העמוס מתרחק ואפשר לנוח. זה מה ששנינו אוהבים, ובגלל זה Kamalaya, Anantara Lawana, W, Conrad, Absolute Sanctuary, Samujana, Vikasa, 5 Elements ו־Samaya Wellness הזמינו אותנו לנגן. <a href=\"about/\">עוד עלינו</a>."
  }
 };
-Object.keys(NOOM_V44).forEach(function (lang) {
-  NOOM_V4[lang] = Object.assign(NOOM_V4[lang] || {}, NOOM_V44[lang]);
-});
-
-/* v4.5 — wa.p2both: shared history + venue list, including the "More about us" link.
-   The <a href="about/"> anchor must stay in every language: it renders only on the
-   homepage, so the depth is correct as written. */
-const NOOM_V45 = {
- "th": {
-  "wa.p2both": "เราเล่นด้วยกันมากกว่าหนึ่งปี กว่าห้าสิบเซสชันแล้ว เราได้รับเชิญไปเล่นที่ Kamalaya, Anantara Lawana, W, Conrad, Absolute Sanctuary, Samujana, Vikasa, 5 Elements และ Samaya Wellness และมีที่ในโปรแกรมเวลเนสของ Kamalaya <a href=\"about/\">อ่านเพิ่มเติมเกี่ยวกับเรา</a>"
- },
- "de": {
-  "wa.p2both": "Wir spielen seit über einem Jahr zusammen, bisher mehr als fünfzig Sessions. Wir wurden eingeladen, bei Kamalaya, Anantara Lawana, W, Conrad, Absolute Sanctuary, Samujana, Vikasa, 5 Elements und Samaya Wellness zu spielen, und wir haben einen Platz im Wellnessprogramm von Kamalaya. <a href=\"about/\">Mehr über uns</a>."
- },
- "fr": {
-  "wa.p2both": "Nous jouons ensemble depuis plus d’un an, plus de cinquante séances à ce jour. Nous avons été invités à jouer à Kamalaya, Anantara Lawana, W, Conrad, Absolute Sanctuary, Samujana, Vikasa, 5 Elements et Samaya Wellness, et nous avons une place dans le programme bien-être de Kamalaya. <a href=\"about/\">En savoir plus sur nous</a>."
- },
- "ru": {
-  "wa.p2both": "Мы играем вместе больше года, уже более пятидесяти сессий. Нас приглашали играть в Kamalaya, Anantara Lawana, W, Conrad, Absolute Sanctuary, Samujana, Vikasa, 5 Elements и Samaya Wellness, и у нас есть место в велнес-программе Kamalaya. <a href=\"about/\">Подробнее о нас</a>."
- },
- "tr": {
-  "wa.p2both": "Bir yıldan fazla birlikte çalıyoruz, şimdiye kadar ellinin üzerinde seans. Kamalaya, Anantara Lawana, W, Conrad, Absolute Sanctuary, Samujana, Vikasa, 5 Elements ve Samaya Wellness’ta çalmaya davet edildik ve Kamalaya wellness programında yerimiz var. <a href=\"about/\">Hakkımızda daha fazlası</a>."
- },
- "he": {
-  "wa.p2both": "אנחנו מנגנים יחד יותר משנה, למעלה מחמישים מפגשים עד כה. הוזמנו לנגן ב־Kamalaya, Anantara Lawana, W, Conrad, Absolute Sanctuary, Samujana, Vikasa, 5 Elements ו־Samaya Wellness, ויש לנו מקום בתוכנית הבריאות של Kamalaya. <a href=\"about/\">עוד עלינו</a>."
- }
-};
-Object.keys(NOOM_V45).forEach(function (lang) {
-  NOOM_V4[lang] = Object.assign(NOOM_V4[lang] || {}, NOOM_V45[lang]);
+Object.keys(NOOM_WA_STORY).forEach(function (lang) {
+  NOOM_V4[lang] = Object.assign(NOOM_V4[lang] || {}, NOOM_WA_STORY[lang]);
 });
 
 // Booking step 9 (2026-09-11): nav Book button, and the private and lesson cards
